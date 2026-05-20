@@ -1,0 +1,6 @@
+akshare
+flask
+numpy
+pandas
+python-socks
+tqsdk

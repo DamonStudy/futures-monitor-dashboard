@@ -1,0 +1,7 @@
+.env
+.env.*
+!.env.example
+.DS_Store
+data/
+__pycache__/
+*.pyc

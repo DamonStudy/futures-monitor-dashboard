@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>期货盯控看板</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7f8;
+      --panel: #ffffff;
+      --line: #d9dee5;
+      --text: #17202a;
+      --muted: #6c7785;
+      --accent: #176b87;
+      --up: #b42318;
+      --down: #067647;
+      --warn: #b54708;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 14px;
+    }
+    header {
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      border-bottom: 1px solid var(--line);
+      background: var(--panel);
+    }
+    h1 { margin: 0; font-size: 18px; letter-spacing: 0; }
+    button {
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      color: white;
+      border-radius: 6px;
+      height: 34px;
+      padding: 0 14px;
+      cursor: pointer;
+    }
+    button:disabled { opacity: .55; cursor: wait; }
+    main {
+      display: grid;
+      grid-template-columns: 330px 1fr;
+      min-height: calc(100vh - 56px);
+    }
+    aside {
+      border-right: 1px solid var(--line);
+      background: var(--panel);
+      overflow: auto;
+    }
+    .status {
+      color: var(--muted);
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--line);
+      line-height: 1.7;
+    }
+    .board-row, .item-row {
+      display: grid;
+      gap: 4px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--line);
+      cursor: pointer;
+    }
+    .item-row.active { background: #eef7fa; border-left: 4px solid var(--accent); padding-left: 12px; }
+    .name-line { display: flex; justify-content: space-between; gap: 10px; }
+    .score { font-weight: 700; color: var(--accent); }
+    .muted { color: var(--muted); }
+    .tag { color: var(--muted); font-size: 12px; }
+    .content {
+      padding: 20px;
+      overflow: auto;
+    }
+    .summary-grid, .spec-grid {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .summary-grid { grid-template-columns: repeat(4, minmax(120px, 1fr)); }
+    .spec-grid { grid-template-columns: repeat(6, minmax(120px, 1fr)); }
+    .analysis-metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(120px, 1fr));
+      gap: 10px;
+      margin: 12px 0;
+    }
+    .analysis-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 12px;
+    }
+    .analysis-subtitle {
+      color: var(--muted);
+      font-size: 12px;
+      margin: 12px 0 6px;
+    }
+    .analysis-columns ul {
+      margin: 0;
+    }
+    .metric, section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+    .metric { padding: 12px; }
+    .metric .label { color: var(--muted); font-size: 12px; margin-bottom: 6px; }
+    .metric .value { font-size: 18px; font-weight: 700; }
+    section { padding: 16px; margin-bottom: 14px; }
+    h2 { margin: 0 0 6px; font-size: 20px; }
+    h3 { margin: 0 0 10px; font-size: 15px; }
+    p { line-height: 1.8; margin: 0; }
+    ul { margin: 0; padding-left: 18px; line-height: 1.8; }
+    .chart-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .tabs { display: flex; gap: 6px; }
+    .tab {
+      height: 28px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--text);
+      border-radius: 6px;
+    }
+    .tab.active {
+      border-color: var(--accent);
+      background: #eef7fa;
+      color: var(--accent);
+      font-weight: 700;
+    }
+    canvas {
+      width: 100%;
+      height: 360px;
+      display: block;
+    }
+    .empty { color: var(--muted); padding: 30px; }
+    .up { color: var(--up); }
+    .down { color: var(--down); }
+    .warn { color: var(--warn); }
+    @media (max-width: 900px) {
+      main { grid-template-columns: 1fr; }
+      aside { max-height: 44vh; border-right: 0; border-bottom: 1px solid var(--line); }
+      .summary-grid, .spec-grid { grid-template-columns: repeat(2, 1fr); }
+      .analysis-metrics { grid-template-columns: repeat(2, 1fr); }
+      .analysis-columns { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>期货盯控看板</h1>
+    <button id="refresh">刷新数据</button>
+  </header>
+  <main>
+    <aside>
+      <div class="status" id="status">打开页面后优先复用今日缓存。</div>
+      <div id="list"></div>
+    </aside>
+    <div class="content" id="detail">
+      <div class="empty">等待刷新结果。</div>
+    </div>
+  </main>
+
+  <script>
+    let state = { items: [], selected: 0, period: "day" };
+    const statusEl = document.getElementById("status");
+    const listEl = document.getElementById("list");
+    const detailEl = document.getElementById("detail");
+    const refreshBtn = document.getElementById("refresh");
+
+    refreshBtn.addEventListener("click", () => refresh(true));
+    window.addEventListener("load", init);
+
+    async function init() {
+      const usedCache = await loadCache(true);
+      if (!usedCache) refresh(false);
+    }
+
+    async function refresh(force = false) {
+      refreshBtn.disabled = true;
+      statusEl.textContent = force ? "正在强制请求天勤行情并计算指标..." : "正在请求天勤行情并计算指标...";
+      try {
+        const response = await fetch(`/api/refresh${force ? "?force=1" : ""}`, { method: "POST" });
+        const payload = await response.json();
+        if (!payload.ok) throw new Error(payload.message || "刷新失败");
+        state.items = payload.items || [];
+        state.selected = 0;
+        statusEl.innerHTML = `${payload.from_cache ? "使用今日缓存" : "刷新时间"}：${payload.refreshed_at}<br>活跃品种：${payload.active_count}/${payload.universe_count}`;
+        renderList();
+        renderDetail();
+      } catch (error) {
+        statusEl.innerHTML = `<span class="warn">刷新失败：</span>${error.message}`;
+        loadCache(false);
+      } finally {
+        refreshBtn.disabled = false;
+      }
+    }
+
+    async function loadCache(onlyToday) {
+      const response = await fetch("/api/snapshot");
+      const payload = await response.json();
+      if (onlyToday && !payload.cache_is_today) return false;
+      if (payload.items && payload.items.length) {
+        state.items = payload.items;
+        state.selected = 0;
+        statusEl.innerHTML = `${payload.cache_is_today ? "使用今日缓存" : "使用历史缓存"}：${payload.refreshed_at}<br>活跃品种：${payload.active_count}/${payload.universe_count}`;
+        renderList();
+        renderDetail();
+        return true;
+      }
+      return false;
+    }
+
+    function renderList() {
+      if (!state.items.length) {
+        listEl.innerHTML = '<div class="empty">暂无活跃品种结果。</div>';
+        return;
+      }
+      listEl.innerHTML = state.items.map((item, index) => `
+        <div class="item-row ${index === state.selected ? "active" : ""}" onclick="selectItem(${index})">
+          <div class="name-line">
+            <strong>${item.name}</strong>
+            <span class="score">${item.score}</span>
+          </div>
+          <div class="tag">${item.board} · ${item.state}</div>
+          <div class="muted">${item.level}</div>
+        </div>
+      `).join("");
+    }
+
+    function selectItem(index) {
+      state.selected = index;
+      renderList();
+      renderDetail();
+    }
+
+    function setPeriod(period) {
+      state.period = period;
+      renderDetail();
+    }
+
+    function renderDetail() {
+      const item = state.items[state.selected];
+      if (!item) {
+        detailEl.innerHTML = '<div class="empty">暂无详情。</div>';
+        return;
+      }
+      const m = item.metrics || {};
+      const directionClass = item.direction === "up" ? "up" : item.direction === "down" ? "down" : "";
+      detailEl.innerHTML = `
+        <section>
+          <h2>${item.name}</h2>
+          <div class="muted">分析序列：${item.symbol}　实际主力：${item.actual_symbol || "-"}　最新价：${item.last_price || "-"}</div>
+        </section>
+        <div class="spec-grid">
+          ${metric("一手吨数/乘数", spec(m.volume_multiple))}
+          ${metric("最小变动价位", spec(m.price_tick))}
+          ${metric("一跳金额", money(m.tick_value))}
+          ${metric("预估保证金/手", money(m.estimated_margin))}
+          ${metric("一手合约价值", money(m.contract_value))}
+          ${metric("近5日日均波动/手", money(m.avg_daily_range_amount_5d))}
+        </div>
+        <section>
+          <h3>量价分析</h3>
+          <p><strong>${item.state}</strong>。${item.level}</p>
+          <div class="analysis-metrics">
+            ${metric("关注分", item.score)}
+            ${metric("日涨跌幅", pct(m.return_pct), directionClass)}
+            ${metric("成交量分位", pct(m.volume_rank_60))}
+            ${metric("ATR分位", pct(m.atr_rank_60))}
+          </div>
+          <div class="analysis-subtitle">诊断依据</div>
+          <p>${compactDiagnosis(item)}</p>
+          <div class="analysis-columns">
+            <div>
+              <div class="analysis-subtitle">后续可能成立的条件</div>
+              ${plainList(item.to_confirm)}
+            </div>
+            <div>
+              <div class="analysis-subtitle">判断失效的条件</div>
+              ${plainList(item.invalidation)}
+            </div>
+          </div>
+        </section>
+        <section>
+          <div class="chart-head">
+            <h3>K线图</h3>
+            <div class="tabs">
+              ${tab("day", "日线")}
+              ${tab("hour", "1小时")}
+              ${tab("week", "周线")}
+            </div>
+          </div>
+          <canvas id="kline"></canvas>
+        </section>
+      `;
+      drawKline(document.getElementById("kline"), (item.charts || {})[state.period] || []);
+    }
+
+    function tab(period, label) {
+      return `<button class="tab ${state.period === period ? "active" : ""}" onclick="setPeriod('${period}')">${label}</button>`;
+    }
+
+    function metric(label, value, klass = "") {
+      return `<div class="metric"><div class="label">${label}</div><div class="value ${klass}">${value ?? "-"}</div></div>`;
+    }
+
+    function plainList(rows) {
+      return `<ul>${(rows || []).map(row => `<li>${row}</li>`).join("")}</ul>`;
+    }
+
+    function compactDiagnosis(item) {
+      const evidence = (item.evidence || []).join("");
+      return `${item.facts || ""}${evidence ? " " + evidence : ""}`;
+    }
+
+    function pct(value) {
+      return value === null || value === undefined ? "-" : `${Number(value).toFixed(2)}%`;
+    }
+
+    function spec(value) {
+      return value === null || value === undefined ? "-" : Number(value).toLocaleString("zh-CN", { maximumFractionDigits: 4 });
+    }
+
+    function money(value) {
+      return value === null || value === undefined ? "-" : `¥${Number(value).toLocaleString("zh-CN", { maximumFractionDigits: 0 })}`;
+    }
+
+    function drawKline(canvas, rows) {
+      if (!canvas || !rows.length) return;
+      const rect = canvas.getBoundingClientRect();
+      const ratio = window.devicePixelRatio || 1;
+      const width = Math.max(640, Math.floor(rect.width));
+      const height = 360;
+      canvas.width = width * ratio;
+      canvas.height = height * ratio;
+      const ctx = canvas.getContext("2d");
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      ctx.clearRect(0, 0, width, height);
+
+      const pad = { left: 54, right: 18, top: 18, bottom: 34 };
+      const volumeHeight = 72;
+      const priceBottom = height - pad.bottom - volumeHeight - 16;
+      const plotW = width - pad.left - pad.right;
+      const priceH = priceBottom - pad.top;
+      const volTop = priceBottom + 16;
+      const volH = height - pad.bottom - volTop;
+
+      const highs = rows.map(r => r.high).filter(Number.isFinite);
+      const lows = rows.map(r => r.low).filter(Number.isFinite);
+      const prices = highs.concat(lows);
+      const minPrice = Math.min(...prices);
+      const maxPrice = Math.max(...prices);
+      const span = Math.max(maxPrice - minPrice, 1);
+      const priceY = value => pad.top + (maxPrice - value) / span * priceH;
+      const maxVol = Math.max(...rows.map(r => r.volume || 0), 1);
+      const step = plotW / rows.length;
+      const bodyW = Math.max(2, Math.min(9, step * 0.58));
+
+      ctx.strokeStyle = "#d9dee5";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (let i = 0; i <= 4; i++) {
+        const y = pad.top + priceH * i / 4;
+        ctx.moveTo(pad.left, y);
+        ctx.lineTo(width - pad.right, y);
+      }
+      ctx.moveTo(pad.left, volTop);
+      ctx.lineTo(width - pad.right, volTop);
+      ctx.stroke();
+
+      ctx.fillStyle = "#6c7785";
+      ctx.font = "12px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
+      ctx.textAlign = "right";
+      for (let i = 0; i <= 4; i++) {
+        const value = maxPrice - span * i / 4;
+        ctx.fillText(value.toFixed(2), pad.left - 8, pad.top + priceH * i / 4 + 4);
+      }
+
+      rows.forEach((row, i) => {
+        const x = pad.left + step * i + step / 2;
+        const rising = row.close >= row.open;
+        const color = rising ? "#b42318" : "#067647";
+        ctx.strokeStyle = color;
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(x, priceY(row.high));
+        ctx.lineTo(x, priceY(row.low));
+        ctx.stroke();
+        const y1 = priceY(Math.max(row.open, row.close));
+        const y2 = priceY(Math.min(row.open, row.close));
+        ctx.fillRect(x - bodyW / 2, y1, bodyW, Math.max(1, y2 - y1));
+        const volBarH = (row.volume || 0) / maxVol * volH;
+        ctx.globalAlpha = 0.28;
+        ctx.fillRect(x - bodyW / 2, volTop + volH - volBarH, bodyW, volBarH);
+        ctx.globalAlpha = 1;
+      });
+
+      drawLine(ctx, rows, "ma20", "#176b87", pad.left, step, priceY);
+      drawLine(ctx, rows, "ma60", "#b54708", pad.left, step, priceY);
+
+      ctx.textAlign = "left";
+      ctx.fillStyle = "#176b87";
+      ctx.fillText("MA20", pad.left, 14);
+      ctx.fillStyle = "#b54708";
+      ctx.fillText("MA60", pad.left + 52, 14);
+      ctx.fillStyle = "#6c7785";
+      ctx.textAlign = "center";
+      const first = rows[0]?.time || "";
+      const last = rows[rows.length - 1]?.time || "";
+      ctx.fillText(first.slice(0, 10), pad.left + 40, height - 12);
+      ctx.fillText(last.slice(0, 10), width - pad.right - 40, height - 12);
+    }
+
+    function drawLine(ctx, rows, key, color, left, step, priceY) {
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      let started = false;
+      rows.forEach((row, i) => {
+        const value = row[key];
+        if (!Number.isFinite(value)) return;
+        const x = left + step * i + step / 2;
+        const y = priceY(value);
+        if (!started) {
+          ctx.moveTo(x, y);
+          started = true;
+        } else {
+          ctx.lineTo(x, y);
+        }
+      });
+      if (started) ctx.stroke();
+    }
+  </script>
+</body>
+</html>
