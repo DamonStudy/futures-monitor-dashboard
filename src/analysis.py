@@ -9,6 +9,11 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
+from .analyzers.directional_matrix import build_direction_matrix, month_from_day
+from .domain.nanhua_boards import resolve_nanhua_board
+from .skills import analyze_contract
+from .trading_hours import session_info
+
 
 MIN_AVG_VOLUME_20 = 1000
 MIN_AVG_OI_20 = 1000
@@ -17,7 +22,6 @@ MIN_AVG_OI_20 = 1000
 @dataclass
 class PeriodFrames:
     day: pd.DataFrame
-    hour: pd.DataFrame
     week: pd.DataFrame
 
 
@@ -80,10 +84,11 @@ def diagnose_contract(
     frames: PeriodFrames,
     quote: dict[str, Any],
     board_context: dict[str, Any] | None = None,
+    chain_quotes: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any] | None:
     day = add_indicators(frames.day)
-    hour = add_indicators(frames.hour)
     week = add_indicators(frames.week)
+    month = month_from_day(day)
     if len(day) < 70:
         return None
 
@@ -96,27 +101,42 @@ def diagnose_contract(
 
     state = classify_state(last, prev)
     direction = direction_for_state(state)
-    hour_path = period_path(hour)
+    day_path = period_path(day)
     week_bias = weekly_bias(week)
-    score = score_state(state, last, prev, hour_path, week_bias)
+    score = score_state(state, last, prev, day_path, week_bias)
 
     context = board_context or {}
-    level = classify_level(state, last, hour_path, week_bias, context)
+    level = classify_level(state, last, day_path, week_bias, context)
     facts = build_facts(last, prev)
-    evidence = build_evidence(state, last, prev, hour_path, week_bias, context)
+    evidence = build_evidence(state, last, prev, week_bias, context)
     to_confirm = build_confirmations(state, direction, last)
     invalidation = build_invalidations(state, direction, last)
     quote_for_specs = dict(quote)
     if clean_number(quote_for_specs.get("last_price")) is None:
         quote_for_specs["last_price"] = last.get("close")
+    outputs = analyze_contract(
+        periods={"day": day, "week": week},
+        state=state,
+        level=level,
+        direction=direction,
+        score=score,
+        chain_quotes=chain_quotes,
+        meta=meta,
+        quote=quote_for_specs,
+        include_external=bool(context.get("include_external_analyzers", context.get("include_external_skills", True))),
+        macro_context=context.get("macro"),
+        board_peers=context.get("board_peers"),
+        boards_summary=context.get("boards_summary"),
+    )
 
     return {
-        "board": meta["board"],
+        **resolve_nanhua_board(meta.get("board")),
         "name": meta["name"],
         "symbol": meta["symbol"],
         "actual_symbol": quote.get("underlying_symbol") or quote.get("symbol") or meta["symbol"],
         "last_price": clean_number(quote.get("last_price")),
         "quote_time": quote.get("datetime"),
+        "session": session_info(symbol=meta.get("symbol")),
         "state": state,
         "direction": direction,
         "level": level,
@@ -151,9 +171,13 @@ def diagnose_contract(
         },
         "charts": {
             "day": chart_rows(day, 120),
-            "hour": chart_rows(hour, 120),
             "week": chart_rows(week, 100),
         },
+        "direction_matrix": build_direction_matrix(
+            {"day": day, "week": week, "month": month}
+        ),
+        "analyzers": outputs["analyzers"],
+        "skills": outputs["skills"],
     }
 
 
@@ -185,7 +209,7 @@ def classify_state(last: pd.Series, prev: pd.Series) -> str:
     return "中性无明确信号"
 
 
-def score_state(state: str, last: pd.Series, prev: pd.Series, hour: str, week: str) -> int:
+def score_state(state: str, last: pd.Series, prev: pd.Series, day_path: str, week: str) -> int:
     score = 35
     if "突破" in state:
         score += 25
@@ -203,8 +227,8 @@ def score_state(state: str, last: pd.Series, prev: pd.Series, hour: str, week: s
     oi_change = (last.get("open_oi") / prev.get("open_oi") - 1) if prev.get("open_oi") else 0
     if abs(oi_change) >= 0.02:
         score += 6
-    if hour in ("连续上行", "连续下行"):
-        score += 6
+    if day_path in ("连续上行", "连续下行"):
+        score += 4
     if ("上行" in state and week == "周线偏强") or ("下行" in state and week == "周线偏弱"):
         score += 5
     if state == "中性无明确信号":
@@ -212,14 +236,14 @@ def score_state(state: str, last: pd.Series, prev: pd.Series, hour: str, week: s
     return int(max(0, min(score, 100)))
 
 
-def classify_level(state: str, last: pd.Series, hour: str, week: str, context: dict[str, Any]) -> str:
+def classify_level(state: str, last: pd.Series, day_path: str, week: str, context: dict[str, Any]) -> str:
     same_direction_count = context.get("same_direction_count", 0)
     volume_ok = nan_to_zero(last.get("volume_rank_60")) >= 0.75
     oi_ok = abs(context.get("oi_change_pct", 0) or 0) >= 1.5
     breakout_60 = last["close"] > last.get("prev_high_60", np.inf) or last["close"] < last.get("prev_low_60", -np.inf)
     if "突破" in state and breakout_60 and volume_ok and oi_ok and same_direction_count >= 3 and week != "周线逆向":
         return "大行情候选，仍需后续确认"
-    if ("突破" in state or "趋势" in state) and volume_ok and hour in ("连续上行", "连续下行"):
+    if ("突破" in state or "趋势" in state) and volume_ok and day_path in ("连续上行", "连续下行"):
         return "中级行情候选"
     if state == "中性无明确信号":
         return "暂无行情级别"
@@ -240,7 +264,6 @@ def build_evidence(
     state: str,
     last: pd.Series,
     prev: pd.Series,
-    hour: str,
     week: str,
     context: dict[str, Any],
 ) -> list[str]:
@@ -263,7 +286,6 @@ def build_evidence(
     items.append(f"成交量处于近60日 {pct_rank(last.get('volume_rank_60'))}。")
     if prev.get("open_oi"):
         items.append(f"持仓变化为 {pct(last.get('open_oi') / prev.get('open_oi') - 1)}。")
-    items.append(f"1小时路径：{hour}。")
     items.append(f"周线背景：{week}。")
     if context.get("same_direction_count") is not None:
         items.append(f"同板块同方向品种数：{context.get('same_direction_count')}。")
@@ -275,13 +297,13 @@ def build_confirmations(state: str, direction: str, last: pd.Series) -> list[str
         return [
             f"未来1-3个交易日收盘继续站在突破/均线关键位上方，参考位 {fmt(last.get('prev_high_20') or last.get('ma20'))}。",
             "回撤时成交量不明显放大，持仓不快速回落。",
-            "1小时结构继续保持高低点抬高。",
+            "日线结构继续保持高低点抬高。",
         ]
     if direction == "down":
         return [
             f"未来1-3个交易日收盘继续压在突破/均线关键位下方，参考位 {fmt(last.get('prev_low_20') or last.get('ma20'))}。",
             "反弹时成交量不明显放大，持仓不快速回落。",
-            "1小时结构继续保持高低点下移。",
+            "日线结构继续保持高低点下移。",
         ]
     if "波动扩张" in state or "收敛" in state:
         return ["等待日线收盘突破近20日区间，并观察成交量与持仓是否同步。"]

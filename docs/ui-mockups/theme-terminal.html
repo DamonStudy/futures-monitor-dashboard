@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>C · 沉稳终端风 · 预览</title>
+  <style>
+    :root {
+      --bg: #12151a;
+      --bg-side: #171b22;
+      --panel: #1c2128;
+      --panel-elevated: #222831;
+      --line: #2d3540;
+      --text: #e8ecf0;
+      --muted: #8b95a3;
+      --subtle: #5c6672;
+      --accent: #5b9fd4;
+      --accent-soft: rgba(91, 159, 212, .12);
+      --danger: #f07178;
+      --danger-soft: rgba(240, 113, 120, .15);
+      --success: #7fd99a;
+      --success-soft: rgba(127, 217, 154, .12);
+      --warning: #e6c07b;
+      --l1-border: #5b9fd4;
+    }
+    * { box-sizing: border-box; margin: 0; }
+    body {
+      height: 100vh; overflow: hidden; background: var(--bg);
+      color: var(--text);
+      font-family: "SF Mono", "JetBrains Mono", "PingFang SC", monospace;
+      font-size: 13px;
+    }
+    .preview-badge {
+      position: fixed; top: 10px; right: 12px; z-index: 99;
+      font-size: 10px; color: var(--subtle); border: 1px solid var(--line);
+      padding: 3px 8px; border-radius: 4px; font-family: sans-serif;
+    }
+    header {
+      height: 44px; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 16px; border-bottom: 1px solid var(--line); background: var(--bg-side);
+    }
+    h1 { font-size: 13px; font-weight: 600; font-family: sans-serif; letter-spacing: .03em; }
+    .top-left { display: flex; align-items: center; gap: 12px; }
+    .view-switch { display: flex; gap: 2px; }
+    .view-tab {
+      height: 26px; padding: 0 10px; border: 1px solid transparent; background: transparent;
+      color: var(--muted); border-radius: 4px; font: inherit; font-size: 12px; cursor: pointer;
+      font-family: sans-serif;
+    }
+    .view-tab.active { border-color: var(--line); background: var(--panel); color: var(--accent); }
+    .btn {
+      height: 26px; padding: 0 10px; border: 1px solid var(--line); background: var(--panel);
+      color: var(--text); border-radius: 4px; font: inherit; font-size: 12px; cursor: pointer;
+      font-family: sans-serif;
+    }
+    main { display: grid; grid-template-columns: 268px 1fr; height: calc(100vh - 44px); }
+    aside { background: var(--bg-side); border-right: 1px solid var(--line); overflow-y: auto; }
+    .status {
+      padding: 10px 12px; font-size: 11px; color: var(--subtle);
+      border-bottom: 1px solid var(--line); line-height: 1.55; font-family: sans-serif;
+    }
+    .grp {
+      padding: 8px 12px 4px; font-size: 10px; color: var(--subtle);
+      letter-spacing: .1em; font-family: sans-serif;
+    }
+    .item {
+      display: grid; grid-template-columns: 32px 1fr auto; gap: 8px; align-items: center;
+      padding: 8px 12px; border-bottom: 1px solid var(--line); cursor: pointer;
+    }
+    .item.active { background: var(--accent-soft); border-left: 2px solid var(--accent); }
+    .sc {
+      font-size: 11px; font-weight: 700; color: var(--warning); text-align: center;
+    }
+    .item.active .sc { color: var(--danger); }
+    .nm { font-family: sans-serif; font-weight: 600; font-size: 13px; }
+    .cd { font-size: 10px; color: var(--subtle); }
+    .tg {
+      font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 3px;
+      background: var(--danger-soft); color: var(--danger); font-family: sans-serif;
+    }
+    .content { padding: 16px 20px 28px; overflow-y: auto; background: var(--bg); }
+    .dash { max-width: 960px; display: grid; gap: 12px; }
+
+    .l1 {
+      background: var(--panel-elevated);
+      border: 1px solid var(--line);
+      border-top: 2px solid var(--l1-border);
+      border-radius: 6px;
+      padding: 16px 18px;
+    }
+    .l1 .tag { font-size: 10px; color: var(--accent); letter-spacing: .08em; margin-bottom: 8px; font-family: sans-serif; }
+    .l1 h2 { font-family: sans-serif; font-size: 18px; font-weight: 600; line-height: 1.4; margin-bottom: 10px; }
+    .l1 .lead { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 12px; font-family: sans-serif; }
+    .meta { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+    .meta span {
+      font-size: 11px; padding: 2px 8px; border: 1px solid var(--line);
+      border-radius: 3px; color: var(--muted); font-family: sans-serif;
+    }
+    .meta .hi { border-color: rgba(240,113,120,.4); color: var(--danger); }
+    .lines { display: grid; gap: 6px; font-family: sans-serif; }
+    .line { font-size: 12px; color: var(--muted); line-height: 1.55; }
+    .line b { color: var(--subtle); font-weight: 600; font-size: 10px; margin-right: 6px; }
+
+    .lbl { font-size: 10px; color: var(--subtle); letter-spacing: .08em; margin-top: 4px; font-family: sans-serif; }
+    .row2 { display: grid; grid-template-columns: 1.3fr .7fr; gap: 10px; }
+    .card { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; }
+    .card h3 { font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 10px; font-family: sans-serif; }
+    .mx { display: grid; grid-template-columns: 56px repeat(4, 1fr); gap: 4px; font-size: 11px; }
+    .mx .h { color: var(--subtle); text-align: center; padding: 4px 0; }
+    .mx .l { color: var(--subtle); display: flex; align-items: center; }
+    .c {
+      text-align: center; padding: 5px; border-radius: 3px;
+      border: 1px solid var(--line); color: var(--muted);
+    }
+    .c.long { background: var(--danger-soft); color: var(--danger); border-color: transparent; }
+    .c.short { background: var(--success-soft); color: var(--success); border-color: transparent; }
+    .lvls { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
+    .lv { padding: 8px; border: 1px solid var(--line); border-radius: 4px; }
+    .lv .t { font-size: 10px; color: var(--subtle); font-family: sans-serif; }
+    .lv .v { font-size: 15px; font-weight: 700; margin-top: 2px; }
+    .mets { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; }
+    .m { padding: 8px 10px; border: 1px solid var(--line); border-radius: 4px; }
+    .m .k { font-size: 10px; color: var(--subtle); font-family: sans-serif; }
+    .m .v { font-size: 14px; font-weight: 700; margin-top: 2px; }
+    .m .v.up { color: var(--danger); }
+    details { border-top: 1px solid var(--line); padding-top: 8px; }
+    details summary { font-size: 12px; color: var(--subtle); cursor: pointer; font-family: sans-serif; list-style: none; }
+    details summary::-webkit-details-marker { display: none; }
+    .back { font-size: 11px; color: var(--accent); text-decoration: none; font-family: sans-serif; }
+  </style>
+</head>
+<body>
+  <span class="preview-badge">模版 C · 沉稳终端风</span>
+  <header>
+    <div class="top-left">
+      <a class="back" href="index.html">← 返回</a>
+      <h1>FUTURES / DECISION</h1>
+      <div class="view-switch">
+        <button class="view-tab">MARKET</button>
+        <button class="view-tab active">SYMBOLS</button>
+      </div>
+    </div>
+    <button class="btn">REFRESH</button>
+  </header>
+  <main>
+    <aside>
+      <div class="status">SYMBOLS 53 · PERIOD D1 · 2026-06-06</div>
+      <div class="grp">BLACK</div>
+      <div class="item active">
+        <div class="sc">72</div>
+        <div><div class="nm">螺纹钢</div><div class="cd">rb.SHF</div></div>
+        <span class="tg">L</span>
+      </div>
+      <div class="item">
+        <div class="sc">58</div>
+        <div><div class="nm">铁矿石</div><div class="cd">i.DCE</div></div>
+        <span class="tg">L</span>
+      </div>
+      <div class="item">
+        <div class="sc">41</div>
+        <div><div class="nm">热卷</div><div class="cd">hc.SHF</div></div>
+        <span class="tg" style="background:var(--success-soft);color:var(--success)">S</span>
+      </div>
+      <div class="grp">CHEM</div>
+      <div class="item">
+        <div class="sc" style="color:var(--danger)">81</div>
+        <div><div class="nm">甲醇</div><div class="cd">MA.CZC</div></div>
+        <span class="tg">L</span>
+      </div>
+    </aside>
+    <div class="content">
+      <div class="dash">
+        <section class="l1">
+          <div class="tag">INSIGHT / LONG</div>
+          <h2>趋势上行后的反转预警 · 中级行情候选</h2>
+          <p class="lead">日线趋势仍在，但小时结构出现滞涨；持仓增量放缓，需观察能否站稳 3800 确认位。</p>
+          <div class="meta">
+            <span class="hi">SCORE 72</span>
+            <span>rb 3786</span>
+            <span>BOARD +3</span>
+          </div>
+          <div class="lines">
+            <p class="line"><b>HIT</b>周线偏多 · MA20有效 · 黑色共振×3</p>
+            <p class="line"><b>GAP</b>仓单待更新 · 宏观未纳入</p>
+            <p class="line"><b>CHK</b>跌破3720 → 预警升级</p>
+          </div>
+        </section>
+
+        <div class="lbl">EVIDENCE</div>
+        <div class="row2">
+          <div class="card">
+            <h3>MATRIX</h3>
+            <div class="mx">
+              <div></div><div class="h">PV</div><div class="h">TA</div><div class="h">PT</div><div class="h">TS</div>
+              <div class="l">W1</div><div class="c long">L</div><div class="c long">L</div><div class="c">-</div><div class="c">-</div>
+              <div class="l">D1</div><div class="c long">L</div><div class="c long">L</div><div class="c long">L</div><div class="c">-</div>
+              <div class="l">H1</div><div class="c">-</div><div class="c">-</div><div class="c short">S</div><div class="c">-</div>
+            </div>
+          </div>
+          <div class="card">
+            <h3>LEVELS</h3>
+            <div class="lvls">
+              <div class="lv"><div class="t">SUP</div><div class="v">3720</div></div>
+              <div class="lv"><div class="t">CNF</div><div class="v" style="color:var(--accent)">3800</div></div>
+              <div class="lv"><div class="t">RES</div><div class="v">3860</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>METRICS</h3>
+          <div class="mets">
+            <div class="m"><div class="k">CHG</div><div class="v up">+1.24%</div></div>
+            <div class="m"><div class="k">ATR%</div><div class="v">68</div></div>
+            <div class="m"><div class="k">VOL</div><div class="v">1.41</div></div>
+            <div class="m"><div class="k">OI</div><div class="v up">+2.1%</div></div>
+          </div>
+        </div>
+
+        <div class="lbl">APPENDIX</div>
+        <details><summary>▸ CHART (collapsed)</summary></details>
+        <details><summary>▸ SIGNALS +12 hidden</summary></details>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

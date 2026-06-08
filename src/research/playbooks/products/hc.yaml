@@ -1,0 +1,72 @@
+id: hc
+name: 热卷
+board: 黑色
+version: 1
+sources:
+  - broker: 中航期货
+    file: 20260605-中航期货-钢材铁矿周度报告.pdf
+    date: "2026-06-05"
+
+reasoning_chain:
+  - id: supply
+    title: 供给端
+    focus: [热卷产量, 高炉开工, 检修]
+    questions:
+      - 热卷产量是否维持相对低位？
+      - 钢厂是否因利润或需求调整热卷排产？
+    fallback: 跟踪样本钢厂热卷产量及高炉开工率变化。
+
+  - id: demand
+    title: 需求端
+    focus: [制造业PMI, 汽车家电, 出口, 下游开工]
+    questions:
+      - 制造业新订单是否回落？
+      - 下游制造企业补库意愿如何？
+    fallback: 关注热卷周度消费、PMI新订单及主要下游行业开工。
+
+  - id: inventory
+    title: 库存
+    focus: [社会库存, 厂库, 库存绝对水平]
+    questions:
+      - 热卷社库是否处于历年同期高位？
+      - 厂库去库但社库去化是否不畅？
+    skill_links: [warehouse_receipts]
+    fallback: 重点看33城社会库存绝对值与去化速度，热卷库存压力通常大于螺纹。
+
+  - id: spread
+    title: 卷螺差与品种分化
+    focus: [卷螺差, 建材vs制造业需求]
+    questions:
+      - 卷螺差高位是否反映制造业弱于建材或反之？
+      - 品种间库存分化如何影响套利逻辑？
+    related_products: [rb]
+    fallback: 卷螺差维持高位震荡时，往往对应建材与热卷基本面分化。
+
+  - id: cost
+    title: 成本传导
+    focus: [焦煤, 铁矿, 高炉利润]
+    questions:
+      - 炉料涨价是否压缩热卷利润？
+      - 成本支撑与弱需求如何博弈？
+    related_products: [jm, i]
+    fallback: 煤价强势可提供成本支撑，但弱需求会压制价格弹性。
+
+  - id: market
+    title: 盘面验证
+    focus: [趋势, 量价, 持仓]
+    skill_links: [price_volume, technical_signals, key_levels, term_structure, position_rank]
+
+confirmation:
+  - 社库有效去化 + 下游订单回暖 + 卷螺差走扩逻辑成立
+  - 突破区间上沿且放量，制造业PMI配合
+
+invalidation:
+  - 社库绝对值处高位且持续累积
+  - 制造业需求持续走弱，卷螺差逻辑反转
+
+seasonal_notes:
+  - 夏季部分制造业进入传统淡季，关注汽车家电排产节奏
+
+risk_factors:
+  - 出口政策与海外需求
+  - 宏观预期变化

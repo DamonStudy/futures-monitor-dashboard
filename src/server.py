@@ -2,25 +2,30 @@
 
 from __future__ import annotations
 
-import json
 import os
-import time
-from datetime import datetime
 from pathlib import Path
-from typing import Any
 
-import pandas as pd
 from flask import Flask, jsonify, request, send_from_directory
-from tqsdk import TqApi, TqAuth
 
-from .analysis import PeriodFrames, board_context, diagnose_contract
-from .contract_specs import enrich_quote_with_specs, load_akshare_specs
-from .contracts import all_contracts
+from .global_market import build_global_overview
+from .services import (
+    cache_has_skills,
+    cache_is_today,
+    fetch_and_analyze,
+    global_cache_reusable,
+    global_schema_outdated,
+    global_snapshot_should_persist,
+    read_contract_snapshot,
+    read_global_snapshot,
+    read_json_cache,
+    write_json_cache,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
 CACHE_DIR = ROOT / "data"
 CACHE_FILE = CACHE_DIR / "latest_snapshot.json"
+GLOBAL_CACHE_FILE = CACHE_DIR / "global_market_snapshot.json"
 
 app = Flask(__name__, static_folder=str(ROOT / "static"))
 
@@ -46,7 +51,7 @@ def index():
 def snapshot():
     if not CACHE_FILE.exists():
         return jsonify({"ok": False, "message": "暂无缓存，请先刷新。", "items": []})
-    data = read_cache()
+    data = read_contract_snapshot(CACHE_FILE)
     data["from_cache"] = True
     data["cache_is_today"] = cache_is_today(data)
     return jsonify(data)
@@ -55,20 +60,19 @@ def snapshot():
 @app.post("/api/refresh")
 def refresh():
     try:
+        load_dotenv()
         force = request.args.get("force") == "1"
-        cached = read_cache()
-        if cached and cache_is_today(cached) and not force:
+        cached = read_contract_snapshot(CACHE_FILE)
+        if cached and cache_is_today(cached) and cache_has_skills(cached) and not force:
             cached["from_cache"] = True
             cached["cache_is_today"] = True
             return jsonify(cached)
 
         data = fetch_and_analyze()
-        CACHE_DIR.mkdir(exist_ok=True)
-        CACHE_FILE.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+        write_json_cache(CACHE_FILE, data)
         return jsonify(data)
     except Exception as exc:
-        cached = None
-        cached = read_cache()
+        cached = read_contract_snapshot(CACHE_FILE)
         return jsonify(
             {
                 "ok": False,
@@ -80,146 +84,58 @@ def refresh():
         ), 500
 
 
-def read_cache() -> dict[str, Any] | None:
-    if not CACHE_FILE.exists():
-        return None
-    return json.loads(CACHE_FILE.read_text(encoding="utf-8"))
-
-
-def cache_is_today(data: dict[str, Any]) -> bool:
-    refreshed_at = data.get("refreshed_at")
-    if not refreshed_at:
-        return False
-    try:
-        return datetime.strptime(refreshed_at, "%Y-%m-%d %H:%M:%S").date() == datetime.now().date()
-    except ValueError:
-        return False
-
-
-def fetch_and_analyze() -> dict[str, Any]:
+@app.get("/api/global-market")
+def global_market_snapshot():
     load_dotenv()
-    account = os.getenv("TQ_ACCOUNT")
-    password = os.getenv("TQ_PASSWORD")
-    if not account or not password:
-        raise RuntimeError("未找到 TQ_ACCOUNT/TQ_PASSWORD。请放入环境变量或本地 .env 文件。")
+    if not GLOBAL_CACHE_FILE.exists():
+        return jsonify({"ok": False, "message": "暂无大盘首页缓存，请先刷新。"})
+    raw = read_json_cache(GLOBAL_CACHE_FILE)
+    contract = read_contract_snapshot(CACHE_FILE)
+    data = read_global_snapshot(GLOBAL_CACHE_FILE, CACHE_FILE)
+    if data and raw and global_snapshot_should_persist(raw, data, contract):
+        write_json_cache(GLOBAL_CACHE_FILE, data)
+    data["from_cache"] = True
+    data["cache_is_today"] = cache_is_today(data)
+    data["cache_has_nanhua"] = bool(data.get("nanhua_indices"))
+    return jsonify(data)
 
-    api = TqApi(auth=TqAuth(account, password), web_gui=False, disable_print=True)
+
+@app.post("/api/global-market/refresh")
+def global_market_refresh():
     try:
-        contracts = all_contracts()
-        specs = load_akshare_specs()
-        requested: list[dict[str, Any]] = []
-        for meta in contracts:
-            symbol = meta["symbol"]
-            requested.append(
-                {
-                    "meta": meta,
-                    "quote": api.get_quote(symbol),
-                    "day": api.get_kline_serial(symbol, 24 * 60 * 60, data_length=260),
-                    "hour": api.get_kline_serial(symbol, 60 * 60, data_length=220),
-                    "week": api.get_kline_serial(symbol, 7 * 24 * 60 * 60, data_length=140),
-                }
-            )
+        load_dotenv()
+        force = request.args.get("force") == "1"
+        raw = read_json_cache(GLOBAL_CACHE_FILE) if GLOBAL_CACHE_FILE.exists() else None
+        contract = read_contract_snapshot(CACHE_FILE)
+        schema_outdated = global_schema_outdated(raw)
+        cached = read_global_snapshot(GLOBAL_CACHE_FILE, CACHE_FILE)
+        if cached and global_cache_reusable(cached, contract) and not force and not schema_outdated:
+            if global_snapshot_should_persist(raw, cached, contract):
+                write_json_cache(GLOBAL_CACHE_FILE, cached)
+            cached["from_cache"] = True
+            cached["cache_is_today"] = True
+            cached["cache_has_nanhua"] = bool(cached.get("nanhua_indices"))
+            return jsonify(cached)
 
-        deadline = time.time() + 30
-        while time.time() < deadline:
-            api.wait_update(deadline=time.time() + 1)
-            if all(has_enough_rows(item["day"], 80) for item in requested):
-                break
-
-        first_pass = []
-        errors = []
-        for item in requested:
-            try:
-                quote = enrich_quote_with_specs(
-                    item["meta"],
-                    quote_to_dict(item["quote"]),
-                    specs,
-                )
-                frames = PeriodFrames(
-                    day=item["day"].copy(),
-                    hour=item["hour"].copy(),
-                    week=item["week"].copy(),
-                )
-                diag = diagnose_contract(item["meta"], frames, quote, {})
-                if diag:
-                    first_pass.append(diag)
-            except Exception as exc:
-                errors.append({"symbol": item["meta"]["symbol"], "message": str(exc)})
-
-        boards = board_context(first_pass)
-        final_items = []
-        for diag in first_pass:
-            context = {
-                "same_direction_count": same_direction_count(first_pass, diag),
-                "oi_change_pct": diag.get("metrics", {}).get("open_interest_change_pct"),
+        data = build_global_overview((contract or {}).get("items"))
+        write_json_cache(GLOBAL_CACHE_FILE, data)
+        data["from_cache"] = False
+        data["cache_is_today"] = True
+        data["cache_has_nanhua"] = bool(data.get("nanhua_indices"))
+        return jsonify(data)
+    except Exception as exc:
+        cached = read_global_snapshot(GLOBAL_CACHE_FILE, CACHE_FILE)
+        return jsonify(
+            {
+                "ok": False,
+                "message": str(exc),
+                "cached": cached,
+                "lead": cached.get("lead") if cached else None,
+                "nanhua_indices": cached.get("nanhua_indices", []) if cached else [],
+                "drivers": cached.get("drivers", []) if cached else [],
+                "macro": cached.get("macro") if cached else None,
             }
-            item = next(i for i in requested if i["meta"]["symbol"] == diag["symbol"])
-            refined = diagnose_contract(
-                item["meta"],
-                PeriodFrames(item["day"].copy(), item["hour"].copy(), item["week"].copy()),
-                enrich_quote_with_specs(item["meta"], quote_to_dict(item["quote"]), specs),
-                context,
-            )
-            if refined:
-                final_items.append(refined)
-
-        final_items.sort(key=lambda row: row["score"], reverse=True)
-        return {
-            "ok": True,
-            "mode": "manual_refresh",
-            "refreshed_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "universe_count": len(contracts),
-            "active_count": len(final_items),
-            "boards": boards,
-            "items": final_items,
-            "errors": errors[:20],
-        }
-    finally:
-        api.close()
-
-
-def has_enough_rows(df: pd.DataFrame, rows: int) -> bool:
-    return len(df.dropna(subset=["close"])) >= rows if "close" in df else False
-
-
-def quote_to_dict(quote: Any) -> dict[str, Any]:
-    keys = (
-        "instrument_id",
-        "underlying_symbol",
-        "last_price",
-        "datetime",
-        "instrument_name",
-        "price_tick",
-        "volume_multiple",
-        "margin",
-        "margin_rate",
-        "long_margin_rate",
-        "short_margin_rate",
-        "margin_ratio",
-        "long_margin_ratio",
-        "short_margin_ratio",
-    )
-    data = {key: quote_value(quote, key) for key in keys}
-    data["symbol"] = data.get("underlying_symbol") or data.get("instrument_id")
-    return data
-
-
-def quote_value(quote: Any, key: str) -> Any:
-    if hasattr(quote, "get"):
-        value = quote.get(key)
-        if value is not None:
-            return value
-    return getattr(quote, key, None)
-
-
-def same_direction_count(items: list[dict[str, Any]], target: dict[str, Any]) -> int:
-    if target.get("direction") == "neutral":
-        return 0
-    return sum(
-        1
-        for item in items
-        if item.get("board") == target.get("board") and item.get("direction") == target.get("direction")
-    )
+        ), 500
 
 
 if __name__ == "__main__":

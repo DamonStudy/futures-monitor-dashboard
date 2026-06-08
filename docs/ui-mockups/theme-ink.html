@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>D · 墨绿决策风 · 预览</title>
+  <style>
+    :root {
+      --bg: #eef2ef;
+      --bg-side: #f6f8f6;
+      --panel: #ffffff;
+      --line: #d5ddd7;
+      --text: #1a2e24;
+      --muted: #5a6b60;
+      --subtle: #849488;
+      --accent: #1e4d3a;
+      --accent-mid: #2d6a4f;
+      --accent-soft: #e4efe8;
+      --accent-line: #3d7a5c;
+      --danger: #c0392b;
+      --danger-soft: #fdf0ee;
+      --success: #1e6b42;
+      --success-soft: #e8f4ec;
+      --l1-bg: #f2f8f4;
+    }
+    * { box-sizing: border-box; margin: 0; }
+    body {
+      height: 100vh; overflow: hidden; background: var(--bg);
+      color: var(--text); font-family: "PingFang SC", "Source Han Sans SC", sans-serif; font-size: 14px;
+    }
+    .preview-badge {
+      position: fixed; top: 10px; right: 12px; z-index: 99;
+      font-size: 11px; color: var(--subtle); background: var(--panel);
+      border: 1px solid var(--line); padding: 4px 10px; border-radius: 999px;
+    }
+    header {
+      height: 52px; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 20px; background: var(--accent); color: #fff; border-bottom: none;
+    }
+    h1 { font-size: 16px; font-weight: 600; }
+    .top-left { display: flex; align-items: center; gap: 16px; }
+    .view-switch {
+      display: flex; gap: 4px; padding: 3px;
+      background: rgba(255,255,255,.12); border-radius: 8px;
+    }
+    .view-tab {
+      height: 28px; padding: 0 12px; border: 0; background: transparent;
+      color: rgba(255,255,255,.7); border-radius: 6px; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+    }
+    .view-tab.active { background: #fff; color: var(--accent); }
+    .btn {
+      height: 32px; padding: 0 14px; border: 1px solid rgba(255,255,255,.35);
+      background: transparent; color: #fff; border-radius: 6px; font: inherit; font-size: 13px; cursor: pointer;
+    }
+    main { display: grid; grid-template-columns: 296px 1fr; height: calc(100vh - 52px); }
+    aside { background: var(--bg-side); border-right: 1px solid var(--line); overflow-y: auto; }
+    .status { padding: 12px 16px; font-size: 12px; color: var(--muted); border-bottom: 1px solid var(--line); line-height: 1.6; }
+    .grp {
+      padding: 10px 16px 5px; font-size: 11px; font-weight: 700; color: var(--accent-mid);
+      letter-spacing: .04em;
+    }
+    .item {
+      display: flex; align-items: center; gap: 10px; padding: 10px 16px;
+      border-bottom: 1px solid var(--line); cursor: pointer;
+    }
+    .item.active { background: var(--accent-soft); box-shadow: inset 4px 0 0 var(--accent); }
+    .bar {
+      width: 4px; height: 32px; border-radius: 2px; background: var(--line); flex-shrink: 0;
+    }
+    .item.active .bar { background: var(--accent); }
+    .item.active .bar.high { background: var(--danger); }
+    .info { flex: 1; min-width: 0; }
+    .info .n { font-weight: 600; font-size: 13px; }
+    .info .c { font-size: 11px; color: var(--subtle); }
+    .sc { font-size: 13px; font-weight: 700; color: var(--accent); }
+    .item.active .sc.high { color: var(--danger); }
+    .content { padding: 22px 28px 36px; overflow-y: auto; }
+    .dash { max-width: 900px; display: grid; gap: 18px; }
+
+    .decision {
+      background: var(--l1-bg);
+      border-radius: 12px;
+      padding: 22px 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .decision::before {
+      content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-mid));
+    }
+    .decision .row1 {
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px;
+    }
+    .decision h2 { font-size: 19px; font-weight: 600; line-height: 1.4; }
+    .score-badge {
+      flex-shrink: 0; text-align: center; padding: 8px 12px; border-radius: 8px;
+      background: var(--panel); border: 1px solid var(--line);
+    }
+    .score-badge .num { font-size: 22px; font-weight: 700; color: var(--danger); line-height: 1; }
+    .score-badge .lbl { font-size: 10px; color: var(--subtle); margin-top: 2px; }
+    .decision .lead { font-size: 15px; line-height: 1.6; color: var(--muted); margin-bottom: 16px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+    .chip {
+      font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 6px;
+      background: var(--panel); border: 1px solid var(--line); color: var(--muted);
+    }
+    .chip.dir { background: var(--danger-soft); border-color: #e8c8c4; color: var(--danger); }
+    .dl { display: grid; gap: 7px; }
+    .dl p { font-size: 13px; line-height: 1.6; color: var(--muted); }
+    .dl .k {
+      display: inline-block; min-width: 2.5em; font-size: 11px; font-weight: 700;
+      color: var(--accent-mid); margin-right: 4px;
+    }
+
+    .zone-title {
+      font-size: 12px; font-weight: 700; color: var(--accent);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .zone-title::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+    .grid2 { display: grid; grid-template-columns: 1.15fr .85fr; gap: 14px; }
+    .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+    .card h3 { font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 12px; }
+    .mx { display: grid; grid-template-columns: 68px repeat(4, 1fr); gap: 5px; font-size: 12px; }
+    .mx .h { text-align: center; color: var(--subtle); font-weight: 600; font-size: 11px; }
+    .mx .l { color: var(--muted); font-weight: 600; display: flex; align-items: center; }
+    .cell {
+      text-align: center; padding: 7px 4px; border-radius: 6px; font-weight: 700;
+      background: #f4f7f5; color: var(--subtle); border: 1px solid transparent;
+    }
+    .cell.long { background: var(--danger-soft); color: var(--danger); }
+    .cell.short { background: var(--success-soft); color: var(--success); }
+    .lvls { display: grid; gap: 8px; }
+    .lv {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 12px; border-radius: 8px; background: #f4f7f5;
+    }
+    .lv .t { font-size: 12px; color: var(--muted); }
+    .lv .v { font-size: 16px; font-weight: 700; }
+    .lv.key .v { color: var(--accent); }
+    .mets { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .met { text-align: center; padding: 12px 8px; border-radius: 8px; background: #f4f7f5; }
+    .met .k { font-size: 11px; color: var(--subtle); }
+    .met .v { font-size: 16px; font-weight: 700; margin-top: 4px; }
+    .met .v.up { color: var(--danger); }
+    .append details { margin-top: 4px; }
+    .append summary {
+      font-size: 13px; color: var(--subtle); cursor: pointer; padding: 10px 0;
+      border-top: 1px solid var(--line); list-style: none;
+    }
+    .append summary::-webkit-details-marker { display: none; }
+    .back { font-size: 12px; color: rgba(255,255,255,.8); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <span class="preview-badge">模版 D · 墨绿决策风</span>
+  <header>
+    <div class="top-left">
+      <a class="back" href="index.html">← 返回</a>
+      <h1>期货决策系统</h1>
+      <div class="view-switch">
+        <button class="view-tab">大盘首页</button>
+        <button class="view-tab active">品种决策</button>
+      </div>
+    </div>
+    <button class="btn">刷新数据</button>
+  </header>
+  <main>
+    <aside>
+      <div class="status">品种决策 · 53 个活跃品种 · 日线</div>
+      <div class="grp">黑色</div>
+      <div class="item active">
+        <div class="bar high"></div>
+        <div class="info"><div class="n">螺纹钢</div><div class="c">rb · SHFE</div></div>
+        <span class="sc high">72</span>
+      </div>
+      <div class="item">
+        <div class="bar"></div>
+        <div class="info"><div class="n">铁矿石</div><div class="c">i · DCE</div></div>
+        <span class="sc">58</span>
+      </div>
+      <div class="item">
+        <div class="bar"></div>
+        <div class="info"><div class="n">热卷</div><div class="c">hc · SHFE</div></div>
+        <span class="sc">41</span>
+      </div>
+      <div class="grp">能化</div>
+      <div class="item">
+        <div class="bar high"></div>
+        <div class="info"><div class="n">甲醇</div><div class="c">MA · CZCE</div></div>
+        <span class="sc high">81</span>
+      </div>
+    </aside>
+    <div class="content">
+      <div class="dash">
+        <section class="decision">
+          <div class="row1">
+            <h2>趋势上行后的反转预警<br>中级行情候选</h2>
+            <div class="score-badge"><div class="num">72</div><div class="lbl">关注分</div></div>
+          </div>
+          <p class="lead">日线趋势仍在，但小时结构出现滞涨；持仓增量放缓，需观察能否站稳 3800 确认位。</p>
+          <div class="chips">
+            <span class="chip dir">偏多</span>
+            <span class="chip">rb · 3786</span>
+            <span class="chip">黑色共振 ×3</span>
+          </div>
+          <div class="dl">
+            <p><span class="k">命中</span>周线背景偏多 · 日线 MA20 支撑有效 · 板块 3 品种同向</p>
+            <p><span class="k">缺项</span>仓单待更新 · 宏观风险变量未纳入</p>
+            <p><span class="k">待验</span>跌破 3720 失效位 → 反转预警升级</p>
+          </div>
+        </section>
+
+        <div class="zone-title">证据</div>
+        <div class="grid2">
+          <div class="card">
+            <h3>方向矩阵</h3>
+            <div class="mx">
+              <div></div><div class="h">量价</div><div class="h">技术</div><div class="h">形态</div><div class="h">期限</div>
+              <div class="l">周线</div><div class="cell long">多</div><div class="cell long">多</div><div class="cell">中</div><div class="cell">中</div>
+              <div class="l">日线</div><div class="cell long">多</div><div class="cell long">多</div><div class="cell long">多</div><div class="cell">中</div>
+              <div class="l">1小时</div><div class="cell">中</div><div class="cell">中</div><div class="cell short">空</div><div class="cell">中</div>
+            </div>
+          </div>
+          <div class="card">
+            <h3>关键位</h3>
+            <div class="lvls">
+              <div class="lv"><span class="t">最近支撑</span><span class="v">3720</span></div>
+              <div class="lv key"><span class="t">确认位</span><span class="v">3800</span></div>
+              <div class="lv"><span class="t">最近压力</span><span class="v">3860</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>核心指标</h3>
+          <div class="mets">
+            <div class="met"><div class="k">日涨跌</div><div class="v up">+1.24%</div></div>
+            <div class="met"><div class="k">ATR 分位</div><div class="v">68%</div></div>
+            <div class="met"><div class="k">量比</div><div class="v">1.41</div></div>
+            <div class="met"><div class="k">持仓变化</div><div class="v up">+2.1%</div></div>
+          </div>
+        </div>
+
+        <div class="zone-title">附录</div>
+        <div class="append">
+          <details><summary>▸ K 线图（默认折叠）</summary></details>
+          <details><summary>▸ 信号详表（另有 12 条）</summary></details>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

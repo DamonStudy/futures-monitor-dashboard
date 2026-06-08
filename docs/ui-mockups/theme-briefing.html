@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>A · 研报简报风 · 预览</title>
+  <style>
+    :root {
+      --bg: #f3f0ea;
+      --bg-side: #faf8f4;
+      --panel: #fffcf7;
+      --line: #e4ddd2;
+      --text: #2a241c;
+      --muted: #6f6558;
+      --subtle: #9a9084;
+      --accent: #8b5a2b;
+      --accent-soft: #f5ebe0;
+      --accent-line: #c4a574;
+      --danger: #b83232;
+      --danger-soft: #fce8e6;
+      --success: #2d6a3e;
+      --success-soft: #e6f0e8;
+      --warning: #9a6b00;
+      --warning-soft: #faf0d4;
+      --l1-bg: #fff9f0;
+      --font: "PingFang SC", "Songti SC", "STSong", "Microsoft YaHei", serif;
+      --font-sans: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; }
+    body {
+      height: 100vh;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 14px;
+    }
+    .preview-badge {
+      position: fixed; top: 10px; right: 12px; z-index: 99;
+      font-size: 11px; font-weight: 600; color: var(--muted);
+      background: var(--panel); border: 1px solid var(--line);
+      padding: 4px 10px; border-radius: 999px;
+    }
+    header {
+      height: 52px; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 20px; border-bottom: 1px solid var(--line); background: var(--panel);
+    }
+    h1 { font-size: 17px; font-weight: 600; letter-spacing: .02em; }
+    .top-left { display: flex; align-items: center; gap: 14px; }
+    .view-switch {
+      display: flex; gap: 4px; padding: 3px; border: 1px solid var(--line);
+      border-radius: 8px; background: var(--bg-side);
+    }
+    .view-tab {
+      height: 28px; padding: 0 12px; border: 0; background: transparent;
+      color: var(--muted); border-radius: 6px; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+    }
+    .view-tab.active { background: var(--panel); color: var(--accent); }
+    .btn {
+      height: 32px; padding: 0 14px; border: 1px solid var(--accent);
+      background: var(--accent); color: #fff; border-radius: 6px; font: inherit; font-size: 13px; cursor: pointer;
+    }
+    main {
+      display: grid; grid-template-columns: 300px minmax(0, 1fr);
+      height: calc(100vh - 52px); min-height: 0;
+    }
+    aside {
+      background: var(--bg-side); border-right: 1px solid var(--line);
+      overflow-y: auto; min-height: 0;
+    }
+    .status { padding: 12px 14px; font-size: 12px; color: var(--muted); border-bottom: 1px solid var(--line); line-height: 1.6; }
+    .group-label {
+      padding: 10px 14px 6px; font-size: 11px; font-weight: 700;
+      color: var(--subtle); letter-spacing: .06em; text-transform: uppercase;
+      position: sticky; top: 0; background: var(--bg-side); z-index: 1;
+    }
+    .item-row {
+      display: grid; grid-template-columns: 36px 1fr auto; gap: 8px; align-items: center;
+      padding: 10px 14px; border-bottom: 1px solid var(--line); cursor: pointer;
+    }
+    .item-row.active { background: var(--accent-soft); box-shadow: inset 3px 0 0 var(--accent); }
+    .score {
+      width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; color: #fff; background: var(--danger);
+    }
+    .item-name { font-weight: 600; font-size: 13px; }
+    .item-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .bias {
+      font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 4px;
+      background: var(--danger-soft); color: var(--danger);
+    }
+    .bias.short { background: var(--success-soft); color: var(--success); }
+    .content { padding: 20px 24px 32px; overflow-y: auto; min-height: 0; }
+    .dashboard { max-width: 920px; display: grid; gap: 16px; }
+
+    /* L1 决策带 */
+    .decision-band {
+      background: var(--l1-bg);
+      border: 1px solid var(--accent-line);
+      border-left: 5px solid var(--accent);
+      border-radius: 0 10px 10px 0;
+      padding: 20px 22px;
+    }
+    .decision-band .eyebrow {
+      font-size: 11px; font-weight: 700; color: var(--accent);
+      letter-spacing: .08em; margin-bottom: 8px;
+    }
+    .decision-headline {
+      font-family: var(--font);
+      font-size: 20px; font-weight: 600; line-height: 1.45; margin-bottom: 12px;
+    }
+    .decision-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .pill {
+      font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 4px;
+      border: 1px solid var(--line); color: var(--muted); background: #fff;
+    }
+    .pill.hot { border-color: #e8b4b0; background: var(--danger-soft); color: var(--danger); }
+    .decision-lines { display: grid; gap: 8px; }
+    .decision-line { font-size: 13px; line-height: 1.65; color: var(--muted); }
+    .decision-line .k {
+      display: inline-block; min-width: 2.8em; font-size: 11px; font-weight: 700;
+      color: var(--subtle); margin-right: 4px;
+    }
+
+    /* L2 证据区 */
+    .section-label {
+      font-size: 11px; font-weight: 700; color: var(--subtle);
+      letter-spacing: .06em; margin: 4px 0 0; padding-bottom: 4px;
+    }
+    .evidence-grid { display: grid; grid-template-columns: 1.2fr .8fr; gap: 14px; }
+    .card {
+      background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px;
+    }
+    .card h3 { font-size: 14px; font-weight: 600; margin-bottom: 10px; }
+    .matrix { display: grid; grid-template-columns: 72px repeat(4, 1fr); gap: 5px; font-size: 12px; }
+    .matrix .h { color: var(--muted); font-weight: 600; text-align: center; padding: 4px 0; }
+    .matrix .lbl { color: var(--muted); font-weight: 600; display: flex; align-items: center; }
+    .cell {
+      text-align: center; padding: 6px 4px; border-radius: 5px; font-weight: 700;
+      border: 1px solid var(--line); background: #faf8f5; color: var(--muted);
+    }
+    .cell.long { background: var(--danger-soft); color: var(--danger); border-color: #e8c4c0; }
+    .cell.short { background: var(--success-soft); color: var(--success); border-color: #b8d4be; }
+    .levels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .level {
+      padding: 10px; border-radius: 6px; border: 1px solid var(--line); background: #faf8f5;
+    }
+    .level .type { font-size: 11px; color: var(--subtle); font-weight: 600; }
+    .level .val { font-size: 16px; font-weight: 700; margin-top: 4px; }
+    .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .metric {
+      padding: 10px 12px; border-radius: 6px; border: 1px solid var(--line); background: #faf8f5;
+    }
+    .metric .k { font-size: 11px; color: var(--subtle); }
+    .metric .v { font-size: 15px; font-weight: 700; margin-top: 4px; }
+    .metric .v.up { color: var(--danger); }
+    .metric .v.down { color: var(--success); }
+
+    /* L3 附录 */
+    .appendix details { border-top: 1px solid var(--line); padding-top: 8px; }
+    .appendix summary {
+      cursor: pointer; font-size: 13px; font-weight: 600; color: var(--muted);
+      padding: 8px 0; list-style: none;
+    }
+    .appendix summary::-webkit-details-marker { display: none; }
+    .appendix .body {
+      padding: 12px 0 4px; color: var(--subtle); font-size: 13px;
+      border: 1px dashed var(--line); border-radius: 6px; text-align: center; padding: 28px;
+    }
+    .back { font-size: 12px; color: var(--accent); text-decoration: none; margin-right: 12px; }
+  </style>
+</head>
+<body>
+  <span class="preview-badge">模版 A · 研报简报风 · 模拟数据</span>
+  <header>
+    <div class="top-left">
+      <a class="back" href="index.html">← 返回</a>
+      <h1>期货决策系统</h1>
+      <div class="view-switch">
+        <button class="view-tab">大盘首页</button>
+        <button class="view-tab active">品种决策</button>
+      </div>
+    </div>
+    <button class="btn">刷新数据</button>
+  </header>
+  <main>
+    <aside>
+      <div class="status">品种决策：53 个活跃品种<br>日线详情 · 2026-06-06</div>
+      <div class="group-label">黑色</div>
+      <div class="item-row active">
+        <div class="score">72</div>
+        <div><div class="item-name">螺纹钢</div><div class="item-meta">rb · SHFE</div></div>
+        <span class="bias">偏多</span>
+      </div>
+      <div class="item-row">
+        <div class="score" style="background:var(--warning)">58</div>
+        <div><div class="item-name">铁矿石</div><div class="item-meta">i · DCE</div></div>
+        <span class="bias">偏多</span>
+      </div>
+      <div class="item-row">
+        <div class="score" style="background:var(--subtle)">41</div>
+        <div><div class="item-name">热卷</div><div class="item-meta">hc · SHFE</div></div>
+        <span class="bias short">偏空</span>
+      </div>
+      <div class="group-label">能化</div>
+      <div class="item-row">
+        <div class="score" style="background:var(--danger)">81</div>
+        <div><div class="item-name">甲醇</div><div class="item-meta">MA · CZCE</div></div>
+        <span class="bias">偏多</span>
+      </div>
+    </aside>
+    <div class="content">
+      <div class="dashboard">
+        <section class="decision-band">
+          <div class="eyebrow">决策解读 · 方向偏多</div>
+          <div class="decision-headline">趋势上行后的反转预警 · 中级行情候选</div>
+          <div class="decision-meta">
+            <span class="pill hot">关注分 72</span>
+            <span class="pill">螺纹钢 rb</span>
+            <span class="pill">最新 3786</span>
+            <span class="pill">黑色板块共振 ×3</span>
+          </div>
+          <div class="decision-lines">
+            <p class="decision-line"><span class="k">结论</span>日线趋势仍在，但小时结构出现滞涨；持仓增量放缓，需观察能否站稳确认位。</p>
+            <p class="decision-line"><span class="k">命中</span>周线背景偏多 · 日线 MA20 支撑有效 · 板块黑色 3 品种同向</p>
+            <p class="decision-line"><span class="k">缺项</span>仓单数据待更新 · 宏观风险变量未纳入本次刷新</p>
+            <p class="decision-line"><span class="k">待验</span>若跌破 3720 失效位，反转预警升级为确认</p>
+          </div>
+        </section>
+
+        <div class="section-label">证据区</div>
+        <div class="evidence-grid">
+          <div class="card">
+            <h3>方向矩阵</h3>
+            <div class="matrix">
+              <div></div><div class="h">量价</div><div class="h">技术</div><div class="h">形态</div><div class="h">期限</div>
+              <div class="lbl">周线</div><div class="cell long">多</div><div class="cell long">多</div><div class="cell">中</div><div class="cell">中</div>
+              <div class="lbl">日线</div><div class="cell long">多</div><div class="cell long">多</div><div class="cell long">多</div><div class="cell">中</div>
+              <div class="lbl">1小时</div><div class="cell">中</div><div class="cell">中</div><div class="cell short">空</div><div class="cell">中</div>
+            </div>
+          </div>
+          <div class="card">
+            <h3>关键位</h3>
+            <div class="levels">
+              <div class="level"><div class="type">最近支撑</div><div class="val">3720</div></div>
+              <div class="level"><div class="type">确认位</div><div class="val" style="color:var(--accent)">3800</div></div>
+              <div class="level"><div class="type">最近压力</div><div class="val">3860</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>核心指标</h3>
+          <div class="metrics">
+            <div class="metric"><div class="k">日涨跌</div><div class="v up">+1.24%</div></div>
+            <div class="metric"><div class="k">ATR 分位</div><div class="v">68%</div></div>
+            <div class="metric"><div class="k">量比</div><div class="v">1.41</div></div>
+            <div class="metric"><div class="k">持仓变化</div><div class="v up">+2.1%</div></div>
+          </div>
+        </div>
+
+        <div class="section-label">附录 · 默认收起</div>
+        <div class="appendix">
+          <details>
+            <summary>▸ K 线图（辅助验证）</summary>
+            <div class="body">K 线区域 · 默认折叠 · 需要时再展开</div>
+          </details>
+          <details>
+            <summary>▸ 技术信号详表（另有 12 条未展示）</summary>
+            <div class="body">信号详表 · 限量展示</div>
+          </details>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

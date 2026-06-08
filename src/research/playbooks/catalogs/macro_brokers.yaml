@@ -1,0 +1,298 @@
+id: macro_brokers_catalog
+author: 多券商宏观合集
+persona: null
+updated: '2026-06-08'
+source_folder: 期货原始资料/期货宏观
+parsed_folder: data/research/parsed/macro
+stats:
+  reports: 16
+  distill_status: indexed_only
+reports:
+- file: 20260520-建信期货-宏观专题报告：伊朗战争系列专题之二，伊朗战争对全球宏观市场的影响.pdf
+  report_date: '20260520'
+  parsed_ok: true
+  chain: macro
+  tags:
+  - 宏观
+  - 建信期货
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: semi_annual
+  distill_status: indexed
+  note: 已并入 layers/macro.yaml 通用方法论；券商立场待拆 macro persona，不存观点与数字
+  distilled_to:
+  - regime
+  - monetary_path
+  - oil_geopolitics
+  - cross_asset
+  - commodity_filter
+- file: 20260522-建信期货-宏观贵金属周报：美联储紧缩预期升温，贵金属承压回落.pdf
+  report_date: '20260522'
+  parsed_ok: true
+  chain: macro
+  tags:
+  - 宏观
+  - 建信期货
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: semi_annual
+  distill_status: indexed
+  note: 已并入 layers/macro.yaml 通用方法论；券商立场待拆 macro persona，不存观点与数字
+  distilled_to:
+  - regime
+  - monetary_path
+  - oil_geopolitics
+  - cross_asset
+  - commodity_filter
+- file: 20260527-银河期货-月度宏观经济形势分析和大类资产观点综述（2026年5月）.pdf
+  report_date: '20260527'
+  parsed_ok: true
+  chain: macro
+  tags:
+  - 宏观
+  - 银河期货
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: semi_annual
+  distill_status: indexed
+  note: 已并入 layers/macro.yaml 通用方法论；券商立场待拆 macro persona，不存观点与数字
+  distilled_to:
+  - regime
+  - monetary_path
+  - oil_geopolitics
+  - cross_asset
+  - commodity_filter
+- file: 20260528-中信期货-如何看待未来中国通胀走势？.pdf
+  report_date: '20260528'
+  parsed_ok: true
+  chain: macro
+  tags:
+  - 宏观
+  - 中信期货
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: semi_annual
+  distill_status: indexed
+  note: 已并入 layers/macro.yaml 通用方法论；券商立场待拆 macro persona，不存观点与数字
+  distilled_to:
+  - regime
+  - monetary_path
+  - oil_geopolitics
+  - cross_asset
+  - commodity_filter
+- file: 20260529-银河期货-2026年06月宏观经济与资产走势分析报告：防守方向上的策略分歧.pdf
+  report_date: '20260529'
+  parsed_ok: true
+  chain: macro
+  tags:
+  - 宏观
+  - 银河期货
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: semi_annual
+  distill_status: indexed
+  note: 已并入 layers/macro.yaml 通用方法论；券商立场待拆 macro persona，不存观点与数字
+  distilled_to:
+  - regime
+  - monetary_path
+  - oil_geopolitics
+  - cross_asset
+  - commodity_filter
+- file: 20260529-银河期货-2026年06月宏观视角下的大宗商品走势分析：跟随确定性主题.pdf
+  report_date: '20260529'
+  parsed_ok: true
+  chain: macro
+  tags:
+  - 宏观
+  - 银河期货
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: semi_annual
+  distill_status: indexed
+  note: 已并入 layers/macro.yaml 通用方法论；券商立场待拆 macro persona，不存观点与数字
+  distilled_to:
+  - regime
+  - monetary_path
+  - oil_geopolitics
+  - cross_asset
+  - commodity_filter
+- file: 20260530-南华期货-宏观热点：6月市场风险与机遇.pdf
+  report_date: '20260530'
+  parsed_ok: true
+  chain: macro
+  tags:
+  - 宏观
+  - 南华期货
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: semi_annual
+  distill_status: indexed
+  note: 已并入 layers/macro.yaml 通用方法论；券商立场待拆 macro persona，不存观点与数字
+  distilled_to:
+  - regime
+  - monetary_path
+  - oil_geopolitics
+  - cross_asset
+  - commodity_filter
+- file: 20260530-方正中期期货-全球宏观经济2026年6月报告：全球货币政策正在转向，沃什正式接任美联储主席.pdf
+  report_date: '20260530'
+  parsed_ok: true
+  chain: macro
+  tags:
+  - 宏观
+  - 方正中期期货
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: semi_annual
+  distill_status: indexed
+  note: 已并入 layers/macro.yaml 通用方法论；券商立场待拆 macro persona，不存观点与数字
+  distilled_to:
+  - regime
+  - monetary_path
+  - oil_geopolitics
+  - cross_asset
+  - commodity_filter
+- file: 20260531-光大期货-大类资产策略6月报.pdf
+  report_date: '20260531'
+  parsed_ok: true
+  chain: macro
+  tags:
+  - 宏观
+  - 光大期货
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: semi_annual
+  distill_status: indexed
+  note: 已并入 layers/macro.yaml 通用方法论；券商立场待拆 macro persona，不存观点与数字
+  distilled_to:
+  - regime
+  - monetary_path
+  - oil_geopolitics
+  - cross_asset
+  - commodity_filter
+- file: 20260531-招商期货-大类资产配置周报：4月工业企业利润高增.pdf
+  report_date: '20260531'
+  parsed_ok: true
+  chain: macro
+  tags:
+  - 宏观
+  - 招商期货
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: semi_annual
+  distill_status: indexed
+  note: 已并入 layers/macro.yaml 通用方法论；券商立场待拆 macro persona，不存观点与数字
+  distilled_to:
+  - regime
+  - monetary_path
+  - oil_geopolitics
+  - cross_asset
+  - commodity_filter
+- file: 20260602-华泰期货-美国中期选举观察指南：股、债、金的关键变量.pdf
+  report_date: '20260602'
+  parsed_ok: true
+  chain: macro
+  tags:
+  - 宏观
+  - 华泰期货
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: semi_annual
+  distill_status: indexed
+  note: 已并入 layers/macro.yaml 通用方法论；券商立场待拆 macro persona，不存观点与数字
+  distilled_to:
+  - regime
+  - monetary_path
+  - oil_geopolitics
+  - cross_asset
+  - commodity_filter
+- file: 20260602-迈科期货-宏观经济、贵金属6月月报：海外滞胀风险隐现，贵金属偏强震荡.pdf
+  report_date: '20260602'
+  parsed_ok: true
+  chain: macro
+  tags:
+  - 宏观
+  - 迈科期货
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: semi_annual
+  distill_status: indexed
+  note: 已并入 layers/macro.yaml 通用方法论；券商立场待拆 macro persona，不存观点与数字
+  distilled_to:
+  - regime
+  - monetary_path
+  - oil_geopolitics
+  - cross_asset
+  - commodity_filter
+- file: 20260602-银河期货-05月中国PMI观察：结构转弱更加明显.pdf
+  report_date: '20260602'
+  parsed_ok: true
+  chain: macro
+  tags:
+  - 宏观
+  - 银河期货
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: semi_annual
+  distill_status: indexed
+  note: 已并入 layers/macro.yaml 通用方法论；券商立场待拆 macro persona，不存观点与数字
+  distilled_to:
+  - regime
+  - monetary_path
+  - oil_geopolitics
+  - cross_asset
+  - commodity_filter
+- file: 20260605-建信期货-宏观贵金属周报.pdf
+  report_date: '20260605'
+  parsed_ok: true
+  chain: macro
+  tags:
+  - 宏观
+  - 建信期货
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: semi_annual
+  distill_status: indexed
+  note: 已并入 layers/macro.yaml 通用方法论；券商立场待拆 macro persona，不存观点与数字
+  distilled_to:
+  - regime
+  - monetary_path
+  - oil_geopolitics
+  - cross_asset
+  - commodity_filter
+- file: 20260605-格林大华期货-大类资产周报：“开尔文波”暖流抵达南美洲.pdf
+  report_date: '20260605'
+  parsed_ok: true
+  chain: macro
+  tags:
+  - 宏观
+  - 格林大华期货
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: semi_annual
+  distill_status: indexed
+  note: 已并入 layers/macro.yaml 通用方法论；券商立场待拆 macro persona，不存观点与数字
+  distilled_to:
+  - regime
+  - monetary_path
+  - oil_geopolitics
+  - cross_asset
+  - commodity_filter
+- file: 20260605-瑞达期货-宏观市场周报.pdf
+  report_date: '20260605'
+  parsed_ok: true
+  chain: macro
+  tags:
+  - 宏观
+  - 瑞达期货
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: semi_annual
+  distill_status: indexed
+  note: 已并入 layers/macro.yaml 通用方法论；券商立场待拆 macro persona，不存观点与数字
+  distilled_to:
+  - regime
+  - monetary_path
+  - oil_geopolitics
+  - cross_asset
+  - commodity_filter

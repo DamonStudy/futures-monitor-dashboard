@@ -1,0 +1,48 @@
+id: 贵金属
+name: 贵金属板块
+board: 贵金属
+version: 1
+sources:
+  - broker: 山金期货
+    file: 20260605-山金期货-贵金属策略报告.pdf
+    date: "2026-06-05"
+
+reasoning_chain:
+  - id: macro
+    title: 宏观定价
+    focus: [实际利率, 美元, 美联储]
+    questions:
+      - 货币政策预期转向了吗？
+      - 美元与美债如何影响贵金属？
+    fallback: 贵金属首看实际利率与美元，这是金融定价主干。
+
+  - id: geopolitics
+    title: 避险与风险
+    focus: [地缘, 政治, 风险偏好]
+    questions:
+      - 避险情绪升温还是回落？
+    fallback: 地缘僵持提供风险溢价，缓和则溢价消退。
+
+  - id: relative
+    title: 相对估值
+    focus: [金银比, 金铜比, 内外价差]
+    questions:
+      - 黄金与白银谁更强，驱动是什么？
+    skill_links: [term_structure]
+    fallback: 金银比与内外价差是研究员常用相对估值工具。
+
+  - id: market
+    title: 盘面验证
+    skill_links: [price_volume, technical_signals, key_levels, position_rank]
+
+confirmation:
+  - 实际利率下行 + 美元走弱 + 避险升温
+  - 突破关键位且持仓配合
+
+invalidation:
+  - 实际利率上行 + 美元走强
+  - 地缘缓和，风险溢价快速回落
+
+risk_factors:
+  - 美联储超预期
+  - 国内进口与交易政策

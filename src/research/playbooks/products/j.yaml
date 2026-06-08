@@ -1,0 +1,56 @@
+id: j
+name: 焦炭
+board: 黑色
+version: 1
+sources:
+  - broker: 银河期货
+    file: 20260605-银河期货-双焦：谨慎看多，中期关注下游承接能力.pdf
+    date: "2026-06-05"
+
+reasoning_chain:
+  - id: cost_push
+    title: 成本推动
+    focus: [焦煤价格, 提涨落地, 焦企利润]
+    questions:
+      - 焦煤上涨是否快于焦炭，压缩焦企利润？
+      - 焦炭提涨轮次能否顺利落地？
+    related_products: [jm]
+    fallback: 焦炭定价常跟随焦煤成本推动，关注提涨落地与吨焦盈利。
+
+  - id: supply
+    title: 供给端
+    focus: [独立焦企, 钢厂焦化, 产量]
+    questions:
+      - 利润压缩后焦炭产量是否下降？
+    fallback: 跟踪独立焦企与钢厂焦化焦炭日均产量。
+
+  - id: demand
+    title: 需求端
+    focus: [铁水产量, 高炉开工]
+    questions:
+      - 铁水是否维持高位震荡？
+      - 钢厂盈利恶化是否会触发减产？
+    related_products: [i, rb]
+    fallback: 铁水240万吨附近是焦炭需求核心锚。
+
+  - id: inventory
+    title: 库存
+    focus: [焦企库存, 钢厂库存, 港口库存]
+    skill_links: [warehouse_receipts]
+    fallback: 焦企累库、钢厂去库的方向组合反映供需松紧。
+
+  - id: market
+    title: 盘面验证
+    skill_links: [price_volume, technical_signals, term_structure, position_rank]
+
+confirmation:
+  - 焦煤偏强 + 焦炭提涨连续落地 + 铁水稳定
+  - 焦企利润修复后产量企稳
+
+invalidation:
+  - 钢厂利润恶化触发减产，铁水回落
+  - 焦煤回落导致成本支撑消失
+
+risk_factors:
+  - 环保限产与焦化产能政策
+  - 焦煤供给超预期恢复

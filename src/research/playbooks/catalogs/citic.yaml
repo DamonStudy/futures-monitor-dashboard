@@ -1,0 +1,730 @@
+id: citic_catalog
+author: 中信期货研究所
+persona: citic
+updated: '2026-06-08'
+source_folder: 期货原始资料/中信期货研究所
+parsed_folder: data/research/parsed/citic
+stats:
+  reports: 52
+  parsed_ok: 29
+  parsed_pending: 23
+  distill_done: 29
+chain_types:
+- macro
+- board
+- product
+- cross_asset
+- strategy
+- arbitrage
+- event
+reports:
+- file: 20251123-中信期货-能源化工（PX~TA~EG~PR~PF）周报：调油情绪降温，TA供需边际改善下基差走出颓势.pdf
+  parsed_ok: false
+  chain: product
+  tags:
+  - 未分类
+  boards:
+  - 能化
+  report_date: '2025-11-23'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_energy_px_polyester
+  distill_status: pending
+- file: 20251207-中信期货-能源化工（PX~TA~EG~PR~PF）周报：PX利润持续扩张，估值重心上移，乙二醇空配属性依旧.pdf
+  parsed_ok: false
+  chain: product
+  tags:
+  - 未分类
+  boards:
+  - 能化
+  report_date: '2025-12-07'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_energy_px_polyester
+  distill_status: pending
+- file: 20251214-中信期货-能源化工（PX~TA~EG~PR~PF）周报：上游加工费涨跌互现，关注聚酯工厂负荷节奏.pdf
+  parsed_ok: false
+  chain: product
+  tags:
+  - 未分类
+  boards:
+  - 能化
+  report_date: '2025-12-14'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_energy_px_polyester
+  distill_status: pending
+- file: 20251221-中信期货-能源化工（PX~TA~EG~PR~PF）周报：资金提前入场博弈原料端乐观预期，利润向上游集中.pdf
+  parsed_ok: false
+  chain: product
+  tags:
+  - 未分类
+  boards:
+  - 能化
+  report_date: '2025-12-21'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_energy_px_polyester
+  distill_status: pending
+- file: 20260118-中信期货-能源化工（PX~TA~EG~PR~PF）周报：产业链利润再平衡，PX大厂检修兑现缓解下行压力.pdf
+  parsed_ok: false
+  chain: product
+  tags:
+  - 未分类
+  boards:
+  - 能化
+  report_date: '2026-01-18'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_energy_px_polyester
+  distill_status: pending
+- file: 20260208-中信期货-能源化工（PX~TA~EG~PR~PF）周报：产业链利润再均衡，节前驱动一般关注节后需求兑现情况.pdf
+  parsed_ok: false
+  chain: product
+  tags:
+  - 未分类
+  boards:
+  - 能化
+  report_date: '2026-02-08'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_energy_px_polyester
+  distill_status: pending
+- file: 20260223-中信期货-能源化工（PX~TA~EG~PR~PF）周报：美伊地缘局势升级和叠加关税政策共振，成本提振下关注节后需求兑现情况.pdf
+  parsed_ok: false
+  chain: product
+  tags:
+  - 未分类
+  boards:
+  - 能化
+  report_date: '2026-02-23'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_energy_px_polyester
+  distill_status: pending
+- file: 20260406-中信期货-能源化工（PX~TA~EG~PR~PF）周报：PTA大厂集中宣布减产计划，下游负反馈加深.pdf
+  parsed_ok: false
+  chain: product
+  tags:
+  - 未分类
+  boards:
+  - 能化
+  report_date: '2026-04-06'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_energy_px_polyester
+  distill_status: pending
+- file: 20260412-中信期货-有色与新材料（基本金属）周报：美伊和谈预期主导盘面，基本金属延续震荡.pdf
+  parsed_ok: false
+  chain: product
+  tags:
+  - 有色与新能源
+  report_date: '2026-04-12'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_metals_financial_property
+  distill_status: pending
+- file: 20260419-中信期货-【农业（棉花、白糖）】周报：棉花强势、白糖震荡.pdf
+  parsed_ok: false
+  chain: product
+  tags:
+  - 未分类
+  boards:
+  - 农产品
+  report_date: '2026-04-19'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_cross_asset_rotation
+  distill_status: pending
+- file: 20260426-中信期货-【有色与新材料（新能源金属）】周报：产业期现套利盘活跃，多晶硅冲高回落.pdf
+  parsed_ok: false
+  chain: arbitrage
+  tags:
+  - 有色与新能源
+  report_date: '2026-04-26'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_newenergy_lc_si
+  - citic_arbitrage_cross_border
+  distill_status: pending
+- file: 20260531-中信期货-能源化工（PX~TA~EG~PR~PF）周报：地缘溢价部分回吐但仍有反复，关注后续减产兑现情况.pdf
+  parsed_ok: false
+  chain: product
+  tags:
+  - 未分类
+  boards:
+  - 能化
+  report_date: '2026-05-31'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_energy_px_polyester
+  distill_status: pending
+- file: 20260602-中信期货-中国期货运行月报.pdf
+  parsed_ok: false
+  chain: cross_asset
+  tags:
+  - 综述
+  report_date: '2026-06-02'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_cross_asset_rotation
+  distill_status: pending
+- file: 20260602-中信期货-新能源金属每日报告：供应恢复预期VS现实供需偏紧，碳酸锂震荡整理.pdf
+  parsed_ok: true
+  chain: product
+  tags:
+  - 有色与新能源
+  products:
+  - lc
+  report_date: '2026-06-02'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_newenergy_lc_si
+  distill_status: done
+- file: 20260603-中信期货-中国商品期货跨境套利周报.pdf
+  parsed_ok: true
+  chain: arbitrage
+  tags:
+  - 未分类
+  report_date: '2026-06-03'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_arbitrage_cross_border
+  distill_status: done
+- file: 20260604-中信期货-伊朗冲突对甲醇影响（二）：中国市场.pdf
+  parsed_ok: true
+  chain: event
+  tags:
+  - 未分类
+  boards:
+  - 能化
+  report_date: '2026-06-04'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_energy_methanol_framework
+  - citic_event_methanol_iran
+  distill_status: done
+- file: 20260604-中信期货-镍价破位下挫，关注印尼矿配额政策进展.pdf
+  parsed_ok: true
+  chain: product
+  tags:
+  - 有色与新能源
+  products:
+  - ni
+  report_date: '2026-06-04'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_ni_indonesia_policy
+  distill_status: done
+- file: 20260605-中信期货-新能源金属每日报告：仓单持续回升引发供应回升忧虑，碳酸锂继续领跌新能源金属.pdf
+  parsed_ok: true
+  chain: product
+  tags:
+  - 有色与新能源
+  products:
+  - lc
+  report_date: '2026-06-05'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_newenergy_lc_si
+  distill_status: done
+- file: 20260605-中信期货-菜油过山车行情解读.pdf
+  parsed_ok: true
+  chain: event
+  tags:
+  - 未分类
+  boards:
+  - 农产品
+  products:
+  - OI
+  report_date: '2026-06-05'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_cross_asset_rotation
+  distill_status: done
+- file: 20260605-中信期货-黑色建材策略日报：板块延续分化，关注矿端供给变化.pdf
+  parsed_ok: true
+  chain: strategy
+  tags:
+  - 未分类
+  boards:
+  - 黑色
+  report_date: '2026-06-05'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_black_supply_demand_table
+  distill_status: done
+- file: 20260607-中信期货-美国经济数据韧性超预期，关注6月议息会议.pdf
+  parsed_ok: true
+  chain: macro
+  tags:
+  - 宏观
+  report_date: '2026-06-07'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_macro_fed_path
+  distill_status: done
+- file: 20260607-中信期货-能源化工（PX~TA~EG~PR~PF）周报：原料减产将进一步加速，关注6月中下旬聚酯负荷的有效拐点.pdf
+  parsed_ok: false
+  chain: product
+  tags:
+  - 未分类
+  boards:
+  - 能化
+  report_date: '2026-06-07'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_energy_px_polyester
+  distill_status: pending
+- file: 20260608-中信期货-中国期货周度综述.pdf
+  parsed_ok: true
+  chain: cross_asset
+  tags:
+  - 综述
+  report_date: '2026-06-08'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_cross_asset_rotation
+  distill_status: done
+- file: 20260608-中信期货-累库压力下铁矿逢高做空策略.pdf
+  parsed_ok: true
+  chain: strategy
+  tags:
+  - 未分类
+  boards:
+  - 黑色
+  products:
+  - i
+  report_date: '2026-06-08'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_i_inventory_short_rally
+  distill_status: done
+- file: 20260608-中信期货-非农数据引爆加息预期，金银大幅下挫.pdf
+  parsed_ok: true
+  chain: macro
+  tags:
+  - 宏观
+  boards:
+  - 贵金属
+  report_date: '2026-06-08'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_macro_fed_path
+  distill_status: done
+- file: 【中信期货农业（油脂油料）】双粕震荡偏弱，油脂关注下方技术支撑有效性——周报20251214.pdf
+  parsed_ok: true
+  chain: product
+  tags:
+  - 农业（油脂油料）
+  boards:
+  - 农产品
+  report_date: '2025-12-14'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_agri_oils_meals
+  distill_status: done
+- file: 【中信期货农业（软商品）】板块品种多氛围转暖——周报20251214.pdf
+  parsed_ok: false
+  chain: product
+  tags:
+  - 农业（软商品）
+  boards:
+  - 农产品
+  report_date: '2025-12-14'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_cross_asset_rotation
+  distill_status: pending
+- file: 【中信期货农业（饲料养殖）】降温刺激需求，猪价小幅反弹——周报20251214.pdf
+  parsed_ok: false
+  chain: product
+  tags:
+  - 农业（饲料养殖）
+  boards:
+  - 农产品
+  report_date: '2025-12-14'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_cross_asset_rotation
+  distill_status: pending
+- file: 【中信期货固定收益（国债）】ΔEVE改善如何影响银行的政府债承接空间？——周报20251214.pdf
+  parsed_ok: false
+  chain: product
+  tags:
+  - 固定收益（国债）
+  report_date: '2025-12-14'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_cross_asset_rotation
+  distill_status: pending
+- file: 【中信期货固定收益（美债）】日债收益率上升：财政隐忧还是中性利率之变？——周报20251214.pdf
+  parsed_ok: true
+  chain: product
+  tags:
+  - 固定收益（美债）
+  report_date: '2025-12-14'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_cross_asset_rotation
+  distill_status: done
+- file: 【中信期货宏观】 “超级政策周”落地，流动性交易或尚具备持续性——宏观策略周报20251214.pdf
+  parsed_ok: true
+  chain: product
+  tags:
+  - 宏观
+  report_date: '2025-12-14'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_macro_liquidity_regime
+  distill_status: done
+- file: 【中信期货有色与新材料（基本金属）】美联储降息预期出现反复，基本金属或转为震荡整固——周报20251214.pdf
+  parsed_ok: false
+  chain: product
+  tags:
+  - 有色与新材料（基本金属）
+  - 有色与新能源
+  report_date: '2025-12-14'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_metals_financial_property
+  distill_status: pending
+- file: 【中信期货有色与新材料（新能源金属）】供应扰动担忧升温，多晶硅和碳酸锂交替领涨新能源金属——周报20251214.pdf
+  parsed_ok: false
+  chain: product
+  tags:
+  - 有色与新材料（新能源金属）
+  - 有色与新能源
+  products:
+  - lc
+  report_date: '2025-12-14'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_newenergy_lc_si
+  distill_status: pending
+- file: 【中信期货有色与新材料（铂钯）】降息交易延续，铂钯震荡偏强——周报20251214.pdf
+  parsed_ok: true
+  chain: product
+  tags:
+  - 有色与新材料（铂钯）
+  - 有色与新能源
+  report_date: '2025-12-14'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_cross_asset_rotation
+  distill_status: done
+- file: 【中信期货权益及期权策略（股指）】A港股科技指数对比与“春躁”择时——周报20251213.pdf
+  parsed_ok: true
+  chain: product
+  tags:
+  - 权益及期权策略（股指）
+  report_date: '2025-12-13'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_cross_asset_rotation
+  distill_status: done
+- file: 【中信期货权益及期权策略（金融期权）】延续备兑思路——周报20251213.pdf
+  parsed_ok: true
+  chain: product
+  tags:
+  - 权益及期权策略（金融期权）
+  report_date: '2025-12-13'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_cross_asset_rotation
+  distill_status: done
+- file: 【中信期货能源化工（LPG）】下游存降负预期，内盘高估值有所松动——周报20251214.pdf
+  parsed_ok: true
+  chain: product
+  tags:
+  - 能源化工（LPG）
+  boards:
+  - 能化
+  report_date: '2025-12-14'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_cross_asset_rotation
+  distill_status: done
+- file: 【中信期货能源化工（PVC、烧碱）】减产预期增强，氯碱空单止盈——周报20251214.pdf
+  parsed_ok: true
+  chain: product
+  tags:
+  - 能源化工（PVC、烧碱）
+  boards:
+  - 能化
+  report_date: '2025-12-14'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_cross_asset_rotation
+  distill_status: done
+- file: 【中信期货能源化工（PX-TA-EG-PR-PF）】上游加工费涨跌互现，关注聚酯工厂负荷节奏——周报20251214.pdf
+  parsed_ok: false
+  chain: product
+  tags:
+  - 能源化工（PX-TA-EG-PR-PF）
+  boards:
+  - 能化
+  report_date: '2025-12-14'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_energy_px_polyester
+  distill_status: pending
+- file: 【中信期货能源化工（原油）】俄油发运仍有韧性，委内供应担忧加剧——周报20251214.pdf
+  parsed_ok: false
+  chain: product
+  tags:
+  - 能源化工（原油）
+  boards:
+  - 能化
+  report_date: '2025-12-14'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_energy_oil_products
+  distill_status: pending
+- file: 【中信期货能源化工（塑料、PP、丙烯）】PDH利润承压，烯烃谨慎反弹——周报20251214.pdf
+  parsed_ok: true
+  chain: product
+  tags:
+  - 能源化工（塑料、PP、丙烯）
+  boards:
+  - 能化
+  report_date: '2025-12-14'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_cross_asset_rotation
+  distill_status: done
+- file: 【中信期货能源化工（沥青、低高硫燃油）】亚洲浮仓高企对冲俄罗斯燃料油出口下降利好——周报20251214.pdf
+  parsed_ok: true
+  chain: product
+  tags:
+  - 能源化工（沥青、低高硫燃油）
+  boards:
+  - 能化
+  report_date: '2025-12-14'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_cross_asset_rotation
+  distill_status: done
+- file: 【中信期货能源化工（甲醇、尿素）】甲醇供需博弈区间震荡，尿素需求转弱延续弱势——周报20251214.pdf
+  parsed_ok: true
+  chain: product
+  tags:
+  - 能源化工（甲醇、尿素）
+  boards:
+  - 能化
+  report_date: '2025-12-14'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_energy_methanol_framework
+  - citic_agri_ur_demand
+  distill_status: done
+- file: 【中信期货能源化工（纯苯和苯乙烯）】纯苯弱现实压制情绪，关注反内卷后续——周报20251214.pdf
+  parsed_ok: true
+  chain: product
+  tags:
+  - 能源化工（纯苯和苯乙烯）
+  boards:
+  - 能化
+  report_date: '2025-12-14'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_cross_asset_rotation
+  distill_status: done
+- file: 【中信期货能源转型与碳中和（光伏）】硅料库存一骑绝尘，盘面价格高位震荡——周报20251214.pdf
+  parsed_ok: true
+  chain: product
+  tags:
+  - 能源转型与碳中和（光伏）
+  boards:
+  - 能化
+  report_date: '2025-12-14'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_cross_asset_rotation
+  distill_status: done
+- file: 【中信期货能源转型与碳中和（双碳）】中国碳价偏弱运行，欧盟碳价冲刺前高！——周报20251212.pdf
+  parsed_ok: true
+  chain: product
+  tags:
+  - 能源转型与碳中和（双碳）
+  boards:
+  - 能化
+  report_date: '2025-12-12'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_cross_asset_rotation
+  distill_status: done
+- file: 【中信期货能源转型与碳中和（能源电力）】原油地缘溢价继续回吐，气温偏暖煤气需求偏弱——周报20251214.pdf
+  parsed_ok: false
+  chain: product
+  tags:
+  - 能源转型与碳中和（能源电力）
+  boards:
+  - 能化
+  report_date: '2025-12-14'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_energy_oil_products
+  distill_status: pending
+- file: 【中信期货航运（大宗贸易）】干散、油轮运费高位回落，影子油轮运营压力加剧——周报20251214.pdf
+  parsed_ok: true
+  chain: product
+  tags:
+  - 航运（大宗贸易）
+  report_date: '2025-12-14'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_cross_asset_rotation
+  distill_status: done
+- file: 【中信期货航运（集运）】现货上行期现同步走强，MSC宣涨一月上半月至3700美元FEU——周报20251214.pdf
+  parsed_ok: true
+  chain: product
+  tags:
+  - 航运（集运）
+  report_date: '2025-12-14'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_cross_asset_rotation
+  distill_status: done
+- file: 【中信期货贵金属（黄金&白银）】金银仍看震荡向上，黄金安全边际更高——周报20251214.pdf
+  parsed_ok: true
+  chain: product
+  tags:
+  - 贵金属（黄金&白银）
+  boards:
+  - 贵金属
+  report_date: '2025-12-14'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_precious_liquidity
+  distill_status: done
+- file: 【中信期货黑色建材（玻璃纯碱）】供需过剩预期压制，价格下探寻找支撑——周报20251214.pdf
+  parsed_ok: true
+  chain: product
+  tags:
+  - 黑色建材（玻璃纯碱）
+  boards:
+  - 黑色
+  report_date: '2025-12-14'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_black_supply_demand_table
+  - citic_black_glass_sa_chain
+  distill_status: done
+- file: 【中信期货黑色建材（黑色金属）】宏观扰动暂歇，关注冬季补库需求的开启——周报20251214.pdf
+  parsed_ok: false
+  chain: product
+  tags:
+  - 黑色建材（黑色金属）
+  boards:
+  - 黑色
+  report_date: '2025-12-14'
+  data_policy: mind_only
+  knowledge_type: checklist
+  freshness: semi_annual
+  distilled_to:
+  - citic_macro_liquidity_regime
+  - citic_black_supply_demand_table
+  distill_status: pending

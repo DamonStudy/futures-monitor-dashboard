@@ -1,0 +1,935 @@
+id: peifengke_cu_catalog
+author: 培风客
+persona: peifengke_cu
+updated: '2026-06-08'
+source_folder: 期货原始资料/培风客-铜
+parsed_folder: data/research/parsed/peifengke-cu
+stats:
+  reports: 44
+  parsed_ok: 0
+  distill_done: 44
+reports:
+- file: 20240924 培风客 铜真正的范式转变.docx
+  report_date: '2024-09-24'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20241006 培风客 全球资产的拐点时刻.docx
+  report_date: '2024-10-06'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20241019 培风客 经济和市场分析.docx
+  report_date: '2024-10-19'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20241102 培风客 十一月经济和市场展望.docx
+  report_date: '2024-11-02'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20241113 培风客 美国政治市场.docx
+  report_date: '2024-11-13'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20241122 培风客 政治经济分析.docx
+  report_date: '2024-11-22'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20241212 培风客 叙事逻辑可能过几周有端倪了.docx
+  report_date: '2024-12-12'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20241224 培风客 铜和黄金的2025思考.docx
+  report_date: '2024-12-24'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20250111 培风客 经济和市场展望.docx
+  report_date: '2025-01-11'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20250124 培风客 低买入。逢是什么？低是多低？.docx
+  report_date: '2025-01-24'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20250208 培风客 just copper.docx
+  report_date: '2025-02-08'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20250222 培风客 政治经济市场各说各话.docx
+  report_date: '2025-02-22'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20250226 培风客 铜的狂野世界.docx
+  report_date: '2025-02-26'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20250313 培风客 铜和中国资产.docx
+  report_date: '2025-03-13'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20250320 培风客 FOMC点评.docx
+  report_date: '2025-03-20'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20250325 培风客 2025Q2经济回顾与市场总结.docx
+  report_date: '2025-03-25'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20250404 培风客 2025Q2经济展望.docx
+  report_date: '2025-04-04'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20250421 培风客 一团乱麻中的思考经济和市场分析.docx
+  report_date: '2025-04-21'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20250509 培风客 五月市场展望 - When macro matters.docx
+  report_date: '2025-05-09'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20250517 培风客 长周期，中周期，短周期看黄金和铜（一）.docx
+  report_date: '2025-05-17'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20250603 培风客 长周期，中周期，短周期看黄金和铜（二）.docx
+  report_date: '2025-06-03'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20250616 培风客 经济和市场评述.docx
+  report_date: '2025-06-16'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20250627 培风客 既视感.docx
+  report_date: '2025-06-27'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20250709 培风客 50%的铜关税，市场之外的故事更精彩.docx
+  report_date: '2025-07-09'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20250728 培风客 股票和商品下半年应该还是逢低买的思路.docx
+  report_date: '2025-07-28'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20250828 培风客 经济市场 - 简单问题.docx
+  report_date: '2025-08-28'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20250903 培风客 市场 - 仿佛回到了一年前.docx
+  report_date: '2025-09-03'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20251022 培风客 黄金和铜：结构性驱动和周期性驱动.docx
+  report_date: '2025-10-22'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20251112 培风客 铜 - 投研进入了深水区.docx
+  report_date: '2025-11-12'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20251116 培风客 扭曲和预期 - 一些关于铜的想法和思路.docx
+  report_date: '2025-11-16'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20251130 培风客 铜 - 新高之后.docx
+  report_date: '2025-11-30'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20251224 培风客 2026展望 - 经济，地缘，市场.docx
+  report_date: '2025-12-24'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20260110 培风客 大宗商品 - 长期，中期和短期的故事.docx
+  report_date: '2026-01-10'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20260128 培风客 政治，经济，金铜 - 让我们放在一起看.docx
+  report_date: '2026-01-28'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20260206 培风客 二月的展望 - 技术分析.docx
+  report_date: '2026-02-06'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20260224 培风客 假期结束，开工大吉.docx
+  report_date: '2026-02-24'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20260226 培风客 脆弱供给下的需求扩散诉求.docx
+  report_date: '2026-02-26'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20260303 培风客 最不安的一个周末.docx
+  report_date: '2026-03-03'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20260306 培风客 影响的范围在慢慢扩大.docx
+  report_date: '2026-03-06'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20260320 培风客 多一分谨慎.docx
+  report_date: '2026-03-20'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20260329 培风客 摇曳的是宿命，坚定的是命运.docx
+  report_date: '2026-03-29'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20260412 培风客 也许是时候想想几个月之后的事情.docx
+  report_date: '2026-04-12'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20260510 培风客 分歧看法 从有色到宏观.docx
+  report_date: '2026-05-10'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants
+- file: 20260513 培风客 CPI、铜、金.docx
+  report_date: '2026-05-13'
+  parsed_ok: false
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: mind_only
+  freshness: evergreen
+  distill_status: done
+  distilled_to:
+  - time_horizon
+  - structural_cyclical
+  - long_supply_demand
+  - medium_industrial
+  - macro_quadrant
+  - trade_inventory
+  - market_participants

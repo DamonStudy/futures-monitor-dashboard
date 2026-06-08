@@ -1,0 +1,62 @@
+id: lh
+name: 生猪
+board: 农产品
+version: 1
+sources:
+  - broker: 建信期货
+    file: 20260605-建信期货-生猪日报.pdf
+    date: "2026-06-05"
+
+reasoning_chain:
+  - id: supply
+    title: 供给端
+    focus: [出栏量, 出栏体重, 二育, 产能]
+    questions:
+      - 样本养殖计划出栏是否增加？
+      - 二育栏舍利用率与待出栏压力如何？
+      - 出栏均重是否高位回落？
+    fallback: 关注涌益/钢联样本出栏计划、均重及二育进出节奏。
+
+  - id: demand
+    title: 需求端
+    focus: [屠宰量, 开工率, 终端消费, 天气]
+    questions:
+      - 天气转热后终端消费是否转淡？
+      - 屠宰企业订单与开工率变化如何？
+    fallback: 夏季消费淡季，屠宰量与开工率是需求 proxy。
+
+  - id: profit
+    title: 养殖利润与成本
+    focus: [自繁自养利润, 外购仔猪利润, 饲料成本]
+    questions:
+      - 深度亏损是否触发产能去化预期？
+      - 政策调控是否提供下方支撑？
+    fallback: 利润决定中长期产能，政策影响短期价格底部。
+
+  - id: spread
+    title: 标肥价差
+    focus: [肥标价差, 压栏, 体重结构]
+    questions:
+      - 175kg肥猪与标猪价差是否走扩？
+      - 压栏是否增加后续供应压力？
+    fallback: 标肥价差反映大猪供应松紧与压栏意愿。
+
+  - id: market
+    title: 盘面验证
+    focus: [近远月结构, 持仓, 量价]
+    skill_links: [price_volume, technical_signals, term_structure, position_rank]
+
+confirmation:
+  - 出栏增量有限 + 需求季节性回暖 + 产能去化加速
+  - 政策收储/调控配合，现货企稳
+
+invalidation:
+  - 供增需降，出栏体重与二育压力持续
+  - 产能充足、去化不足，远月强近月弱逻辑证伪
+
+seasonal_notes:
+  - 夏季消费淡季，终端需求支撑偏弱；关注节假日备货窗口
+
+risk_factors:
+  - 疫病与环保政策
+  - 调控政策力度与节奏

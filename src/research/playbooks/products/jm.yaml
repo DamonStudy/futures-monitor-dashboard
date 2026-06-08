@@ -1,0 +1,72 @@
+id: jm
+name: 焦煤
+board: 黑色
+version: 1
+sources:
+  - broker: 银河期货
+    file: 20260605-银河期货-双焦：谨慎看多，中期关注下游承接能力.pdf
+    date: "2026-06-05"
+
+reasoning_chain:
+  - id: supply
+    title: 供给端
+    focus: [煤矿产能利用率, 复产节奏, 安检, 进口蒙煤]
+    questions:
+      - 事故/安检后煤矿复产是否偏慢？
+      - 复产煤矿产量是否低于事故前水平？
+      - 蒙煤通关与结构性紧缺如何？
+    fallback: 跟踪523家焦煤矿产能利用率、停产复产进度及蒙煤口岸通关。
+
+  - id: demand
+    title: 需求端
+    focus: [焦炭产量, 铁水, 钢厂补库]
+    questions:
+      - 焦炭产量是否因利润压缩而下降？
+      - 下游焦企、钢厂补库力度如何？
+    related_products: [j]
+    fallback: 焦炭产量与铁水水平决定焦煤刚需，关注下游补库节奏。
+
+  - id: inventory
+    title: 库存
+    focus: [矿山库存, 洗煤厂, 焦企, 钢厂, 港口]
+    questions:
+      - 上游去库、下游补库是否同时发生？
+      - 总库存增加是否仅为隐性库存显性化？
+    skill_links: [warehouse_receipts]
+    fallback: 焦煤库存结构比总量更重要，关注上下游库存迁移。
+
+  - id: policy
+    title: 政策与保供
+    focus: [安全管控, 煤炭保供, 表外产量治理]
+    questions:
+      - 短期安检是否支撑煤价？
+      - 中期保供政策是否压制上方空间？
+    fallback: 供给收缩是近端逻辑，保供导向是中期压制因素。
+
+  - id: downstream
+    title: 下游承接能力
+    focus: [钢材需求, 钢厂利润, 焦炭提涨]
+    questions:
+      - 钢材终端需求是否疲弱？
+      - 焦煤大涨后下游能否持续承接？
+    related_products: [rb, j]
+    fallback: 行情高度最终取决于下游需求，钢材弱则焦煤大涨难持续。
+
+  - id: market
+    title: 盘面验证
+    skill_links: [price_volume, technical_signals, term_structure, position_rank]
+
+confirmation:
+  - 供给确定性收缩 + 下游补库 + 复产慢于预期
+  - 焦炭提涨落地，钢厂仍维持铁水高位
+
+invalidation:
+  - 煤矿快速复产至事故前水平
+  - 钢材需求持续疲弱，钢厂利润深度压缩后减产出清
+
+seasonal_notes:
+  - 夏季安全检查与汛期可能影响煤矿生产节奏
+
+risk_factors:
+  - 煤矿安全事故及安检升级
+  - 进口煤政策与蒙煤通关变化

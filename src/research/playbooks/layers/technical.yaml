@@ -1,0 +1,65 @@
+id: technical
+name: 技术面分析
+layer: technical
+version: 1
+sources:
+  - type: book
+    name: 《期货市场技术分析》/ Murphy 多周期分析框架
+  - type: internal
+    name: src/skills 量价与 TA-Lib 信号口径
+
+reasoning_chain:
+  - id: timeframe
+    title: 多周期背景
+    focus: [周线背景, 日线状态, 日线结构]
+    questions:
+      - 周线是趋势、震荡还是转折？
+      - 日线状态与周线是否一致还是背离？
+      - 日线结构是在确认还是破坏周线判断？
+    skill_links: [price_volume, board_resonance]
+    fallback: 研究员习惯先看大周期定方向，再用小周期找入场与验证点。
+
+  - id: trend
+    title: 趋势与均线
+    focus: [MA20, MA60, 排列, 突破]
+    questions:
+      - 价格相对 MA20/MA60 的位置关系？
+      - 是否处于突破确认或趋势延续阶段？
+    skill_links: [technical_signals, key_levels]
+
+  - id: volume_price
+    title: 量价配合
+    focus: [成交量分位, 持仓变化, 增减仓方向]
+    questions:
+      - 价格动作是否伴随成交量放大？
+      - 增仓上涨/增仓下跌是否支持当前方向？
+    skill_links: [price_volume, position_rank]
+
+  - id: pattern
+    title: 形态与关键位
+    focus: [K线形态, 支撑压力, 前高前低]
+    questions:
+      - 是否出现反转或延续形态？
+      - 距离关键支撑/压力有多远？
+    skill_links: [candlestick_patterns, key_levels]
+
+  - id: term_position
+    title: 期限结构与持仓
+    focus: [近远月结构, 跨期价差, 席位集中度]
+    questions:
+      - 近月升水/贴水是否支持现货逻辑？
+      - 持仓结构是否提示拥挤或反转风险？
+    skill_links: [term_structure, position_rank]
+
+confirmation:
+  - 多周期方向一致 + 量价配合 + 关键位突破/守住
+  - 期限结构与价格方向不显著背离
+
+invalidation:
+  - 大周期与小周期严重背离
+  - 突破无量、或增仓方向与价格方向相反
+  - 关键位失守且无快速收回
+
+risk_factors:
+  - 主力换月导致技术指标失真
+  - 低流动性品种技术信号可靠性下降

@@ -1,0 +1,596 @@
+id: citic
+name: 中信期货研究所
+author: 中信期货研究所
+version: 1
+updated: '2026-06-08'
+scope:
+  all_commodities: true
+sources:
+- 期货原始资料/中信期货研究所/（52 篇 PDF，2025-12 至 2026-06）
+- parsed: data/research/parsed/citic
+- catalog: src/research/playbooks/catalogs/citic.yaml
+changelog:
+- date: '2026-06-08'
+  note: 自 29 篇已解析 PDF 蒸馏 20 条逻辑链；规范见 docs/knowledge-distillation.md
+notes:
+- 蒸馏规范见 docs/knowledge-distillation.md
+- 同一作者（中信）下用 chain / boards / products / tags 区分板块逻辑，不拆多个 persona
+- Playbook 只存思维；库存、利润等数字由 analyzer 实时提供
+reasoning_chain:
+- id: citic_macro_liquidity_regime
+  chain: macro
+  knowledge_type: framework
+  data_policy: live_link
+  freshness: semi_annual
+  tags:
+  - 宏观
+  - 流动性
+  - 软着陆
+  - 大类配置
+  title: 宏观组合：流动性 × 需求预期
+  focus:
+  - 美联储
+  - 降息
+  - 扩表
+  - 软着陆
+  - 美元指数
+  - 大类轮动
+  questions:
+  - 当前交易主线是「流动性释放 + 需求预期上升」，还是「紧缩 repricing + 风险回避」？
+  - 偏鸽议息/扩表阶段，是否相对利好贵金属、金融属性高的有色（铜铝）及外需敏感资产？
+  - 国内重大会议落地后，是否从政策交易回归基本面，黑色等内需品种是否相对承压？
+  analyzer_links:
+  - macro_regime
+  fallback: 先定流动性方向，再映射到商品；同一基本面数据在宽松与紧缩 narrative 下含义相反。
+- id: citic_macro_fed_path
+  chain: macro
+  tags:
+  - 宏观
+  - 联储
+  - 利率
+  - 非农
+  - ISM
+  title: 联储路径与数据窗口
+  focus:
+  - 加息预期
+  - 降息预期
+  - 非农
+  - PMI
+  - 耐用品订单
+  - 6月议息
+  questions:
+  - 就业、PMI、工厂订单是否一致强化「更高更久」利率预期？
+  - 数据超预期后，贵金属、基本金属、铁矿等是否同步承压？
+  - 议息会议与点阵图是否与市场定价出现预期差？
+  analyzer_links:
+  - macro_regime
+  fallback: 中信宏观策略常把「联储收紧/放松计价」作为周内资产排序的第一变量。
+  knowledge_type: framework
+  data_policy: live_link
+  freshness: semi_annual
+- id: citic_macro_china_policy
+  chain: macro
+  tags:
+  - 宏观
+  - 中国政策
+  - 政治局
+  - 中央经济工作会议
+  title: 国内政策基调与空窗期
+  focus:
+  - 逆周期
+  - 跨周期
+  - 十五五
+  - 专项债
+  - 外需
+  - PMI
+  questions:
+  - 政策总量是持平、加码还是边际收敛？结构上是稳增长还是调结构优先？
+  - 会议后是否进入政策空窗，商品是否回到各品种自身供需？
+  - 制造业 PMI 产需、建筑业/服务业景气与专项债节奏是否支持当前商品方向？
+  analyzer_links:
+  - macro_regime
+  fallback: 政策温和积极不等于所有商品同涨；关注「会议落地 → 基本面分化」阶段。
+  knowledge_type: framework
+  data_policy: live_link
+  freshness: semi_annual
+- id: citic_macro_oil_geopolitics
+  chain: macro
+  tags:
+  - 宏观
+  - 地缘
+  - 油价
+  - 通胀二阶效应
+  title: 油价与地缘冲击
+  focus:
+  - 美伊
+  - 霍尔木兹
+  - 海峡通行
+  - 能源通胀
+  - 滞胀
+  questions:
+  - 冲突溢价是主导还是供需基本面主导？缓和预期是否带来溢价回吐？
+  - 高油价是否通过生活成本、金融条件压制中下游利润与商品指数？
+  - 能化进口依赖品种（甲醇等）是否出现「进口断档 vs 国产补充」的阶段性逻辑？
+  fallback: 油价既是成本也是通胀；需区分事件交易阶段与库存/开工验证阶段。
+  knowledge_type: framework
+  data_policy: live_link
+  freshness: semi_annual
+- id: citic_cross_asset_rotation
+  chain: cross_asset
+  tags:
+  - 大类配置
+  - 均衡配置
+  - 板块轮动
+  title: 大类均衡与板块偏好
+  focus:
+  - 贵金属
+  - 有色
+  - 黑色
+  - 能化
+  - 权益
+  - 债券
+  questions:
+  - 当前标配/超配清单落在哪些板块？是否「贵金属 + 高金融属性有色」相对占优？
+  - 国内权益、黑色是否在政策空窗或宏观收紧预期下偏保守？
+  - 配置建议切换时，各商品板块是否出现同步或分化？
+  fallback: 中信宏观周报常给出板块级排序；落到单品种仍需下钻供需链。
+  knowledge_type: framework
+  data_policy: reference_structure
+  freshness: semi_annual
+- id: citic_black_supply_demand_table
+  chain: board
+  knowledge_type: checklist
+  data_policy: reference_structure
+  freshness: semi_annual
+  tags:
+  - 黑色
+  - 供需平衡表
+  - 开工
+  - 库存
+  boards:
+  - 黑色
+  products:
+  - rb
+  - hc
+  - i
+  - j
+  - jm
+  title: 黑色：供需平衡表四件套
+  focus:
+  - 发运
+  - 铁水
+  - 钢厂利润
+  - 港口库存
+  - 终端需求
+  - 季节性
+  questions:
+  - 供应端：发运/产出是否季节性回升？矿端是否有政策或地缘扰动？
+  - 需求端：铁水、盈利率、终端旺季是否见顶？节后是否「供应恢复 + 需求走平」？
+  - 库存：累库/去库是否已成为主要矛盾？基差与现货成交是否验证？
+  analyzer_links:
+  - warehouse_receipts
+  - term_structure
+  - price_volume
+  fallback: 黑色先看「铁水 × 库存 × 利润」三角，再看宏观情绪是否放大波动。
+- id: citic_black_restock_season
+  chain: board
+  tags:
+  - 黑色
+  - 冬储
+  - 补库
+  boards:
+  - 黑色
+  products:
+  - rb
+  - hc
+  - i
+  title: 冬季补库与宏观扰动
+  focus:
+  - 冬储
+  - 补库需求
+  - 宏观扰动暂歇
+  questions:
+  - 宏观事件交易告一段落后，是否回到补库/限产等产业节奏？
+  - 补库预期是否已反映在基差与现货成交量？若已反映是否利多出尽？
+  analyzer_links:
+  - price_volume
+  - warehouse_receipts
+  fallback: 宏观扰动暂歇时，黑色往往回归产业链库存周期。
+  knowledge_type: checklist
+  data_policy: reference_structure
+  freshness: semi_annual
+- id: citic_black_glass_sa_chain
+  chain: product
+  tags:
+  - 玻璃
+  - 纯碱
+  - 产能过剩
+  boards:
+  - 黑色
+  products:
+  - SA
+  - FG
+  title: 玻璃纯碱：过剩预期与支撑寻找
+  focus:
+  - 供需过剩
+  - 产线冷修
+  - 光伏玻璃
+  - 下游开工
+  questions:
+  - 过剩预期是否已充分定价？价格下探是否在寻找成本或政策支撑？
+  - 冷修/限产预期与真实落地之间是否存在预期差？
+  fallback: 双弱品种先看供给出清节奏，再看宏观是否提供阶段性反弹。
+  knowledge_type: checklist
+  data_policy: reference_structure
+  freshness: semi_annual
+- id: citic_i_inventory_short_rally
+  chain: strategy
+  knowledge_type: causal
+  data_policy: mind_only
+  freshness: event
+  tags:
+  - 铁矿
+  - 逢高做空
+  - 累库
+  - 波动率
+  boards:
+  - 黑色
+  products:
+  - i
+  title: 铁矿：累库回归与逢高做空窗口
+  focus:
+  - 累库
+  - 发运回升
+  - 铁水上限
+  - 事件交易结束
+  - 隐含波动率
+  questions:
+  - 供应回升 + 需求旺季过后，港口/钢厂库存是否重新进入累积？
+  - 地缘/联储等事件交易消退后，是否回归产业累库主线？
+  - 波动率处于低位时，是否更适合期权表达而非裸空？
+  analyzer_links:
+  - term_structure
+  - price_volume
+  - warehouse_receipts
+  fallback: 策略链强调「矛盾回归 + 窗口期」；需用库存数据验证而非仅宏观叙事。
+- id: citic_energy_px_polyester
+  chain: board
+  tags:
+  - 能化
+  - PX
+  - PTA
+  - 乙二醇
+  - 聚酯
+  - 利润链
+  boards:
+  - 能化
+  products:
+  - TA
+  - eg
+  - PF
+  - PX
+  - MA
+  title: 聚酯链：利润再分配与负荷节奏
+  focus:
+  - PX加工费
+  - 检修
+  - 减产
+  - 聚酯负荷
+  - 下游负反馈
+  - 地缘成本
+  questions:
+  - 利润在上游还是下游？大厂检修/减产是否兑现？
+  - 节后或旺季聚酯负荷拐点是否出现？负反馈是否向上游传导？
+  - 地缘推升成本时，是否先看成本支撑再看需求能否承接？
+  analyzer_links:
+  - term_structure
+  - price_volume
+  fallback: PX-TA-EG 链核心变量是「利润位置 + 工厂负荷 + 减产兑现」。
+  knowledge_type: checklist
+  data_policy: reference_structure
+  freshness: semi_annual
+- id: citic_energy_oil_products
+  chain: board
+  tags:
+  - 能化
+  - 原油
+  - 燃油
+  - 沥青
+  - 地缘溢价
+  boards:
+  - 能化
+  products:
+  - sc
+  - fu
+  - lu
+  - bu
+  title: 原油及下游：地缘溢价与库存
+  focus:
+  - 俄油发运
+  - 浮仓
+  - 炼厂
+  - 地缘溢价回吐
+  - 气温
+  questions:
+  - 地缘溢价消退是否快于现货紧张缓解？亚洲浮仓/库存如何？
+  - 下游汽柴油、沥青需求是否受季节或气温压制？
+  analyzer_links:
+  - macro_regime
+  - term_structure
+  fallback: 原油链先看溢价成分，再看炼厂与库存验证。
+  knowledge_type: checklist
+  data_policy: reference_structure
+  freshness: semi_annual
+- id: citic_energy_methanol_framework
+  chain: product
+  tags:
+  - 甲醇
+  - 港口库存
+  - MTO
+  - 内外价差
+  boards:
+  - 能化
+  products:
+  - MA
+  title: 甲醇：内地—沿海联动平衡
+  focus:
+  - 港口库存
+  - 进口到港
+  - 内地开工
+  - MTO利润
+  - 传统下游
+  - 出口
+  questions:
+  - 沿海进口高库存 vs 内地需求支撑，价差是否驱动货源倒流？
+  - MTO 开工与利润是否仍为边际需求？新装置投产是否改变区域平衡？
+  - 海外停车/伊朗供应是否改变近远月结构？兑现后矛盾是否回到库存？
+  analyzer_links:
+  - term_structure
+  - warehouse_receipts
+  - price_volume
+  fallback: 甲醇是「港口进口 + 内地煤化工 + MTO」三块拼图；任何一块缓和都可能压制单边叙事。
+  knowledge_type: checklist
+  data_policy: reference_structure
+  freshness: semi_annual
+- id: citic_event_methanol_iran
+  chain: event
+  knowledge_type: causal
+  data_policy: reference_structure
+  freshness: event
+  tags:
+  - 甲醇
+  - 伊朗
+  - 地缘
+  - 进口断档
+  boards:
+  - 能化
+  products:
+  - MA
+  title: 事件链：中东供应冲击（甲醇）
+  focus:
+  - 伊朗装置
+  - 到港
+  - 港口去库
+  - 国产流向沿海
+  - MTO停车
+  - 出口窗口
+  questions:
+  - 进口到港低位是否已反映在港口库存去化？国产是否分流沿海？
+  - MTO 在利润剧烈波动下是否谨慎降负？停车范围是否扩大？
+  - 内外价差打开后，出口放量是否缓解港口紧张？
+  analyzer_links:
+  - warehouse_receipts
+  - term_structure
+  fallback: 地缘主导期看「进口—库存—MTO」三条线；局势缓和则逻辑快速反转。
+- id: citic_agri_ur_demand
+  chain: product
+  tags:
+  - 尿素
+  - 淡储
+  - 复合肥
+  - 出口
+  boards:
+  - 农产品
+  products:
+  - UR
+  title: 尿素：需求栈切换
+  focus:
+  - 淡储进度
+  - 复合肥开工
+  - 磷肥政策
+  - 出口配额
+  - 高日产
+  questions:
+  - 淡储、复合肥、出口三项需求是否同时转弱？是否剩「供强需弱」单一矛盾？
+  - 复合肥因磷肥/硫磺价格切换配方，对尿素需求是阶段性还是趋势性？
+  - 气头限气下日产仍高，供应压力是否被低估？
+  analyzer_links:
+  - warehouse_receipts
+  - price_volume
+  fallback: 尿素需求是多条支撑线的叠加；逐一证伪比单一看多/看空更重要。
+  knowledge_type: checklist
+  data_policy: reference_structure
+  freshness: semi_annual
+- id: citic_agri_oils_meals
+  chain: board
+  tags:
+  - 农产品
+  - 油脂
+  - 双粕
+  boards:
+  - 农产品
+  products:
+  - y
+  - p
+  - OI
+  - RM
+  - m
+  - a
+  - b
+  title: 油脂油料：强弱分化
+  focus:
+  - 豆粕
+  - 菜粕
+  - 油脂
+  - 技术支撑
+  - 到港
+  - 压榨
+  questions:
+  - 双粕与油脂是否分化？菜油等高波动品种是否先走情绪后走供需？
+  - 到港、压榨、库存是否支持当前强弱排序？
+  analyzer_links:
+  - price_volume
+  - warehouse_receipts
+  fallback: 农产品链先看压榨利润与库存，再看宏观是否放大波动。
+  knowledge_type: checklist
+  data_policy: reference_structure
+  freshness: semi_annual
+- id: citic_precious_liquidity
+  chain: board
+  tags:
+  - 贵金属
+  - 黄金
+  - 白银
+  - 流动性
+  boards:
+  - 贵金属
+  products:
+  - au
+  - ag
+  title: 贵金属：流动性驱动与金银分化
+  focus:
+  - 降息
+  - 扩表
+  - 联储主席提名
+  - 金银比
+  - 租赁利率
+  - 挤仓
+  questions:
+  - 流动性宽松预期是否仍为季度级核心驱动？
+  - 白银大幅拉涨后，波动与挤仓风险是否上升？黄金是否相对更高安全边际？
+  - 非农/日央行等数据窗口是否改变短周期节奏而不改中期方向？
+  analyzer_links:
+  - macro_regime
+  - price_volume
+  - term_structure
+  fallback: 黄金偏货币/流动性，白银叠加工业与挤仓；紧缩 repricing 时两者常同步承压。
+  knowledge_type: checklist
+  data_policy: reference_structure
+  freshness: semi_annual
+- id: citic_metals_financial_property
+  chain: product
+  tags:
+  - 基本金属
+  - 铜
+  - 铝
+  - 金融属性
+  products:
+  - cu
+  - al
+  title: 基本金属：金融属性排序
+  focus:
+  - 联储预期
+  - 基本金属
+  - 降息反复
+  - 震荡整固
+  questions:
+  - 降息/加息预期反复时，铜铝是否从趋势转为震荡？
+  - 与贵金属相比，基本金属是否更敏感于 growth + rates 组合？
+  analyzer_links:
+  - macro_regime
+  - price_volume
+  fallback: 中信常把铜铝与贵金属放在同一宏观 bucket，但波动节奏不同。
+  knowledge_type: checklist
+  data_policy: reference_structure
+  freshness: semi_annual
+- id: citic_newenergy_lc_si
+  chain: product
+  tags:
+  - 新能源金属
+  - 碳酸锂
+  - 工业硅
+  - 多晶硅
+  - 仓单
+  products:
+  - lc
+  - si
+  title: 新能源金属：供需紧平衡 vs 仓单信号
+  focus:
+  - 供应恢复预期
+  - 仓单回升
+  - 多晶硅
+  - 期现套利
+  - 政策
+  questions:
+  - 现实供需偏紧与供应恢复预期是否并存？盘面是否领先反映？
+  - 仓单持续回升是否触发「供应忧虑」交易？与产业套利盘如何互动？
+  analyzer_links:
+  - warehouse_receipts
+  - term_structure
+  - price_volume
+  fallback: 新能源金属常「预期与现货打架」；仓单与开工是高频验证项。
+  knowledge_type: checklist
+  data_policy: reference_structure
+  freshness: semi_annual
+- id: citic_ni_indonesia_policy
+  chain: product
+  tags:
+  - 镍
+  - 印尼
+  - 矿配额
+  products:
+  - ni
+  title: 镍：印尼供给政策
+  focus:
+  - 矿配额
+  - 镍铁
+  - 库存
+  - 破位
+  questions:
+  - 价格破位后，印尼矿配额/政策是否成为下一阶段焦点？
+  - 供给释放 vs 新能源需求，哪个是主导变量？
+  analyzer_links:
+  - price_volume
+  - warehouse_receipts
+  fallback: 镍先看印尼政策与成本曲线，再看宏观是否放大趋势。
+  knowledge_type: checklist
+  data_policy: reference_structure
+  freshness: semi_annual
+- id: citic_arbitrage_cross_border
+  chain: arbitrage
+  tags:
+  - 跨境套利
+  - 价差
+  - 进口窗口
+  title: 跨境套利与价差框架
+  focus:
+  - 内外价差
+  - 进口盈亏
+  - 出口窗口
+  - 汇率
+  questions:
+  - 内外盘价差是否打开进口或出口窗口？甲醇、油脂等是否出现出口放量？
+  - 汇率与运费变化是否改变套利逻辑？
+  analyzer_links:
+  - term_structure
+  - basis
+  fallback: 套利链不给出方向，只回答「结构是否支持跨境流动」。
+  knowledge_type: checklist
+  data_policy: reference_structure
+  freshness: semi_annual
+confirmation:
+- 宏观流动性 narrative 与联储定价方向一致，且数据窗口未出现大幅预期差
+- 品种级「供应—需求—库存—利润」四表与周观点方向同向
+- 事件交易阶段，港口/现货/开工至少一条高频线验证故事
+- 策略类逻辑（如累库做空）需库存数据确认矛盾回归
+invalidation:
+- 联储路径或地缘局势与当前 macro chain 假设相反且持续两周边际强化
+- 库存、开工、到港等关键数据连续证伪产业故事
+- 国内政策大幅超预期，使「空窗回归基本面」假设失效
+- 事件缓和后仍用冲击叙事解释价格（逻辑滞后）
+risk_factors:
+- 地缘冲突升级或缓和的尾部风险
+- 关税与经贸政策外溢
+- 国内增量政策与经济修复不及预期
+- 美联储货币政策偏离预期
+- 历史经验失效（低波动环境下的突变）

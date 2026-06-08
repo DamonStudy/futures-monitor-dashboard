@@ -1,0 +1,26 @@
+# 报告索引模板 — 每篇原始 PDF 一行；见 docs/knowledge-distillation.md
+id: example_catalog
+author: 示例机构
+persona: example_view
+updated: "2026-06-08"
+source_folder: 期货原始资料/示例机构
+parsed_folder: data/research/parsed/example
+stats:
+  reports: 0
+  parsed_ok: 0
+  parsed_pending: 0
+chain_types: [macro, cross_asset, board, product, strategy, event, arbitrage]
+reports:
+  - file: 20260601-示例-黑色周报.pdf
+    report_date: "2026-06-01"
+    parsed_ok: true
+    chain: board
+    tags: [黑色, 铁水, 库存]
+    boards: [黑色]
+    products: [rb, i]
+    knowledge_type: checklist
+    data_policy: mind_only
+    freshness: semi_annual
+    distill_status: done
+    distilled_to:
+      - example_board_balance

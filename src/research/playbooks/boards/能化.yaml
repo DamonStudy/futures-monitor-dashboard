@@ -1,0 +1,57 @@
+id: 能化
+name: 能化板块
+board: 能化
+version: 1
+sources:
+  - broker: 弘业期货
+    file: 20260605-弘业期货-甲醇：低供支撑，高位震荡.pdf
+    date: "2026-06-05"
+
+reasoning_chain:
+  - id: cost
+    title: 成本端
+    focus: [原油, 煤炭, 天然气, 加工利润]
+    questions:
+      - 原料上涨是否抬升化工品成本中枢？
+      - 炼厂/化工厂利润是否被压缩？
+    fallback: 原油与煤炭走势是能化成本定价起点。
+
+  - id: supply
+    title: 供给端
+    focus: [开工率, 检修, 进口]
+    questions:
+      - 装置检修与复产哪个占主导？
+      - 进口到港是否形成额外供应压力？
+    fallback: 跟踪开工率、产量及进口到港节奏。
+
+  - id: demand
+    title: 需求端
+    focus: [下游开工, 刚需, 补库]
+    questions:
+      - 下游是否亏损并产生负反馈？
+      - 是集中补库还是刚需采购？
+    fallback: 下游利润决定化工品需求弹性。
+
+  - id: inventory
+    title: 库存
+    skill_links: [warehouse_receipts]
+    fallback: 港口/厂库去库提供支撑，累库压制价格。
+
+  - id: market
+    title: 盘面验证
+    skill_links: [price_volume, technical_signals, term_structure, key_levels]
+
+confirmation:
+  - 低库存 + 成本支撑 + 下游开工回升
+  - 供应收缩且需求补库
+
+invalidation:
+  - 供应放量 + 下游深度亏损 + 库存转增
+  - 原油暴跌导致成本塌陷
+
+seasonal_notes:
+  - 多数化工品有检修季与需求旺季，需结合品种日历
+
+risk_factors:
+  - 原油地缘扰动
+  - 环保限产与出口政策

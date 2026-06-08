@@ -1,0 +1,78 @@
+id: rb
+name: 螺纹钢
+board: 黑色
+version: 1
+sources:
+  - broker: 中航期货
+    file: 20260605-中航期货-钢材铁矿周度报告.pdf
+    date: "2026-06-05"
+
+reasoning_chain:
+  - id: supply
+    title: 供给端
+    focus: [产量, 高炉开工, 电炉产能, 检修减产]
+    questions:
+      - 螺纹产量是否处于同期偏低水平？
+      - 高炉/电炉开工率是在回升还是回落？
+      - 淡季背景下钢厂是否有主动减产意愿？
+    fallback: 跟踪钢联样本钢厂螺纹产量、247家高炉及独立电炉开工率环比变化。
+
+  - id: demand
+    title: 需求端
+    focus: [建材消费, 工地开工, 季节性, 天气施工]
+    questions:
+      - 终端消费是否进入季节性淡季？
+      - 高温多雨是否压制工地开工？
+      - 贸易商成交与补库意愿如何？
+    fallback: 关注螺纹周度表观消费、样本工地开工率及区域天气对施工的影响。
+
+  - id: inventory
+    title: 库存
+    focus: [社会库存, 厂库, 去库速度]
+    questions:
+      - 社库去库是否放缓甚至转累？
+      - 库存压力是否从社会端向钢厂端转移？
+    skill_links: [warehouse_receipts]
+    fallback: 对比35城社会库存与钢厂厂库的增减方向及同期分位。
+
+  - id: cost
+    title: 成本与利润
+    focus: [焦煤焦炭, 高炉利润, 电炉成本, 成本传导]
+    questions:
+      - 炉料涨价是否抬升成材成本中枢？
+      - 钢厂利润收缩是否会倒逼减产？
+      - 成材能否向下游传导原料涨幅？
+    fallback: 关注螺纹高炉利润、电炉生产成本及煤焦价格对成本的推动。
+
+  - id: cross
+    title: 产业链联动
+    focus: [热卷, 铁矿, 焦煤, 卷螺差]
+    questions:
+      - 卷螺差是否反映建材与制造业需求分化？
+      - 焦煤强势是否通过成本端支撑螺纹？
+    related_products: [hc, i, jm]
+    fallback: 同时观察热卷库存压力、铁矿采购意愿及黑色系品种分化。
+
+  - id: market
+    title: 盘面验证
+    focus: [量价配合, 突破, 持仓, 期限结构]
+    questions:
+      - 盘面突破是否伴随成交量放大？
+      - 增仓方向是否与价格方向一致？
+    skill_links: [price_volume, technical_signals, candlestick_patterns, key_levels, term_structure, position_rank]
+
+confirmation:
+  - 减产去库叠加需求季节性回暖，且成本抬升能顺畅传导
+  - 突破前高/前低且成交量处于近60日高分位，持仓配合
+
+invalidation:
+  - 旺季需求证伪，社会库存持续累积、厂库转增
+  - 原料涨价但成材跟涨乏力，钢厂利润深度压缩后仍不见减产
+
+seasonal_notes:
+  - 6-8月传统建材需求淡季，高温多雨易压制施工与采购
+
+risk_factors:
+  - 宏观预期与汽车/地产链需求变化
+  - 海外贸易救济调查及出口扰动
+  - 极端天气对工地开工的冲击

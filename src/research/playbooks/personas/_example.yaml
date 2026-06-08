@@ -1,0 +1,70 @@
+# Persona 模板 — 复制后改 id、name、scope；蒸馏规范见 docs/knowledge-distillation.md
+id: example_view
+name: 示例视角
+author: 作者或机构名
+scope:
+  # 三选一或组合：
+  # all_commodities: true          # 全商品（如券商研究所）
+  boards: []                       # 如 [黑色, 能化]
+  products: []                     # 如 [cu, i]
+
+sources:
+  - 期货原始资料/{作者}/（勿写具体价位）
+catalog: playbooks/catalogs/{author}.yaml   # 可选：报告级打标索引
+
+notes:
+  - Playbook 只存思维；数字由 analyzer 实时提供
+  - 同一作者不同板块 → 多条 reasoning_chain + boards/products/tags
+
+reasoning_chain:
+  - id: example_macro_regime
+    chain: macro
+    knowledge_type: framework
+    data_policy: live_link
+    freshness: semi_annual
+    tags: [宏观, 流动性, 利率]
+    # boards/products 留空 = 全品种可用
+    title: 宏观 regime 怎么读
+    focus: [增长, 通胀, 联储, 国内政策]
+    questions:
+      - 当前是流动性驱动还是基本面驱动？
+      - 国内政策空窗期是否使商品回归分品种供需？
+    analyzer_links: [macro_regime]
+    fallback: 先定 macro chain，再下钻板块；勿用单篇周报多空覆盖本步。
+
+  - id: example_board_balance
+    chain: board
+    knowledge_type: checklist
+    data_policy: reference_structure
+    freshness: semi_annual
+    tags: [供需平衡表, 开工, 库存]
+    boards: [黑色]
+    products: [rb, hc, i]
+    title: 板块：供需四表顺序
+    focus: [开工, 发运, 库存, 利润, 基差]
+    questions:
+      - 供应回升与需求走弱是否同时发生？
+      - 库存边际变化是否已成为主要矛盾？
+    analyzer_links: [warehouse_receipts, term_structure, price_volume]
+    fallback: 只记检查顺序，不记上周库存吨数。
+
+  - id: example_product_event
+    chain: event
+    knowledge_type: causal
+    data_policy: mind_only
+    freshness: event
+    tags: [地缘, 进口]
+    boards: [能化]
+    products: [MA]
+    title: 事件链：进口扰动模板
+    focus: [到港, 港口库存, 国产补充, MTO]
+    questions:
+      - 进口断档是否已在港口库存体现？
+      - 局势缓和后逻辑是否应快速切换回高库存叙事？
+    analyzer_links: [warehouse_receipts, term_structure]
+    fallback: 事件链有时效；叙事失效后本步降权，不删历史 id。
+
+confirmation:
+  - 所述 chain 的关键变量至少一条被 live analyzer 验证
+invalidation:
+  - 关键假设被连续两周数据证伪

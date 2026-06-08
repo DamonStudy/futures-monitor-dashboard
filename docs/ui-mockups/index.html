@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UI 模版预览 · 期货决策系统</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: #f0f1f3;
+      color: #1a1f26;
+      padding: 40px 24px 60px;
+    }
+    .wrap { max-width: 880px; margin: 0 auto; }
+    h1 { font-size: 22px; margin: 0 0 8px; font-weight: 600; }
+    .lead { color: #5c6773; line-height: 1.65; margin: 0 0 28px; font-size: 14px; }
+    .grid { display: grid; gap: 14px; }
+    a.card {
+      display: grid;
+      grid-template-columns: 12px 1fr auto;
+      gap: 16px;
+      align-items: center;
+      padding: 18px 20px;
+      background: #fff;
+      border: 1px solid #dde2e8;
+      border-radius: 10px;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color .15s;
+    }
+    a.card:hover { border-color: #9aa8b8; }
+    .swatch { border-radius: 4px; height: 100%; min-height: 48px; }
+    .card h2 { margin: 0 0 4px; font-size: 16px; font-weight: 600; }
+    .card p { margin: 0; font-size: 13px; color: #5c6773; line-height: 1.55; }
+    .tag {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #eef1f4;
+      color: #5c6773;
+      white-space: nowrap;
+    }
+    .note {
+      margin-top: 28px;
+      padding: 14px 16px;
+      background: #fff;
+      border-left: 3px solid #6b7c93;
+      border-radius: 0 8px 8px 0;
+      font-size: 13px;
+      color: #5c6773;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>期货决策系统 · UI 模版预览</h1>
+    <p class="lead">
+      以下为<strong>独立预览页</strong>，使用模拟数据展示「品种决策」详情布局与配色方向。
+      未修改项目主代码。视觉规范见 <a href="../ui-design-spec.md">docs/ui-design-spec.md</a>；代码落地目标为 <code>static/index.html</code>。
+    </p>
+    <div class="grid">
+      <a class="card" href="theme-briefing.html">
+        <div class="swatch" style="background:linear-gradient(180deg,#f7f4ef,#e8e2d8)"></div>
+        <div>
+          <h2>A · 研报简报风</h2>
+          <p>暖白纸感、左侧色条决策带、像券商晨报 PDF。适合盘后复盘、日度几次刷新。</p>
+        </div>
+        <span class="tag">推荐首选</span>
+      </a>
+      <a class="card" href="theme-minimal.html">
+        <div class="swatch" style="background:linear-gradient(180deg,#fff,#f5f6f8)"></div>
+        <div>
+          <h2>B · 极简白板式</h2>
+          <p>大留白、弱边框、强字号层级。最接近 Notion / Linear，信息最「安静」。</p>
+        </div>
+        <span class="tag">最克制</span>
+      </a>
+      <a class="card" href="theme-terminal.html">
+        <div class="swatch" style="background:linear-gradient(180deg,#1c2128,#12151a)"></div>
+        <div>
+          <h2>C · 沉稳终端风</h2>
+          <p>深色底、低饱和强调色。偏专业终端气质，夜间看盘友好。</p>
+        </div>
+        <span class="tag">深色</span>
+      </a>
+      <a class="card" href="theme-ink.html">
+        <div class="swatch" style="background:linear-gradient(180deg,#f4f6f5,#e2ebe6)"></div>
+        <div>
+          <h2>D · 墨绿决策风</h2>
+          <p>墨绿主色 + 浅灰绿底，金融研判感。与通用 SaaS 蓝明显区分。</p>
+        </div>
+        <span class="tag">差异化</span>
+      </a>
+    </div>
+    <p class="note">
+      四套模版均包含：左侧品种索引 + 右侧「决策带 → 证据区 → 附录（折叠）」三层结构。
+      打开后可用浏览器标签对比；确定方向后可混搭（例如 A 的布局 + D 的配色）。
+    </p>
+  </div>
+</body>
+</html>

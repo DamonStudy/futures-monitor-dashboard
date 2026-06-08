@@ -1,0 +1,55 @@
+id: au
+name: 黄金
+board: 贵金属
+version: 1
+sources:
+  - broker: 山金期货
+    file: 20260605-山金期货-贵金属策略报告.pdf
+    date: "2026-06-05"
+
+reasoning_chain:
+  - id: macro
+    title: 宏观与货币属性
+    focus: [美联储政策, 美元, 美债收益率, 就业通胀]
+    questions:
+      - 加息/降息预期如何变化？
+      - 美元与美债收益率是否压制金价？
+    fallback: 黄金定价首看实际利率与美元，跟踪美联储路径与美国就业通胀数据。
+
+  - id: safe_haven
+    title: 避险属性
+    focus: [地缘冲突, 政治风险, 市场避险情绪]
+    questions:
+      - 地缘局势升级还是缓和？
+      - 风险溢价是否在盘面体现？
+    fallback: 地缘僵持推升避险需求，局势缓和则溢价回落。
+
+  - id: physical
+    title: 商品与实物
+    focus: [金银比, 金铜比, 金油比, 进口政策, 持仓]
+    questions:
+      - 进口政策是否抑制国内实物需求？
+      - 内外价差与持仓变化如何？
+    skill_links: [position_rank]
+    fallback: 关注沪金持仓、内外价差及金银比等相对估值。
+
+  - id: market
+    title: 盘面验证
+    focus: [趋势, 波动, 关键位]
+    skill_links: [price_volume, technical_signals, key_levels, candlestick_patterns]
+
+confirmation:
+  - 地缘升级 + 实际利率下行预期 + 美元走弱
+  - 突破前高且波动率扩张，持仓配合
+
+invalidation:
+  - 地缘缓和 + 美元美债强势 + 实物需求受政策抑制
+  - 风险偏好回升，避险溢价快速消退
+
+seasonal_notes:
+  - 关注亚洲节日实物需求与美联储议息会议窗口
+
+risk_factors:
+  - 美联储政策超预期
+  - 地缘局势突变
+  - 国内进口与交易政策

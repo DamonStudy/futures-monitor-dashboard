@@ -1,0 +1,117 @@
+id: macro
+name: 宏观环境
+layer: macro
+version: 3
+updated: "2026-06-08"
+notes:
+  - 本层仅保留 **跨作者通用** 的宏观→商品方法论；不存券商观点、不存过期叙事
+  - 券商宏观合集见 catalogs/macro_brokers.yaml（indexed）；机构立场见 personas（如 citic）
+  - 蒸馏规范 docs/knowledge-distillation.md
+
+sources:
+  - type: framework
+    name: CME 商品基本面课程 / 商品平衡表方法论
+    note: 通用宏观→商品传导
+  - catalog: src/research/playbooks/catalogs/macro_brokers.yaml
+    note: 16 篇多券商宏观 PDF 已索引，未写入具体观点
+
+reasoning_chain:
+  - id: regime
+    chain: macro
+    knowledge_type: framework
+    data_policy: live_link
+    freshness: evergreen
+    title: 增长-通胀组合（regime）
+    focus: [经济增长, 通胀, 滞涨, 软着陆, 再通胀]
+    questions:
+      - 当前更像「增长上+通胀上」「增长下+通胀上」还是「双弱/双强」？
+      - 海外是否滞胀担忧：韧性尚可但净需求走弱、通胀粘性上升？
+      - 国内是政策托底+结构切换，还是总需求明显失速？
+    analyzer_links: [macro_regime]
+    fallback: 先定 regime，再谈商品方向；同一数据在不同组合下含义相反。
+
+  - id: monetary_path
+    chain: macro
+    knowledge_type: framework
+    data_policy: live_link
+    freshness: semi_annual
+    title: 全球央行路径与利率
+    focus: [美联储, 欧央行, 日央行, 降息, 加息, 10Y美债, 金融条件]
+    questions:
+      - 市场定价降息、按兵不动还是加息？与近期数据是否一致？
+      - 利率变动是通胀预期还是增长/中性利率重估驱动？
+      - 国内货币政策空间与外部利率是否形成共振或背离？
+    analyzer_links: [macro_regime]
+    fallback: 利率路径决定金融条件；紧缩压制贵金属与高金融属性品种，宽松需看 growth 是否配合。
+
+  - id: oil_geopolitics
+    chain: macro
+    knowledge_type: causal
+    data_policy: reference_structure
+    freshness: semi_annual
+    title: 油价与地缘二阶效应
+    focus: [中东局势, 冲突溢价, 能源通胀, 炼厂, 贸易流]
+    questions:
+      - 当前油价主导是冲突溢价还是供需基本面？
+      - 地缘缓和/升级是否通过生活成本、金融条件产生二阶效应？
+      - 能化进口依赖品种是否出现「事件逻辑 vs 库存现实」阶段性背离？
+    fallback: 油价既是成本也是通胀；区分事件交易与库存/开工验证阶段。
+
+  - id: china_demand_structure
+    chain: macro
+    knowledge_type: checklist
+    data_policy: live_link
+    freshness: semi_annual
+    title: 国内总需求与结构
+    focus: [PMI, 工增, 地产, 基建, 外需, 制造业, 非制造业]
+    questions:
+      - 制造业与非制造业是否分化？订单 vs 活动谁更强？
+      - 地产/基建拖累是否仍主导黑色预期，高端制造/出口能否对冲？
+      - 单一 PMI 是否足以代表全部门需求？
+    analyzer_links: [macro_regime]
+    fallback: 国内商品常受结构切换影响；勿用单一总量指标覆盖所有板块。
+
+  - id: cross_asset
+    chain: cross_asset
+    knowledge_type: framework
+    data_policy: live_link
+    freshness: semi_annual
+    title: 跨资产风险偏好
+    focus: [商品指数, 股指, 美债, 美元, 相对估值]
+    questions:
+      - 商品相对股/债估值处于什么环境？偏防守还是进攻？
+      - 美元强弱是否同时影响进口成本与内盘计价？
+      - 风险偏好变化是否与目标板块同向？
+    analyzer_links: [macro_regime]
+    fallback: 跨资产决定「配不配商品」；品种/板块逻辑决定「配哪一类」。
+
+  - id: commodity_filter
+    chain: macro
+    knowledge_type: checklist
+    data_policy: reference_structure
+    freshness: evergreen
+    title: 宏观到品种的敏感度过滤
+    focus: [工业金属, 贵金属, 黑色, 能化, 农产品, 利率敏感, 油价敏感]
+    questions:
+      - 该品种对利率、美元、油价、国内内需哪个更敏感？
+      - 当前 regime 对该板块是顺风、逆风还是结构分化？
+      - 宏观同向时，板块内是否仍可能分化？
+    fallback: 黑色偏国内内需；有色偏全球工业+金融属性；贵金属偏实际利率；能化偏油价。
+
+confirmation:
+  - regime、利率路径、跨资产风险偏好对目标板块方向一致
+  - 经济日历窗口内，盘面反应与宏观预期差方向一致
+
+invalidation:
+  - 宏观转弱但价格仅靠情绪或逼仓支撑
+  - 央行路径预期剧烈反转且缺乏数据锚点
+  - 地缘/油价叙事与库存、基差、工业需求长期背离
+
+seasonal_notes:
+  - 重大数据周（非农、CPI、PMI）与 FOMC 窗口前降低杠杆预期
+
+risk_factors:
+  - 油价尾部与能源冲击二阶效应
+  - 全球央行集体转鹰
+  - 中东/贸易政策反复
+  - 国内政策力度不及预期

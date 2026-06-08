@@ -1,0 +1,72 @@
+id: i
+name: 铁矿石
+board: 黑色
+version: 1
+sources:
+  - broker: 中航期货
+    file: 20260605-中航期货-钢材铁矿周度报告.pdf
+    date: "2026-06-05"
+
+reasoning_chain:
+  - id: demand_side
+    title: 需求端（铁水）
+    focus: [铁水产量, 高炉开工, 钢厂盈利率, 采购节奏]
+    questions:
+      - 铁水日均产量是否维持240万吨附近？
+      - 铁水上行空间是否有限？
+      - 钢厂盈利率下降是否压制铁矿采购？
+    fallback: 铁水是铁矿需求核心锚，关注247家钢厂铁水、开工率及盈利率。
+
+  - id: supply_side
+    title: 供给端（发运与到港）
+    focus: [全球发运, 到港量, 矿山供应]
+    questions:
+      - 发运放量后是否转化为到港压力？
+      - 供应节奏是否出现阶段性回落？
+    fallback: 跟踪45港到港、全球发运及主要矿山供应扰动。
+
+  - id: inventory
+    title: 港口库存
+    focus: [港口库存, 疏港, 钢厂库存]
+    questions:
+      - 港口库存由降转增是否构成压力？
+      - 钢厂是否维持按需采购？
+    skill_links: [warehouse_receipts]
+    fallback: 港口库存方向与钢厂补库意愿是短期价格关键变量。
+
+  - id: cost_trade
+    title: 成本与贸易
+    focus: [海运费, 到岸成本, 汇率]
+    questions:
+      - 海运费高位是否抬升到岸成本？
+      - 地缘因素是否扰动贸易流？
+    fallback: 海运费与到岸成本提供下方支撑，但需与库存压力权衡。
+
+  - id: coal_spread
+    title: 煤矿跷跷板
+    focus: [焦煤, 钢厂利润, 黑色分化]
+    questions:
+      - 焦煤上涨是否挤压钢厂利润并压制铁矿？
+      - 黑色系是否呈现煤强矿弱？
+    related_products: [jm, rb]
+    fallback: 焦煤强势时，钢厂往往压降铁矿采购，关注黑色系品种分化。
+
+  - id: market
+    title: 盘面验证
+    focus: [增仓, 量价, 期限结构]
+    skill_links: [price_volume, technical_signals, term_structure, position_rank]
+
+confirmation:
+  - 铁水稳增 + 港口持续去库 + 钢厂补库意愿回升
+  - 焦煤回落或钢厂利润修复，煤矿跷跷板效应减弱
+
+invalidation:
+  - 港口库存转增 + 铁水见顶回落
+  - 钢厂深度亏损后持续压降铁矿采购，煤强矿弱延续
+
+seasonal_notes:
+  - 关注海外矿山发运季节性及国内钢厂检修节奏
+
+risk_factors:
+  - 地缘与海运扰动
+  - 国内粗钢产量政策预期

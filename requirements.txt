@@ -3,4 +3,8 @@ flask
 numpy
 pandas
 python-socks
+PyYAML
+requests
+TA-Lib
 tqsdk
+tushare

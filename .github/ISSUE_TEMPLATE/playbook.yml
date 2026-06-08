@@ -1,0 +1,27 @@
+name: Playbook / 知识库
+description: 补充或改进 YAML 研究框架、板块/品种 SOP、Persona 蒸馏
+title: "[playbook] "
+labels:
+  - playbook
+body:
+  - type: textarea
+    id: scope
+    attributes:
+      label: 适用范围
+      placeholder: 品种代码（如 rb）、板块（如 黑色）、或 macro persona
+    validations:
+      required: true
+
+  - type: textarea
+    id: content
+    attributes:
+      label: 计划补充的内容
+      description: 研究步骤、关注问题、confirmation/invalidation；请勿粘贴具体喊单或未授权研报大段原文
+    validations:
+      required: true
+
+  - type: textarea
+    id: sources
+    attributes:
+      label: 知识来源（追溯用）
+      placeholder: 书籍章节、公开课程、已授权摘要等

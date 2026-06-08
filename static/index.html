@@ -3,57 +3,144 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>期货盯控看板</title>
+  <title>期货决策系统</title>
   <style>
     :root {
       color-scheme: light;
-      --bg: #f6f7f8;
-      --panel: #ffffff;
-      --line: #d9dee5;
-      --text: #17202a;
-      --muted: #6c7785;
-      --accent: #176b87;
-      --up: #b42318;
-      --down: #067647;
-      --warn: #b54708;
+      --bg: #f3f0ea;
+      --bg-side: #faf8f4;
+      --panel: #fffcf7;
+      --panel-soft: #f7f4ef;
+      --l1-bg: #fff9f0;
+      --line: #e4ddd2;
+      --text: #2a241c;
+      --muted: #6f6558;
+      --subtle: #9a9084;
+      --accent: #8b5a2b;
+      --accent-soft: #f5ebe0;
+      --accent-line: #c4a574;
+      --danger: #b83232;
+      --danger-deep: #8f2828;
+      --danger-soft: #fce8e6;
+      --warning: #9a6b00;
+      --warning-soft: #faf0d4;
+      --success: #2d6a3e;
+      --success-soft: #e6f0e8;
+      --neutral-soft: #f1efe8;
+      --shadow: none;
+      --font-sans: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      --font-display: "PingFang SC", "Songti SC", "STSong", "Microsoft YaHei", serif;
+      --space-1: 8px;
+      --space-2: 16px;
+      --space-3: 24px;
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
       background: var(--bg);
       color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: var(--font-sans);
       font-size: 14px;
     }
-    header {
-      height: 56px;
-      display: flex;
+    header.app-header {
+      height: 52px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
       align-items: center;
-      justify-content: space-between;
+      gap: 16px;
       padding: 0 20px;
       border-bottom: 1px solid var(--line);
       background: var(--panel);
     }
-    h1 { margin: 0; font-size: 18px; letter-spacing: 0; }
+    h1, h2, h3, p { margin: 0; }
+    h1 { font-size: 15px; font-weight: 700; letter-spacing: 0; }
+    h2 { font-size: 24px; line-height: 1.2; }
+    h3 { font-size: 15px; font-weight: 600; line-height: 1.3; }
+    h4 { font-size: 13px; font-weight: 600; line-height: 1.35; }
     button {
       border: 1px solid var(--accent);
       background: var(--accent);
-      color: white;
+      color: #fff;
       border-radius: 6px;
       height: 34px;
       padding: 0 14px;
       cursor: pointer;
+      font: inherit;
     }
     button:disabled { opacity: .55; cursor: wait; }
+    .app-brand {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      min-width: 0;
+      justify-self: start;
+    }
+    .app-brand-sub {
+      color: var(--subtle);
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .app-nav {
+      justify-self: center;
+    }
+    .app-actions {
+      justify-self: end;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .view-switch {
+      display: inline-flex;
+      gap: 4px;
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--panel-soft);
+    }
+    .view-tab {
+      min-width: 104px;
+      height: 32px;
+      padding: 0 14px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .view-tab.active {
+      background: var(--panel);
+      color: var(--accent);
+      border-color: var(--line);
+      box-shadow: 0 1px 2px rgba(42, 36, 28, 0.06);
+    }
+    .btn-ghost {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .btn-ghost:hover:not(:disabled) {
+      border-color: var(--accent-line);
+      color: var(--accent);
+    }
     main {
       display: grid;
-      grid-template-columns: 330px 1fr;
-      min-height: calc(100vh - 56px);
+      grid-template-columns: 300px minmax(0, 1fr);
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
     }
     aside {
       border-right: 1px solid var(--line);
-      background: var(--panel);
-      overflow: auto;
+      background: var(--bg-side);
+      overflow-y: auto;
+      min-height: 0;
     }
     .status {
       color: var(--muted);
@@ -61,108 +148,1692 @@
       border-bottom: 1px solid var(--line);
       line-height: 1.7;
     }
-    .board-row, .item-row {
+    .watch-list { display: grid; }
+    .item-row {
       display: grid;
-      gap: 4px;
-      padding: 12px 16px;
+      grid-template-columns: 4px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 14px;
       border-bottom: 1px solid var(--line);
       cursor: pointer;
     }
-    .item-row.active { background: #eef7fa; border-left: 4px solid var(--accent); padding-left: 12px; }
-    .name-line { display: flex; justify-content: space-between; gap: 10px; }
-    .score { font-weight: 700; color: var(--accent); }
-    .muted { color: var(--muted); }
-    .tag { color: var(--muted); font-size: 12px; }
-    .content {
-      padding: 20px;
-      overflow: auto;
+    .item-row.active {
+      background: var(--accent-soft);
     }
-    .summary-grid, .spec-grid {
-      display: grid;
-      gap: 10px;
-      margin-bottom: 16px;
+    .item-priority {
+      align-self: stretch;
+      width: 4px;
+      border-radius: 2px;
+      background: var(--line);
     }
-    .summary-grid { grid-template-columns: repeat(4, minmax(120px, 1fr)); }
-    .spec-grid { grid-template-columns: repeat(6, minmax(120px, 1fr)); }
-    .analysis-metrics {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(120px, 1fr));
-      gap: 10px;
-      margin: 12px 0;
+    .item-priority.score-high { background: var(--danger); }
+    .item-priority.score-mid { background: var(--warning); }
+    .item-priority.score-low { background: var(--subtle); }
+    .item-score {
+      font-size: 13px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      color: var(--muted);
+      min-width: 1.6em;
+      text-align: right;
     }
-    .analysis-columns {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-top: 12px;
+    .item-row.active .item-score { color: var(--accent); }
+    .item-row.active .item-priority { background: var(--accent); }
+    .item-row.active .item-priority.score-high { background: var(--danger-deep); }
+    .item-main { min-width: 0; }
+    .item-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 4px;
     }
-    .analysis-subtitle {
+    .item-title strong, .ellipsis {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .item-brief {
       color: var(--muted);
       font-size: 12px;
-      margin: 12px 0 6px;
+      line-height: 1.45;
     }
-    .analysis-columns ul {
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 14px 16px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .legend span { display: inline-flex; align-items: center; gap: 5px; }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex: 0 0 auto;
+    }
+    .content {
+      padding: 20px 24px 32px;
+      overflow-y: auto;
+      min-height: 0;
+    }
+    .dashboard {
+      display: grid;
+      gap: var(--space-2);
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    main.global-view .dashboard {
+      max-width: 1200px;
+    }
+    .macro-bar {
+      padding: 12px 16px;
+      display: grid;
+      gap: 8px;
+    }
+    .macro-bar-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .macro-bar-head h3 {
       margin: 0;
     }
-    .metric, section {
+    .macro-bar-lead {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .macro-event-list {
+      display: grid;
+      gap: 6px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .macro-event-list li {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+    .macro-event-list .k {
+      color: var(--text);
+      font-weight: 600;
+    }
+    .macro-release-wrap {
+      margin-top: 12px;
+    }
+    .macro-release-wrap + .macro-release-wrap {
+      margin-top: 16px;
+    }
+    .macro-subhead {
+      margin: 0 0 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+    .macro-release-table td,
+    .macro-release-table th {
+      font-size: 12px;
+    }
+    .macro-release-table .pending {
+      color: var(--warning);
+      font-weight: 600;
+    }
+    .macro-release-table .beat-above {
+      color: var(--danger);
+      font-weight: 600;
+    }
+    .macro-release-table .beat-below {
+      color: var(--success);
+      font-weight: 600;
+    }
+    .macro-calendar-block {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--line);
+    }
+    section, .module, .metric, .period-group, .level-item, .signal-card, .pattern-card {
       background: var(--panel);
       border: 1px solid var(--line);
       border-radius: 8px;
     }
-    .metric { padding: 12px; }
-    .metric .label { color: var(--muted); font-size: 12px; margin-bottom: 6px; }
-    .metric .value { font-size: 18px; font-weight: 700; }
-    section { padding: 16px; margin-bottom: 14px; }
-    h2 { margin: 0 0 6px; font-size: 20px; }
-    h3 { margin: 0 0 10px; font-size: 15px; }
-    p { line-height: 1.8; margin: 0; }
-    ul { margin: 0; padding-left: 18px; line-height: 1.8; }
-    .chart-head {
+    section, .module { padding: 16px; }
+    .evidence-card, .hero {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .hero {
+      display: block;
+    }
+    .detail-header {
+      display: grid;
+      grid-template-columns: minmax(168px, 210px) minmax(0, 1fr);
+      gap: 16px;
+      align-items: center;
+      padding: 14px 16px;
+    }
+    .detail-header .chips {
+      margin-top: 6px;
+    }
+    .detail-header-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0;
+      min-width: 0;
+      border-left: 1px solid var(--line);
+      padding-left: 16px;
+    }
+    .detail-header-metrics .metric {
+      background: transparent;
+      border: 0;
+      border-radius: 0;
+      padding: 4px 12px;
+      border-right: 1px solid var(--line);
+    }
+    .detail-header-metrics .metric:last-child {
+      border-right: 0;
+    }
+    .detail-header-metrics .metric .value {
+      font-size: 18px;
+    }
+    .hero-score {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
+    .hero-title {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .hero-symbol { color: var(--muted); font-size: 14px; }
+    .hero-brief {
+      margin-top: 6px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 9px;
+    }
+    .chip, .type-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 22px;
+      padding: 0 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+      background: #fff;
+      white-space: nowrap;
+    }
+    .chip.info { border-color: var(--accent-line); background: var(--accent-soft); color: var(--accent); }
+    .chip.danger { border-color: #f4c7c3; background: var(--danger-soft); color: var(--danger-deep); }
+    .chip.success { border-color: #cfe4bd; background: var(--success-soft); color: var(--success); }
+    .chip.warning { border-color: #f8df90; background: var(--warning-soft); color: #7a4b00; }
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+    main.global-view {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    main.global-view aside {
+      display: none;
+    }
+    .global-meta-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 13px;
+      padding: 10px 14px;
+      background: var(--panel-soft);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+    .decision-band {
+      background: var(--l1-bg);
+      border: 1px solid var(--accent-line);
+      border-left: 5px solid var(--accent);
+      border-radius: 0 10px 10px 0;
+      padding: 20px 22px;
+      box-shadow: none;
+    }
+    /* 标题层级：display 20px · title 15px · group 13px · caption 12px */
+    .band-title {
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.3;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .decision-eyebrow {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: .04em;
+      margin-bottom: 8px;
+    }
+    .zone-title {
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.3;
+      color: var(--text);
+      margin: var(--space-2) 0 var(--space-1);
+    }
+    .group-title {
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.35;
+      color: var(--muted);
+      margin: 0 0 4px;
+    }
+    .decision-headline-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .decision-headline {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 1.45;
+      margin: 0;
+      flex: 1;
+      min-width: 0;
+    }
+    .decision-headline-row .chip {
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .decision-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 22px;
+      padding: 3px 10px;
+      border-radius: 4px;
+      border: 1px solid var(--line);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      background: #fff;
+    }
+    .pill.hot {
+      border-color: #e8b4b0;
+      background: var(--danger-soft);
+      color: var(--danger);
+    }
+    .narrative-panel {
+      border-left: 5px solid var(--accent);
+    }
+    .narrative-list {
+      margin-top: 10px;
+      display: grid;
+      gap: 14px;
+    }
+    .narrative-section-title {
+      margin-bottom: 6px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      color: var(--accent);
+      text-transform: none;
+    }
+    .narrative-section.verify .narrative-section-title {
+      color: var(--warning);
+    }
+    .insight-block {
+      margin-bottom: 4px;
+    }
+    .insight-lead {
+      margin: 0 0 12px;
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 1.45;
+      color: var(--text);
+    }
+    .insight-lines {
+      display: grid;
+      gap: 6px;
+    }
+    .insight-line {
+      margin: 0;
+      display: grid;
+      grid-template-columns: 2.8em minmax(0, 1fr);
+      gap: 6px;
+      align-items: start;
+      font-size: 13px;
+      line-height: 1.65;
+      color: var(--muted);
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+    .insight-line .k {
+      color: var(--subtle);
+      font-size: 12px;
+      font-weight: 600;
+      padding-top: 1px;
+    }
+    .insight-line.gap {
+      color: var(--subtle);
+    }
+    .insight-hit-list,
+    .insight-tag-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 6px;
+    }
+    .insight-hit-item {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 8px;
+      align-items: start;
+      padding: 2px 0;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    .insight-hit-name {
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+    }
+    .insight-hit-desc {
+      color: var(--muted);
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+    .insight-section-label {
+      margin: 0 0 6px;
+    }
+    .insight-summary {
+      margin: 10px 0 0;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text);
+    }
+    .insight-tag-list li {
+      font-size: 13px;
+      line-height: 1.65;
+      color: var(--muted);
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      padding: 0;
+      border: 0;
+    }
+    .insight-tag-list .k {
+      color: var(--subtle);
+      font-size: 12px;
+      font-weight: 600;
+      padding-top: 1px;
+    }
+    .seasonal-panel {
+      display: grid;
+      gap: 12px;
+    }
+    .seasonal-interpret {
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: var(--panel-soft);
+      border: 1px solid var(--line);
+      font-size: 13px;
+      line-height: 1.65;
+      color: var(--muted);
+    }
+    .seasonal-interpret .k {
+      color: var(--text);
+      font-weight: 700;
+      margin-right: 6px;
+    }
+    .seasonal-year-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .seasonal-year-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: 28px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text);
+      cursor: pointer;
+    }
+    .seasonal-year-chip.off {
+      opacity: .4;
+      text-decoration: line-through;
+    }
+    .seasonal-year-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex: 0 0 auto;
+    }
+    canvas#seasonal-chart {
+      width: 100%;
+      height: 280px;
+      display: block;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+    .driver-group-block {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-soft);
+    }
+    .driver-groups-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: var(--space-2);
+      align-items: start;
+    }
+    .driver-groups-grid .driver-group-block {
+      margin-top: 0;
+    }
+    .driver-groups-grid .change-matrix.compact {
+      min-width: 0;
+    }
+    .driver-zone-layout {
+      display: grid;
+      grid-template-columns: minmax(0, max-content) minmax(260px, 1fr);
+      gap: var(--space-2);
+      align-items: start;
+    }
+    .driver-matrix-wrap .change-matrix {
+      max-width: 100%;
+    }
+    .driver-lens-panel {
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-soft);
+      min-width: 0;
+    }
+    .driver-lens-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .driver-lens-item + .driver-lens-item {
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+    .driver-lens-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .driver-lens-text {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--muted);
+    }
+    .driver-category-row td {
+      padding: 10px 12px;
+      text-align: left !important;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      background: var(--panel-soft);
+      border-bottom: 1px solid var(--line);
+    }
+    .driver-group-block + .driver-group-block {
+      margin-top: 12px;
+    }
+    .driver-group-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+      font-size: 14px;
+      font-weight: 800;
+    }
+    .change-matrix-wrap {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+    .change-matrix {
+      width: max-content;
+      max-width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .change-matrix th,
+    .change-matrix td {
+      border-bottom: 1px solid var(--line);
+      padding: 9px 10px;
+      text-align: right;
+      white-space: nowrap;
+      vertical-align: middle;
+    }
+    .change-matrix th:first-child,
+    .change-matrix td:first-child,
+    .change-matrix th:nth-child(2),
+    .change-matrix td:nth-child(2) {
+      text-align: left;
+    }
+    .change-matrix th {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      background: var(--panel-soft);
+    }
+    .change-matrix tr:last-child td {
+      border-bottom: 0;
+    }
+    .change-matrix-row {
+      cursor: pointer;
+      transition: background .12s ease;
+    }
+    .change-matrix-row:hover {
+      background: var(--panel-soft);
+    }
+    .change-matrix-row.chart-open {
+      background: var(--accent-soft);
+    }
+    .change-matrix .name-cell {
+      width: 1%;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .change-matrix .code-cell,
+    .change-matrix .group-cell,
+    .change-matrix .constituent-toggle-cell {
+      width: 1%;
+      white-space: nowrap;
+    }
+    .change-matrix .group-cell {
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .change-matrix .latest-cell {
+      font-weight: 700;
+      color: var(--text);
+    }
+    .change-cell.rise {
+      background: var(--danger-soft);
+      color: var(--danger-deep);
+      font-weight: 700;
+    }
+    .change-cell.fall {
+      background: var(--success-soft);
+      color: var(--success);
+      font-weight: 700;
+    }
+    .change-cell.flat {
+      color: var(--muted);
+    }
+    .change-cell.heatmap-cell {
+      font-weight: 700;
+      transition: background-color .12s ease, color .12s ease;
+    }
+    .change-cell.heatmap-cell.flat {
+      background: var(--neutral-soft);
+      color: var(--subtle);
+    }
+    .constituent-toggle-cell {
+      text-align: center !important;
+    }
+    .constituent-toggle {
+      height: 26px;
+      padding: 0 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--muted);
+      font: inherit;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .constituent-toggle.open {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: #1f6aa5;
+    }
+    .constituent-detail-row td {
+      padding: 0 !important;
+      background: var(--panel-soft);
+      border-bottom: 1px solid var(--line);
+    }
+    .constituent-block {
+      padding: 12px 14px;
+    }
+    .constituent-block.panel {
+      padding: 10px 0 0;
+      border-top: 1px dashed var(--line);
+      margin-top: 4px;
+    }
+    .constituent-scope {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+    .constituent-groups {
+      display: grid;
+      gap: 10px;
+    }
+    .constituent-group-label {
+      margin-bottom: 6px;
+      color: var(--subtle);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .02em;
+    }
+    .constituent-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .constituent-tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 0 8px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .constituent-note {
+      margin: 10px 0 0;
+      color: var(--subtle);
+      font-size: 11px;
+      line-height: 1.5;
+    }
+    .index-series-stack {
+      display: grid;
+      gap: 16px;
+    }
+    .index-series-block {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-soft);
+    }
+    .index-series-head {
+      margin-bottom: 10px;
+    }
+    .index-series-head .group-title {
+      margin-bottom: 4px;
+    }
+    .nanhua-index-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(300px, .95fr);
+      gap: 14px;
+      align-items: start;
+    }
+    .nanhua-index-panel {
+      min-width: 0;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: var(--shadow);
+      box-sizing: border-box;
+    }
+    .nanhua-index-left {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .nanhua-heatmap-block {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+    .nanhua-heatmap-label {
+      margin: 0 0 8px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .nanhua-index-left .change-matrix-wrap {
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      overflow: visible;
+    }
+    .nanhua-index-left .change-matrix-row {
+      cursor: default;
+    }
+    .nanhua-index-left .change-matrix-row:hover {
+      background: transparent;
+    }
+    .nanhua-index-left .change-matrix {
+      width: 100%;
+      max-width: none;
+      table-layout: fixed;
+      font-size: 12px;
+    }
+    .nanhua-index-left .change-matrix th,
+    .nanhua-index-left .change-matrix td {
+      padding: 6px 8px;
+    }
+    .nanhua-index-left .change-matrix .name-cell {
+      width: 34%;
+      max-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 12px;
+    }
+    .nanhua-index-left .change-matrix .code-cell {
+      width: 11%;
+      font-size: 11px;
+    }
+    .nanhua-index-left .change-matrix .latest-cell {
+      width: 15%;
+      font-size: 12px;
+    }
+    .nanhua-index-left .change-matrix .change-cell {
+      width: 10%;
+      padding: 6px 4px;
+      font-size: 12px;
+    }
+    .nanhua-index-left .change-matrix th {
+      font-size: 11px;
+      padding: 5px 6px;
+    }
+    .nanhua-index-right {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .nanhua-chart-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .nanhua-chart-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .nanhua-chart-sub {
+      font-size: 11px;
+      color: var(--subtle);
+      white-space: nowrap;
+    }
+    canvas#nanhua-normalized-chart {
+      width: 100%;
+      height: 220px;
+      flex: 1 1 auto;
+      min-height: 160px;
+      display: block;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      cursor: crosshair;
+    }
+    .nanhua-chart-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px 8px;
+      margin-top: 8px;
+      flex-shrink: 0;
+    }
+    .nanhua-legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .nanhua-legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      flex-shrink: 0;
+    }
+    .board-product-matrix {
+      display: grid;
+      gap: 10px;
+    }
+    .board-product-row {
+      display: grid;
+      grid-template-columns: 132px minmax(0, 1fr);
+      gap: 12px;
+      align-items: start;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+    .board-product-head {
+      min-width: 0;
+    }
+    .board-product-name {
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.4;
+      color: var(--text);
+    }
+    .board-product-meta {
+      margin-top: 4px;
+      font-size: 11px;
+      line-height: 1.5;
+      color: var(--subtle);
+    }
+    .board-product-meta .idx-change {
+      font-weight: 700;
+    }
+    .board-product-body {
+      min-width: 0;
+    }
+    .board-product-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      max-height: none;
+    }
+    .board-product-chips.collapsed {
+      max-height: 68px;
+      overflow: hidden;
+      position: relative;
+    }
+    .board-product-chips.collapsed::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 22px;
+      background: linear-gradient(180deg, rgba(255, 252, 247, 0), #fff 85%);
+      pointer-events: none;
+    }
+    .board-product-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: 28px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      max-width: 100%;
+    }
+    .board-product-chip .chip-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .board-product-chip .chip-change {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+      color: inherit;
+    }
+    .board-product-actions {
+      margin-top: 6px;
+    }
+    .board-product-toggle {
+      height: 26px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--panel-soft);
+      color: var(--muted);
+      font: inherit;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .board-product-empty {
+      font-size: 12px;
+      color: var(--subtle);
+      line-height: 1.6;
+      padding: 4px 0;
+    }
+    .change-matrix .code-cell {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+    .driver-chart-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(280px, .85fr);
+      gap: 14px;
+      align-items: start;
+    }
+    .driver-chart-left {
+      display: grid;
+      gap: 10px;
+      max-height: 520px;
+      overflow: auto;
+      padding-right: 2px;
+    }
+    .driver-chart-right {
+      position: sticky;
+      top: 12px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+    .driver-group-block.compact {
+      padding: 10px 12px;
+    }
+    .matrix-name-line {
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 6px;
+      max-width: 100%;
+    }
+    .matrix-name-block {
+      min-width: 0;
+    }
+    .matrix-name {
+      font-weight: 600;
+      line-height: 1.45;
+      min-width: 0;
+    }
+    .row-chart-toggle {
+      flex-shrink: 0;
+      padding: 4px;
+      color: var(--subtle);
+    }
+    .row-chart-toggle.open {
+      color: var(--accent);
+    }
+    .row-chart-toggle.icon-only .chart-chevron {
+      width: 7px;
+      height: 7px;
+    }
+    .row-chart-toggle.open .chart-chevron {
+      transform: rotate(45deg);
+    }
+    .row-chart-detail td {
+      padding: 0 10px 12px !important;
+      background: var(--panel-soft);
+      border-bottom: 1px solid var(--line);
+    }
+    canvas.row-chart-canvas {
+      width: 100%;
+      height: 160px;
+      display: block;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      cursor: crosshair;
+    }
+    .change-matrix.compact {
+      min-width: 560px;
+      font-size: 12px;
+    }
+    .change-matrix.compact th,
+    .change-matrix.compact td {
+      padding: 6px 8px;
+    }
+    .chart-panel.compact {
+      gap: 8px;
+    }
+    .chart-panel.compact .chart-panel-title h3 {
+      font-size: 14px;
+    }
+    .chart-panel.compact .series-picker {
+      max-height: 72px;
+      overflow: auto;
+    }
+    .chart-panel {
+      display: grid;
+      gap: 12px;
+    }
+    .chart-panel-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .chart-panel-title h3 {
+      margin-bottom: 4px;
+    }
+    .chart-panel-metrics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .series-picker {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .series-chip {
+      height: 28px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--muted);
+      font: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .series-chip.active {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+    canvas#global-chart-main {
+      width: 100%;
+      height: 200px;
+      display: block;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+    .mini-chart {
+      width: 100%;
+      height: 180px;
+      display: block;
+      margin-top: 12px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+    }
+    .metric {
+      padding: 12px;
+      min-width: 0;
+    }
+    .metric .label {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+    .metric .value {
+      font-size: 20px;
+      line-height: 1.2;
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+    .metric .sub {
+      margin-top: 6px;
+      color: var(--subtle);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+    .summary-card {
+      border-left: 4px solid var(--accent);
+      background: var(--l1-bg);
+    }
+    .summary-top, .module-head, .chart-head {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
       margin-bottom: 10px;
     }
+    .summary-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+    .summary-text {
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.7;
+    }
+    .section-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .pillar-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 4px;
+      margin-bottom: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-soft);
+      position: sticky;
+      top: 0;
+      z-index: 3;
+    }
+    .pillar-tab {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: 32px;
+      padding: 0 12px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--muted);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .pillar-tab.active {
+      background: var(--panel);
+      color: var(--accent);
+    }
+    .pillar-count {
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 18px;
+      text-align: center;
+    }
+    .pillar-stack {
+      display: grid;
+      gap: 10px;
+    }
+    details.pillar-section {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+    details.pillar-section > summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 12px 14px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    details.pillar-section > summary::-webkit-details-marker { display: none; }
+    .pillar-summary-main { min-width: 0; }
+    .pillar-summary-main strong {
+      display: block;
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .pillar-summary-sub {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .pillar-body {
+      padding: 0 14px 14px;
+      border-top: 1px solid var(--line);
+    }
+    .pillar-body .module-head { margin-top: 12px; }
+    .pillar-empty {
+      padding: 24px 16px;
+      color: var(--muted);
+      line-height: 1.7;
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+      background: var(--panel-soft);
+    }
+    .module.wide { grid-column: 1 / -1; }
+    .module-sub {
+      color: var(--muted);
+      line-height: 1.65;
+      margin-top: -2px;
+    }
+    .chart-tools {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+    }
+    .ma-legend {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .ma-key { display: inline-flex; align-items: center; gap: 5px; }
+    .ma-line {
+      width: 24px;
+      height: 3px;
+      border-radius: 99px;
+      background: var(--accent);
+    }
+    .ma-line.ma60 { background: var(--danger); }
     .tabs { display: flex; gap: 6px; }
     .tab {
-      height: 28px;
-      padding: 0 10px;
-      border: 1px solid var(--line);
+      height: 30px;
+      padding: 0 11px;
+      border-color: var(--line);
       background: #fff;
       color: var(--text);
-      border-radius: 6px;
+      border-radius: 999px;
     }
     .tab.active {
       border-color: var(--accent);
-      background: #eef7fa;
+      background: var(--accent-soft);
       color: var(--accent);
-      font-weight: 700;
+      font-weight: 600;
     }
-    canvas {
+    .signal-groups, .card-grid, .level-grid {
+      display: grid;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .period-group { padding: 8px 10px; background: var(--panel-soft); }
+    .period-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 4px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+    .signal-line {
+      display: grid;
+      grid-template-columns: 8px auto minmax(0, 1fr) auto;
+      gap: 4px 8px;
+      align-items: start;
+      padding: 3px 0;
+      border-top: 1px solid var(--line);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .signal-line:first-of-type { border-top: 0; }
+    .signal-line .dot {
+      margin-top: calc((1.5em - 8px) / 2);
+    }
+    .signal-name {
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+    }
+    .signal-desc {
+      color: var(--muted);
+      font-size: 12px;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+    .signal-value {
+      color: var(--subtle);
+      font-size: 12px;
+      text-align: right;
+      white-space: nowrap;
+      align-self: center;
+    }
+    .card-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .signal-card, .pattern-card {
+      padding: 11px;
+      border-left: 4px solid var(--accent);
+      min-width: 0;
+    }
+    .signal-card.bull, .pattern-card.bull { border-left-color: var(--danger-deep); }
+    .signal-card.bear, .pattern-card.bear { border-left-color: var(--success); }
+    .signal-card.watch, .pattern-card.watch { border-left-color: var(--warning); }
+    .signal-card-title, .pattern-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .pattern-card { display: grid; gap: 7px; }
+    .level-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .level-item {
+      padding: 10px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+      border-left: 4px solid var(--accent);
+    }
+    .level-item.support { border-left-color: var(--success); }
+    .level-item.resistance { border-left-color: var(--danger); }
+    .level-price { font-size: 17px; font-weight: 800; }
+    .level-distance { color: var(--muted); font-weight: 800; white-space: nowrap; }
+    .type-pill.support { background: var(--success-soft); color: var(--success); border-color: #cfe4bd; }
+    .type-pill.resistance { background: var(--danger-soft); color: var(--danger-deep); border-color: #f4c7c3; }
+    .type-pill.confirm { background: var(--accent-soft); color: var(--accent); border-color: var(--accent-line); }
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: 12px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+    }
+    .table-wrap table {
+      width: max-content;
+      max-width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      background: #fff;
+    }
+    .table-wrap th,
+    .table-wrap td {
+      border-bottom: 1px solid var(--line);
+      padding: 8px 10px;
+      text-align: left;
+      white-space: nowrap;
+      vertical-align: top;
+    }
+    .table-wrap th:first-child,
+    .table-wrap td:first-child {
+      width: 1%;
+    }
+    .table-wrap th {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+      background: var(--panel-soft);
+    }
+    .table-wrap tr:last-child td { border-bottom: 0; }
+    .term-card {
+      box-shadow: none;
+      background: #f3f5f7;
+      color: var(--muted);
+    }
+    .matrix-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 14px;
+      align-items: start;
+    }
+    .matrix-panel {
+      min-width: 0;
+      width: 100%;
+    }
+    .matrix-table {
+      display: grid;
+      gap: 6px;
+      width: max-content;
+      max-width: 100%;
+    }
+    .matrix-scroll {
+      min-width: 0;
+      width: 100%;
+      overflow-x: auto;
+    }
+    .matrix-label {
+      min-height: 36px;
+      display: flex;
+      align-items: center;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 12px;
+    }
+    .matrix-head {
+      justify-content: center;
+      border-bottom: 1px solid var(--line);
+      padding: 0 4px;
+    }
+    .matrix-label:not(.matrix-head) {
+      padding-right: 8px;
+    }
+    .matrix-cell {
+      width: 100%;
+      min-height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      background: var(--panel-soft);
+      color: var(--text);
+      font-weight: 600;
+      padding: 0 4px;
+      font-size: 13px;
+    }
+    .matrix-cell.long {
+      border-color: #f4c7c3;
+      background: var(--danger-soft);
+      color: var(--danger-deep);
+    }
+    .matrix-cell.short {
+      border-color: #cfe4bd;
+      background: var(--success-soft);
+      color: var(--success);
+    }
+    .matrix-cell.neutral {
+      border-color: var(--line);
+      background: #f7f8fa;
+      color: var(--muted);
+    }
+    .matrix-cell.active {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+    .matrix-explain {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: var(--panel-soft);
+    }
+    .matrix-explain-title {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .matrix-explain-title h3 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+    .reason-list {
+      margin: 10px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    .reason-list li { margin: 2px 0; }
+    .term-card.available { background: var(--panel); color: var(--text); box-shadow: var(--shadow); }
+    .term-spread-section,
+    .term-chain-section,
+    .term-curve-panel {
+      margin-top: 14px;
+    }
+    .term-spread-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    @media (max-width: 720px) {
+      .term-spread-grid { grid-template-columns: 1fr; }
+    }
+    .chart-collapse .chart-head {
+      margin-bottom: 0;
+    }
+    .chart-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: auto;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: var(--text);
+      font: inherit;
+      cursor: pointer;
+    }
+    .chart-toggle h3 {
+      font-size: 15px;
+    }
+    .chart-chevron {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-right: 2px solid var(--muted);
+      border-bottom: 2px solid var(--muted);
+      transform: rotate(-45deg);
+      transition: transform .15s ease;
+      flex: 0 0 auto;
+    }
+    .chart-collapse.open .chart-chevron {
+      transform: rotate(45deg);
+    }
+    .chart-body {
+      margin-top: 12px;
+    }
+    .chart-body[hidden] {
+      display: none;
+    }
+    .kline-panel .chart-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    canvas#kline {
       width: 100%;
       height: 360px;
       display: block;
     }
-    .empty { color: var(--muted); padding: 30px; }
-    .up { color: var(--up); }
-    .down { color: var(--down); }
-    .warn { color: var(--warn); }
-    @media (max-width: 900px) {
+    .table-more {
+      margin-top: 8px;
+      color: var(--subtle);
+      font-size: 12px;
+    }
+    .empty {
+      color: var(--muted);
+      padding: 30px;
+      line-height: 1.7;
+    }
+    .muted { color: var(--muted); }
+    .subtle { color: var(--subtle); }
+    .up { color: var(--danger); }
+    .down { color: var(--success); }
+    .warn { color: var(--warning); }
+    @media (max-width: 1100px) {
+      main { grid-template-columns: 290px minmax(0, 1fr); }
+      .detail-header { grid-template-columns: 1fr; align-items: start; }
+      .detail-header-metrics {
+        border-left: 0;
+        padding-left: 0;
+        border-top: 1px solid var(--line);
+        padding-top: 12px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+      .detail-header-metrics .metric {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 10px;
+      }
+      .metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .card-grid, .level-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .driver-chart-layout { grid-template-columns: 1fr; }
+      .driver-chart-right { position: static; }
+      .nanhua-index-layout { grid-template-columns: 1fr; }
+      .nanhua-index-right { position: static; }
+      .board-product-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 860px) {
+      header.app-header {
+        grid-template-columns: 1fr auto;
+        grid-template-areas:
+          "brand actions"
+          "nav nav";
+        height: auto;
+        padding: 10px 14px;
+        gap: 10px;
+      }
+      .app-brand { grid-area: brand; flex-direction: column; align-items: flex-start; gap: 2px; }
+      .app-brand-sub { display: none; }
+      .app-nav { grid-area: nav; justify-self: stretch; }
+      .view-switch { width: 100%; }
+      .view-tab { flex: 1; min-width: 0; }
+      .app-actions { grid-area: actions; }
       main { grid-template-columns: 1fr; }
-      aside { max-height: 44vh; border-right: 0; border-bottom: 1px solid var(--line); }
-      .summary-grid, .spec-grid { grid-template-columns: repeat(2, 1fr); }
-      .analysis-metrics { grid-template-columns: repeat(2, 1fr); }
-      .analysis-columns { grid-template-columns: 1fr; }
+      aside { max-height: 42vh; border-right: 0; border-bottom: 1px solid var(--line); }
+      .content { padding: 14px; }
+      .driver-zone-layout { grid-template-columns: 1fr; }
+      .section-grid { grid-template-columns: 1fr; }
+      .matrix-layout { grid-template-columns: 1fr; }
+      .module.wide { grid-column: auto; }
+      .card-grid, .level-grid { grid-template-columns: 1fr; }
+      .hero { grid-template-columns: 48px minmax(0, 1fr); }
+      .score-ring.large { width: 48px; height: 48px; font-size: 18px; }
+      .summary-top, .module-head, .chart-head { align-items: flex-start; flex-direction: column; }
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>期货盯控看板</h1>
-    <button id="refresh">刷新数据</button>
+  <header class="app-header">
+    <div class="app-brand">
+      <h1>期货决策系统</h1>
+      <span class="app-brand-sub">公众号：迷你量化</span>
+    </div>
+    <nav class="app-nav" aria-label="主视图">
+      <div class="view-switch" role="tablist">
+        <button type="button" class="view-tab active" id="globalTab" role="tab" aria-selected="true" onclick="setView('global')">大盘首页</button>
+        <button type="button" class="view-tab" id="watchTab" role="tab" aria-selected="false" onclick="setView('watch')">品种决策</button>
+      </div>
+    </nav>
+    <div class="app-actions">
+      <button type="button" class="btn-ghost" id="refresh">刷新数据</button>
+    </div>
   </header>
-  <main>
+  <main class="global-view">
     <aside>
       <div class="status" id="status">打开页面后优先复用今日缓存。</div>
       <div id="list"></div>
@@ -173,81 +1844,1311 @@
   </main>
 
   <script>
-    let state = { items: [], selected: 0, period: "day" };
+    const MAX_DETAIL_TABLE_ROWS = 6;
+    const DETAIL_PILLARS = [
+      { id: "overview", label: "总览" },
+      { id: "market", label: "量价技术", moduleIds: ["price_volume", "board_resonance", "technical_signals", "candlestick_patterns", "key_levels"], tableIds: ["price_volume", "candlestick_patterns", "board_resonance"], extras: ["kline"] },
+      { id: "fundamental", label: "产业基本面", moduleIds: ["product_framework", "board_framework", "basis", "warehouse_receipts"] },
+      { id: "seasonal", label: "季节性", moduleIds: ["seasonality"] },
+      { id: "capital", label: "资金结构", moduleIds: ["term_structure", "position_rank"] },
+    ];
+    const SEASONAL_YEAR_COLORS = ["#378add", "#f5a623", "#f8d90f", "#50c878", "#b37feb", "#7ed6df", "#95a5a6", "#4a5568"];
+    const NANHUA_CHART_COLORS = SEASONAL_YEAR_COLORS;
+    const NANHUA_COMPOSITE_CODES = new Set(["NHII", "NHMI"]);
+    const NANHUA_LEAF_CODES = new Set(["NHAI", "NHECI", "NHFI", "NHNFI", "NHPMI"]);
+    const NANHUA_TABLE_ORDER = { NHCI: 0, NHAI: 1, NHECI: 2, NHFI: 3, NHNFI: 4, NHPMI: 5 };
+    let state = { items: [], selected: 0, period: "day", matrixCell: null, view: "global", global: null, macro: null, globalExpandedIndexId: null, globalOpenChartId: null, boardProductExpanded: {}, detailPillar: "overview", seasonalHiddenYears: {} };
+    const GLOBAL_PERIOD_COLS = [
+      { key: "1d", label: "日度" },
+      { key: "5d", label: "周度" },
+      { key: "ytd", label: "YTD" },
+    ];
+    const DRIVER_GROUP_ORDER = ["国内商品", "海外利率", "国内利率", "汇率", "外盘商品", "股票风险偏好"];
+    const DRIVER_GROUP_LENS = {
+      "国内商品": "现货氛围与期货指数互相印证，看同向还是背离。",
+      "海外利率": "利率路径决定金融条件；路径转紧压制估值，转松需结合增长叙事。",
+      "国内利率": "反映国内增长与流动性，黑色、地产链敏感度更高。",
+      "汇率": "人民币走弱抬升进口成本，影响内盘计价与跨境价差。",
+      "外盘商品": "全球定价锚；原油看地缘与库存，金属看工业与电网需求。",
+      "股票风险偏好": "A 股风偏辅助判断交易情绪，不与商品简单同向。",
+    };
+    const API_BASE = window.location.protocol === "file:" ? "http://127.0.0.1:8011" : "";
     const statusEl = document.getElementById("status");
     const listEl = document.getElementById("list");
     const detailEl = document.getElementById("detail");
     const refreshBtn = document.getElementById("refresh");
+    const globalTab = document.getElementById("globalTab");
+    const watchTab = document.getElementById("watchTab");
 
-    refreshBtn.addEventListener("click", () => refresh(true));
+    refreshBtn.addEventListener("click", () => state.view === "global" ? refreshGlobal(true) : refresh(true));
+    detailEl.addEventListener("click", onGlobalDetailClick);
     window.addEventListener("load", init);
 
+    function onGlobalDetailClick(event) {
+      if (state.view !== "global") return;
+      const chartBtn = event.target.closest("[data-toggle-chart]");
+      if (chartBtn) {
+        event.preventDefault();
+        toggleRowChart(chartBtn.getAttribute("data-toggle-chart"));
+        return;
+      }
+      const constituentBtn = event.target.closest("[data-toggle-constituents]");
+      if (constituentBtn) {
+        event.preventDefault();
+        toggleGlobalIndexExpand(constituentBtn.getAttribute("data-toggle-constituents"));
+        return;
+      }
+      const boardExpandBtn = event.target.closest("[data-toggle-board-products]");
+      if (boardExpandBtn) {
+        event.preventDefault();
+        toggleBoardProductExpand(boardExpandBtn.getAttribute("data-toggle-board-products"));
+        return;
+      }
+      const productChip = event.target.closest("[data-open-product]");
+      if (productChip) {
+        event.preventDefault();
+        openProductFromSymbol(productChip.getAttribute("data-open-product"));
+      }
+    }
+
     async function init() {
+      const usedGlobalCache = await loadGlobalCache(true);
+      if (!usedGlobalCache) await refreshGlobal(false);
       const usedCache = await loadCache(true);
       if (!usedCache) refresh(false);
+      else if (!cacheHasSkills()) refresh(true);
+      if (state.global && !globalMatrixReady(state.global) && state.items?.length) {
+        await refreshGlobal(false);
+      }
+    }
+
+    function setView(view) {
+      state.view = view;
+      document.querySelector("main").classList.toggle("global-view", view === "global");
+      globalTab.classList.toggle("active", view === "global");
+      watchTab.classList.toggle("active", view === "watch");
+      globalTab.setAttribute("aria-selected", view === "global" ? "true" : "false");
+      watchTab.setAttribute("aria-selected", view === "watch" ? "true" : "false");
+      refreshBtn.textContent = view === "global" ? "刷新大盘" : "刷新数据";
+      renderList();
+      renderCurrent();
+    }
+
+    function renderCurrent() {
+      if (state.view === "global") renderGlobalMarket();
+      else renderDetail();
+    }
+
+    async function refreshGlobal(force = false) {
+      refreshBtn.disabled = true;
+      statusEl.textContent = force ? "正在强制刷新大盘首页数据..." : "正在刷新大盘首页数据...";
+      try {
+        const response = await fetch(`${API_BASE}/api/global-market/refresh${force ? "?force=1" : ""}`, { method: "POST" });
+        const payload = await response.json();
+        if (payload.ok === false) throw new Error(payload.message || "大盘首页刷新失败");
+        state.global = payload;
+        renderList();
+        renderCurrent();
+      } catch (error) {
+        statusEl.innerHTML = `<span class="warn">大盘刷新失败：</span>${e(error.message)}<br>${apiHint()}`;
+        await loadGlobalCache(false);
+      } finally {
+        refreshBtn.disabled = false;
+      }
+    }
+
+    function globalNarrativeReady(payload) {
+      const narrative = payload?.narrative;
+      return !!(narrative && typeof narrative === "object" && narrative.version === 2 && narrative.sections?.length);
+    }
+
+    function globalMatrixReady(payload) {
+      const matrix = payload?.board_product_matrix;
+      return !!(matrix && matrix.status === "ok" && (matrix.rows || []).some(row => row.product_count > 0));
+    }
+
+    async function loadGlobalCache(onlyToday) {
+      try {
+        const response = await fetch(`${API_BASE}/api/global-market`);
+        const payload = await response.json();
+        if (payload.ok === false) return false;
+        if (onlyToday && !payload.cache_is_today) return false;
+        if (onlyToday && !(payload.nanhua_indices && payload.nanhua_indices.length)) return false;
+        if (onlyToday && !globalNarrativeReady(payload)) return false;
+        state.global = payload;
+        renderList();
+        renderCurrent();
+        return true;
+      } catch (error) {
+        if (state.view === "global") {
+          statusEl.innerHTML = `<span class="warn">连接大盘数据失败：</span>${e(error.message)}<br>${apiHint()}`;
+        }
+      }
+      return false;
     }
 
     async function refresh(force = false) {
       refreshBtn.disabled = true;
       statusEl.textContent = force ? "正在强制请求天勤行情并计算指标..." : "正在请求天勤行情并计算指标...";
       try {
-        const response = await fetch(`/api/refresh${force ? "?force=1" : ""}`, { method: "POST" });
+        const response = await fetch(`${API_BASE}/api/refresh${force ? "?force=1" : ""}`, { method: "POST" });
         const payload = await response.json();
         if (!payload.ok) throw new Error(payload.message || "刷新失败");
         state.items = payload.items || [];
+        state.macro = payload.macro || null;
         state.selected = 0;
-        statusEl.innerHTML = `${payload.from_cache ? "使用今日缓存" : "刷新时间"}：${payload.refreshed_at}<br>活跃品种：${payload.active_count}/${payload.universe_count}`;
         renderList();
-        renderDetail();
+        renderCurrent();
       } catch (error) {
-        statusEl.innerHTML = `<span class="warn">刷新失败：</span>${error.message}`;
-        loadCache(false);
+        statusEl.innerHTML = `<span class="warn">刷新失败：</span>${e(error.message)}<br>${apiHint()}`;
+        await loadCache(false);
       } finally {
         refreshBtn.disabled = false;
       }
     }
 
     async function loadCache(onlyToday) {
-      const response = await fetch("/api/snapshot");
-      const payload = await response.json();
-      if (onlyToday && !payload.cache_is_today) return false;
-      if (payload.items && payload.items.length) {
-        state.items = payload.items;
-        state.selected = 0;
-        statusEl.innerHTML = `${payload.cache_is_today ? "使用今日缓存" : "使用历史缓存"}：${payload.refreshed_at}<br>活跃品种：${payload.active_count}/${payload.universe_count}`;
-        renderList();
-        renderDetail();
-        return true;
+      try {
+        const response = await fetch(`${API_BASE}/api/snapshot`);
+        const payload = await response.json();
+        if (onlyToday && !payload.cache_is_today) return false;
+        if (payload.items && payload.items.length) {
+          state.items = payload.items;
+          state.macro = payload.macro || null;
+          state.selected = 0;
+          renderList();
+          renderCurrent();
+          return true;
+        }
+      } catch (error) {
+        statusEl.innerHTML = `<span class="warn">连接服务失败：</span>${e(error.message)}<br>${apiHint()}`;
       }
       return false;
     }
 
+    function apiHint() {
+      return `请确认服务已启动，并从 <strong>http://127.0.0.1:8011</strong> 打开看板。`;
+    }
+
+    function cacheHasSkills() {
+      return state.items.length > 0 && state.items.slice(0, 5).every(item =>
+        (Array.isArray(item.analyzers) && item.analyzers.length) || (Array.isArray(item.skills) && item.skills.length)
+      );
+    }
+
     function renderList() {
+      if (state.view === "global") {
+        renderGlobalList();
+        return;
+      }
+      statusEl.innerHTML = state.items.length
+        ? `品种决策：${state.items.length} 个活跃品种<br>当前视图使用${state.period === "day" ? "日线" : periodName(state.period)}详情`
+        : "打开页面后优先复用今日缓存。";
       if (!state.items.length) {
         listEl.innerHTML = '<div class="empty">暂无活跃品种结果。</div>';
         return;
       }
-      listEl.innerHTML = state.items.map((item, index) => `
-        <div class="item-row ${index === state.selected ? "active" : ""}" onclick="selectItem(${index})">
-          <div class="name-line">
-            <strong>${item.name}</strong>
-            <span class="score">${item.score}</span>
-          </div>
-          <div class="tag">${item.board} · ${item.state}</div>
-          <div class="muted">${item.level}</div>
+      listEl.innerHTML = `
+        <div class="watch-list">
+          ${state.items.map((item, index) => `
+            <div class="item-row ${index === state.selected ? "active" : ""}" onclick="selectItem(${index})">
+              <span class="item-priority ${scoreClass(item.score)}" aria-hidden="true"></span>
+              <div class="item-main">
+                <div class="item-title">
+                  <strong>${e(item.name)}</strong>
+                  <span class="${directionClass(item)}">${directionText(item.direction)}</span>
+                </div>
+                <div class="item-brief ellipsis">${e(boardLabel(item))}${item.nanhua_index_code ? ` · ${e(item.nanhua_index_code)}` : ""} · ${e(item.actual_symbol || item.symbol || "-")}</div>
+              </div>
+              <span class="item-score">${e(item.score ?? "-")}</span>
+            </div>
+          `).join("")}
         </div>
-      `).join("");
+        <div class="legend">
+          <span>关注分 80+ 高 · 70–79 中 · &lt;70 低</span>
+        </div>
+      `;
+    }
+
+    function renderGlobalList() {
+      statusEl.textContent = "大盘首页 · 点击名称旁箭头展开走势（180日）";
+      listEl.innerHTML = "";
     }
 
     function selectItem(index) {
       state.selected = index;
+      state.matrixCell = null;
+      state.detailPillar = "overview";
+      state.seasonalHiddenYears = {};
       renderList();
-      renderDetail();
+      renderCurrent();
+    }
+
+    function setDetailPillar(pillarId) {
+      state.detailPillar = pillarId;
+      renderCurrent();
     }
 
     function setPeriod(period) {
-      state.period = period;
-      renderDetail();
+      state.period = period === "hour" ? "day" : period;
+      renderCurrent();
+    }
+
+    function renderGlobalMarket() {
+      const data = state.global;
+      if (!data) {
+        detailEl.innerHTML = '<div class="empty">暂无大盘首页数据，点击“刷新大盘”获取。</div>';
+        return;
+      }
+
+      const nanhua = data.nanhua_indices || [];
+      const nanhuaTableRows = sortNanhuaDisplayRows(filterNanhuaTableRows(nanhua));
+      const nanhuaLeafRows = sortNanhuaDisplayRows(filterNanhuaLeafRows(nanhua));
+      const drivers = data.drivers || [];
+      const driverGroups = groupDriversByCategory(drivers);
+
+      detailEl.innerHTML = `
+        <div class="dashboard">
+          <div class="global-meta-bar">
+            <span>大盘首页 · ${data.from_cache ? "使用缓存" : "最新数据"}</span>
+            <span>刷新时间：${e(data.refreshed_at || "-")}</span>
+            <span>${nanhuaTableRows.length} 个南华指数 · ${drivers.length} 个核心变量</span>
+          </div>
+
+          <section class="decision-band narrative-panel">
+            <div class="band-title">走势解读</div>
+            <div class="narrative-list">
+              ${renderNarrativeList(data.narrative)}
+            </div>
+          </section>
+
+          <div class="zone-title">南华商品指数</div>
+          <section class="evidence-card">
+            ${renderNanhuaIndexSection(nanhua, nanhuaTableRows, nanhuaLeafRows)}
+          </section>
+
+          <div class="zone-title">板块品种梯队</div>
+          <section class="evidence-card">
+            ${renderBoardProductMatrix(data.board_product_matrix)}
+          </section>
+
+          <div class="zone-title">核心变量</div>
+          <section class="evidence-card">
+            ${driverGroups.length
+              ? renderDriverGroupsMatrix(driverGroups)
+              : emptySmall("暂无核心变量。")}
+          </section>
+
+          ${renderGlobalMacroSection(data.macro)}
+
+          ${(data.errors || []).length ? `
+            <section>
+              <div class="module-head"><h3>数据源提示</h3></div>
+              <p class="module-sub">${(data.errors || []).map(row => `${e(row.source)}：${e(row.message)}`).join("；")}</p>
+            </section>
+          ` : ""}
+        </div>
+      `;
+      bindRowCharts(data);
+      bindNanhuaNormalizedChart(nanhuaLeafRows);
+    }
+
+    function nanhuaRowCode(row) {
+      return String(row?.index_code || row?.id || "").replace(/\.NH$/i, "").replace(/\.CCI$/i, "");
+    }
+
+    function isNanhuaOverallRow(row) {
+      return nanhuaRowCode(row) === "NHCI" || row?.group === "总指数";
+    }
+
+    function isNanhuaLeafRow(row) {
+      return NANHUA_LEAF_CODES.has(nanhuaRowCode(row));
+    }
+
+    function filterNanhuaTableRows(rows) {
+      return (rows || []).filter(row => isNanhuaOverallRow(row) || isNanhuaLeafRow(row));
+    }
+
+    function filterNanhuaLeafRows(rows) {
+      return (rows || []).filter(isNanhuaLeafRow);
+    }
+
+    function sortNanhuaDisplayRows(rows) {
+      return [...(rows || [])].sort(
+        (a, b) => (NANHUA_TABLE_ORDER[nanhuaRowCode(a)] ?? 99) - (NANHUA_TABLE_ORDER[nanhuaRowCode(b)] ?? 99)
+      );
+    }
+
+    function renderNarrativeList(narrative) {
+      if (narrative && typeof narrative === "object" && !Array.isArray(narrative) && narrative.sections?.length) {
+        const sections = narrative.sections.filter(section => (section.items || []).length);
+        if (!sections.length) return emptySmall("暂无解读。");
+        return sections.map(section => renderNarrativeSection(section)).join("");
+      }
+
+      const items = (Array.isArray(narrative) ? narrative : []).map(normalizeNarrativeRow).filter(row => row.text);
+      if (!items.length) return emptySmall("暂无解读。");
+      return `
+        <div class="narrative-section">
+          <div class="narrative-section-title">解读</div>
+          ${renderNarrativeItems(items)}
+        </div>
+      `;
+    }
+
+    function renderNarrativeSection(section) {
+      const items = (section.items || []).map(normalizeNarrativeRow).filter(row => row.text);
+      if (!items.length) return "";
+      const sectionClass = section.key === "verify" ? "narrative-section verify" : "narrative-section";
+      return `
+        <div class="${sectionClass}">
+          <div class="narrative-section-title">${e(section.title || section.key || "解读")}</div>
+          ${renderNarrativeItems(items)}
+        </div>
+      `;
+    }
+
+    function renderNarrativeItems(items) {
+      return `
+        <ul class="insight-hit-list">
+          ${items.map(row => `
+            <li class="insight-hit-item">
+              <span class="insight-hit-name">${e(row.label)}</span>
+              <span class="insight-hit-desc">${e(row.text)}</span>
+            </li>
+          `).join("")}
+        </ul>
+      `;
+    }
+
+    function normalizeNarrativeRow(row) {
+      if (row && typeof row === "object" && !Array.isArray(row)) {
+        return {
+          label: String(row.label || "解读").trim() || "解读",
+          text: String(row.text || "").trim(),
+        };
+      }
+      const text = String(row || "").trim();
+      if (!text) return { label: "解读", text: "" };
+      const splitters = [
+        ["宏观窗口：", "宏观窗口"],
+        ["下一宏观事件：", "宏观日历"],
+        ["板块上，", "板块轮动"],
+      ];
+      for (const [prefix, label] of splitters) {
+        if (text.startsWith(prefix)) {
+          return { label, text: text.slice(prefix.length).trim() };
+        }
+      }
+      if (text.startsWith("原油")) {
+        return { label: "原油", text: text.replace(/^原油/, "").trim() };
+      }
+      if (text.includes("10年期国债")) {
+        return { label: "海外利率", text };
+      }
+      if (text.includes("人民币中间价")) {
+        return { label: "汇率", text };
+      }
+      if (text.includes("南华商品") || text.includes("商品指数")) {
+        return { label: "商品整体", text };
+      }
+      const colonIdx = text.indexOf("：");
+      if (colonIdx > 0 && colonIdx <= 8) {
+        return {
+          label: text.slice(0, colonIdx).trim(),
+          text: text.slice(colonIdx + 1).trim(),
+        };
+      }
+      return { label: "解读", text };
+    }
+
+    function renderGlobalMacroSection(macro) {
+      const zoneHead = `<div class="zone-title">宏观发布与日历</div>`;
+      if (!macro || macro.status === "unavailable") {
+        return `
+          ${zoneHead}
+          <section class="evidence-card">
+            ${emptySmall("宏观数据拉取失败，可稍后刷新大盘重试。")}
+          </section>
+        `;
+      }
+      const snapshot = macro.snapshot || {};
+      const calendar = macro.calendar || {};
+      const releases = snapshot.releases || [];
+      const upcoming = (calendar.upcoming || []).slice(0, 10);
+      const usReleases = releases.filter(row => row.region === "美国");
+      const cnReleases = releases.filter(row => row.region === "中国");
+      const leadParts = [];
+      if (calendar.risk_window_48h) leadParts.push("48h 内有重要数据");
+      if (calendar.next_event) {
+        const next = calendar.next_event;
+        leadParts.push(`下一事件 ${next.date || ""} ${next.title || ""}`.trim());
+      }
+      return `
+        ${zoneHead}
+        <section class="macro-bar evidence-card">
+          <p class="module-sub subtle">更新 ${e(macro.refreshed_at || "-")}</p>
+          <p class="macro-bar-lead">${leadParts.length ? e(leadParts.join(" · ")) : "中美关键宏观发布与未来 7 日重要事件"}</p>
+          ${usReleases.length ? `
+            <div class="macro-release-wrap">
+              <p class="macro-subhead">美国发布</p>
+              ${renderMacroReleaseTable(usReleases)}
+            </div>
+          ` : ""}
+          ${cnReleases.length ? `
+            <div class="macro-release-wrap">
+              <p class="macro-subhead">中国发布</p>
+              ${renderMacroReleaseTable(cnReleases)}
+            </div>
+          ` : ""}
+          ${!releases.length ? emptySmall("暂无宏观发布数据。") : ""}
+          <div class="macro-calendar-block">
+            <p class="macro-subhead">未来 7 日经济日历</p>
+            ${upcoming.length ? `
+              <ul class="macro-event-list">
+                ${upcoming.map(ev => `
+                  <li>
+                    <span class="k">${e(ev.date || "")} ${e(ev.time || "")}</span>
+                    ${e(ev.region || "")} · ${e(ev.title || "")}
+                    ${ev.importance >= 3 ? `<span class="chip warning">高</span>` : ""}
+                  </li>
+                `).join("")}
+              </ul>
+            ` : emptySmall("近期无匹配的重要宏观事件。")}
+          </div>
+        </section>
+      `;
+    }
+
+    function renderMacroReleaseTable(releases) {
+      return `
+        <div class="change-matrix-wrap">
+          <table class="change-matrix compact macro-release-table">
+            <thead>
+              <tr>
+                <th>指标</th>
+                <th>公布日</th>
+                <th>实际</th>
+                <th>预期</th>
+                <th>前值</th>
+                <th>状态</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${releases.map(row => {
+                const actualClass = row.beat === "above" ? "beat-above" : row.beat === "below" ? "beat-below" : "";
+                return `
+                  <tr>
+                    <td class="name-cell">${e(row.title || "-")}</td>
+                    <td>${e(formatMacroDate(row.date))}</td>
+                    <td class="${actualClass}">${formatMacroValue(row.actual, row.unit)}</td>
+                    <td>${formatMacroValue(row.forecast, row.unit)}</td>
+                    <td>${formatMacroValue(row.previous, row.unit)}</td>
+                    <td>${row.pending ? '<span class="pending">待公布</span>' : row.beat === "above" ? "高于预期" : row.beat === "below" ? "低于预期" : "已公布"}</td>
+                  </tr>
+                `;
+              }).join("")}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function formatMacroValue(value, unit) {
+      if (value === null || value === undefined || value === "") return "-";
+      const text = String(value);
+      if (!unit || unit === "%") return `${text}${unit || ""}`;
+      return `${text} ${unit}`;
+    }
+
+    function formatMacroDate(value) {
+      if (!value) return "-";
+      const text = String(value);
+      return text.length >= 10 ? text.slice(0, 10) : text;
+    }
+
+    function chartCanvasId(id) {
+      return `row-chart-${String(id).replace(/[^a-zA-Z0-9_-]/g, "_")}`;
+    }
+
+    function bindRowCharts(data) {
+      const id = state.globalOpenChartId;
+      if (!id) return;
+      const row = allGlobalSeries(data).find(item => item.id === id);
+      if (!row?.chart?.length) return;
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const canvas = document.getElementById(chartCanvasId(id));
+          if (canvas) drawMiniLine(canvas, row.chart, row.tone, 180, true);
+        });
+      });
+    }
+
+    function bindNanhuaNormalizedChart(rows) {
+      if (!rows?.length) return;
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          syncNanhuaPanelLayout(rows);
+        });
+      });
+    }
+
+    function ytdStartIso() {
+      return `${new Date().getFullYear()}-01-01`;
+    }
+
+    function filterChartToYtd(chart) {
+      const start = ytdStartIso();
+      return (chart || []).filter(point => String(point.time).slice(0, 10) >= start);
+    }
+
+    function buildNanhuaNormalizedSeries(rows) {
+      const chartRows = rows.filter(row => filterChartToYtd(row.chart).length);
+      if (!chartRows.length) return { times: [], series: [] };
+
+      const timeSet = new Set();
+      chartRows.forEach(row => filterChartToYtd(row.chart).forEach(point => timeSet.add(String(point.time))));
+      const times = [...timeSet].sort();
+
+      const series = chartRows.map((row, index) => {
+        const ytdChart = filterChartToYtd(row.chart);
+        const valueMap = new Map(
+          ytdChart.map(point => [String(point.time), Number(point.value)]).filter(([, value]) => Number.isFinite(value))
+        );
+        const aligned = times.map(time => valueMap.get(time));
+        const baseIndex = aligned.findIndex(value => Number.isFinite(value));
+        if (baseIndex < 0) return null;
+        const base = aligned[baseIndex];
+        return {
+          id: row.id,
+          name: row.name,
+          code: formatIndexCode(row),
+          color: NANHUA_CHART_COLORS[index % NANHUA_CHART_COLORS.length],
+          values: aligned.map(value => (Number.isFinite(value) ? (value / base) * 100 : null)),
+        };
+      }).filter(Boolean);
+
+      return { times, series };
+    }
+
+    function syncNanhuaPanelLayout(rows) {
+      const left = document.querySelector(".nanhua-index-left");
+      const right = document.querySelector(".nanhua-index-right");
+      const canvas = document.getElementById("nanhua-normalized-chart");
+      if (!left || !right || !canvas) return;
+
+      right.style.height = "";
+      canvas.style.height = "";
+
+      const leftHeight = Math.ceil(left.getBoundingClientRect().height);
+      right.style.height = `${leftHeight}px`;
+
+      const headEl = right.querySelector(".nanhua-chart-head");
+      const legendEl = right.querySelector(".nanhua-chart-legend");
+      const panelStyle = window.getComputedStyle(right);
+      const padY = parseFloat(panelStyle.paddingTop) + parseFloat(panelStyle.paddingBottom);
+      const headH = headEl ? headEl.offsetHeight + 8 : 0;
+      const legendH = legendEl ? legendEl.offsetHeight + 8 : 0;
+      const chartHeight = Math.max(160, leftHeight - padY - headH - legendH);
+      canvas.style.height = `${chartHeight}px`;
+
+      drawNanhuaNormalizedChart(canvas, rows);
+      if (!window._nanhuaResizeBound) {
+        window._nanhuaResizeBound = true;
+        window.addEventListener("resize", () => {
+          if (state.view !== "global" || !(state.global?.nanhua_indices || []).length) return;
+          const leafRows = sortNanhuaDisplayRows(filterNanhuaLeafRows(state.global.nanhua_indices));
+          syncNanhuaPanelLayout(leafRows);
+        });
+      }
+    }
+
+    function drawNanhuaNormalizedChart(canvas, rows) {
+      const { times, series } = buildNanhuaNormalizedSeries(rows);
+      if (!canvas || !times.length || !series.length) return;
+
+      const rect = canvas.getBoundingClientRect();
+      const ratio = window.devicePixelRatio || 1;
+      const width = Math.max(280, Math.floor(rect.width));
+      const height = Math.max(160, Math.floor(rect.height));
+      const flatValues = series.flatMap(item => item.values.filter(Number.isFinite));
+      if (!flatValues.length) return;
+
+      let yMin = Math.min(...flatValues);
+      let yMax = Math.max(...flatValues);
+      if (Math.abs(yMax - yMin) < 0.5) {
+        yMin -= 1;
+        yMax += 1;
+      } else {
+        const padding = Math.max((yMax - yMin) * 0.08, 0.5);
+        yMin -= padding;
+        yMax += padding;
+      }
+      const ySpan = Math.max(yMax - yMin, 1);
+      const pad = { left: 46, right: 14, top: 14, bottom: 30 };
+      const plotW = width - pad.left - pad.right;
+      const plotH = height - pad.top - pad.bottom;
+      const xAt = index => pad.left + (times.length <= 1 ? 0 : index / (times.length - 1) * plotW);
+      const yAt = value => pad.top + (yMax - value) / ySpan * plotH;
+
+      canvas._nanhuaChartMeta = { times, series, width, height, ratio, pad, plotW, plotH, xAt, yAt, yMin, yMax, ySpan };
+      renderNanhuaChart(canvas, canvas._nanhuaChartMeta);
+      bindNanhuaChartHover(canvas);
+    }
+
+    function bindNanhuaChartHover(canvas) {
+      if (canvas._nanhuaHoverBound) return;
+      canvas._nanhuaHoverBound = true;
+      canvas.addEventListener("mousemove", event => {
+        const meta = canvas._nanhuaChartMeta;
+        if (!meta) return;
+        const rect = canvas.getBoundingClientRect();
+        const localX = event.clientX - rect.left;
+        let best = 0;
+        let bestDist = Infinity;
+        meta.times.forEach((_, index) => {
+          const dist = Math.abs(meta.xAt(index) - localX);
+          if (dist < bestDist) {
+            bestDist = dist;
+            best = index;
+          }
+        });
+        renderNanhuaChartHover(canvas, meta, best);
+      });
+      canvas.addEventListener("mouseleave", () => {
+        const meta = canvas._nanhuaChartMeta;
+        if (!meta) return;
+        renderNanhuaChart(canvas, meta);
+      });
+    }
+
+    function renderNanhuaChart(canvas, meta) {
+      const ctx = canvas.getContext("2d");
+      const ratio = meta.ratio || window.devicePixelRatio || 1;
+      const { times, series, width, height, pad, plotW, plotH, xAt, yAt, yMin, yMax, ySpan } = meta;
+      canvas.width = width * ratio;
+      canvas.height = height * ratio;
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      ctx.clearRect(0, 0, width, height);
+
+      ctx.strokeStyle = "#eef1f5";
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= 4; i++) {
+        const tick = yMin + ySpan * i / 4;
+        const yy = yAt(tick);
+        ctx.beginPath();
+        ctx.moveTo(pad.left, yy);
+        ctx.lineTo(width - pad.right, yy);
+        ctx.stroke();
+      }
+
+      series.forEach(item => {
+        ctx.strokeStyle = item.color;
+        ctx.lineWidth = item.code === "NHCI" ? 2.4 : 1.6;
+        ctx.beginPath();
+        let started = false;
+        item.values.forEach((value, index) => {
+          if (!Number.isFinite(value)) return;
+          const px = xAt(index);
+          const py = yAt(value);
+          if (!started) {
+            ctx.moveTo(px, py);
+            started = true;
+          } else {
+            ctx.lineTo(px, py);
+          }
+        });
+        ctx.stroke();
+      });
+
+      ctx.fillStyle = "#9a9084";
+      ctx.font = "11px PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif";
+      ctx.textAlign = "right";
+      ctx.textBaseline = "middle";
+      for (let i = 0; i <= 4; i++) {
+        const tick = yMin + ySpan * i / 4;
+        ctx.fillText(tick.toFixed(1), pad.left - 8, yAt(tick));
+      }
+
+      const xTickIndices = chartDateTickIndices(times.length, 4);
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+      xTickIndices.forEach(index => {
+        const label = String(times[index] || "").slice(0, 10);
+        if (!label) return;
+        ctx.fillText(label, xAt(index), height - pad.bottom + 6);
+      });
+
+      const baselineY = yAt(100);
+      if (baselineY >= pad.top && baselineY <= pad.top + plotH) {
+        ctx.setLineDash([4, 4]);
+        ctx.strokeStyle = "#d8dde3";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(pad.left, baselineY);
+        ctx.lineTo(width - pad.right, baselineY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    }
+
+    function renderNanhuaChartHover(canvas, meta, hoverIndex) {
+      renderNanhuaChart(canvas, meta);
+      const ctx = canvas.getContext("2d");
+      const ratio = window.devicePixelRatio || 1;
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+      const { times, series, width, height, pad, plotH, xAt, yAt } = meta;
+      const px = xAt(hoverIndex);
+      const dateLabel = String(times[hoverIndex] || "").slice(0, 10);
+
+      ctx.setLineDash([4, 3]);
+      ctx.strokeStyle = "#c4a574";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(px, pad.top);
+      ctx.lineTo(px, pad.top + plotH);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      series.forEach(item => {
+        const value = item.values[hoverIndex];
+        if (!Number.isFinite(value)) return;
+        const py = yAt(value);
+        ctx.fillStyle = item.color;
+        ctx.beginPath();
+        ctx.arc(px, py, 3.5, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      const lines = series
+        .map(item => {
+          const value = item.values[hoverIndex];
+          if (!Number.isFinite(value)) return null;
+          return `${item.code} ${value.toFixed(2)}`;
+        })
+        .filter(Boolean);
+      if (!lines.length) return;
+
+      const tip = `${dateLabel}\n${lines.join("  ")}`;
+      ctx.font = "11px PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif";
+      const tipLines = tip.split("\n");
+      const tipW = Math.max(...tipLines.map(line => ctx.measureText(line).width)) + 16;
+      const tipH = 16 + tipLines.length * 14;
+      let tipX = px - tipW / 2;
+      tipX = Math.max(pad.left, Math.min(tipX, width - pad.right - tipW));
+      const tipY = pad.top + 6;
+      ctx.fillStyle = "rgba(255,255,255,0.96)";
+      ctx.strokeStyle = "#e4ddd2";
+      ctx.lineWidth = 1;
+      roundRect(ctx, tipX, tipY, tipW, tipH, 6);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = "#4a4035";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "top";
+      tipLines.forEach((line, index) => {
+        ctx.fillText(line, tipX + 8, tipY + 8 + index * 14);
+      });
+    }
+
+    function toggleRowChart(id) {
+      state.globalOpenChartId = state.globalOpenChartId === id ? null : id;
+      renderGlobalMarket();
+    }
+
+    function toggleBoardProductExpand(code) {
+      state.boardProductExpanded[code] = !state.boardProductExpanded[code];
+      renderGlobalMarket();
+    }
+
+    function openProductFromSymbol(symbol) {
+      if (!symbol) return;
+      const idx = state.items.findIndex(item => item.symbol === symbol);
+      if (idx < 0) return;
+      state.selected = idx;
+      setView("watch");
+    }
+
+    function renderBoardProductMatrix(matrix) {
+      const rows = (matrix?.rows || []).filter(row => !row.composite && !NANHUA_COMPOSITE_CODES.has(row.code));
+      if (!rows.length || matrix?.status === "empty") {
+        return emptySmall("暂无品种梯队数据。请先刷新品种盯控，再刷新大盘。");
+      }
+      const previewLimit = matrix?.preview_limit || 10;
+      return `
+        <div class="board-product-matrix">
+          ${rows.map(row => renderBoardProductRow(row, previewLimit)).join("")}
+        </div>
+      `;
+    }
+
+    function renderBoardProductRow(row, previewLimit) {
+      const expanded = !!state.boardProductExpanded[row.code];
+      const products = expanded ? (row.products || []) : (row.preview || row.products || []).slice(0, previewLimit);
+      const hiddenCount = expanded ? 0 : Math.max(0, (row.product_count || 0) - products.length);
+      const scale = buildRowHeatmapScale(row.products || products);
+      const indexChange = row.index_change_5d;
+      const indexChangeHtml = Number.isFinite(Number(indexChange))
+        ? `<span class="idx-change ${cnChangeClass(indexChange)}">指数5日 ${formatChange(indexChange)}</span>`
+        : `<span class="idx-change">指数5日 -</span>`;
+
+      if (!products.length) {
+        return `
+          <div class="board-product-row">
+            <div class="board-product-head">
+              <div class="board-product-name">${e(row.name || row.code)}</div>
+              <div class="board-product-meta">${e(row.code || "")} · ${indexChangeHtml}</div>
+            </div>
+            <div class="board-product-body">
+              <div class="board-product-empty">暂无可用品种数据</div>
+            </div>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="board-product-row">
+          <div class="board-product-head">
+            <div class="board-product-name">${e(row.name || row.code)}</div>
+            <div class="board-product-meta">
+              ${e(row.code || "")} · ${indexChangeHtml}<br>
+              ${row.product_count || products.length} 个品种 · 近5日涨幅排序
+            </div>
+          </div>
+          <div class="board-product-body">
+            <div class="board-product-chips ${expanded || hiddenCount === 0 ? "" : "collapsed"}">
+              ${products.map(product => renderBoardProductChip(product, scale)).join("")}
+            </div>
+            ${hiddenCount > 0 ? `
+              <div class="board-product-actions">
+                <button type="button" class="board-product-toggle" data-toggle-board-products="${e(row.code)}">
+                  展开剩余 ${hiddenCount} 个
+                </button>
+              </div>
+            ` : expanded && (row.product_count || 0) > previewLimit ? `
+              <div class="board-product-actions">
+                <button type="button" class="board-product-toggle" data-toggle-board-products="${e(row.code)}">
+                  收起
+                </button>
+              </div>
+            ` : ""}
+          </div>
+        </div>
+      `;
+    }
+
+    function buildRowHeatmapScale(products) {
+      const scale = { maxPos: 1e-9, maxNeg: 1e-9 };
+      (products || []).forEach(product => {
+        const n = parseChangeNumber(product?.change_5d);
+        if (n === null) return;
+        if (n > 0) scale.maxPos = Math.max(scale.maxPos, n);
+        if (n < 0) scale.maxNeg = Math.max(scale.maxNeg, Math.abs(n));
+      });
+      return scale;
+    }
+
+    function renderBoardProductChip(product, scale) {
+      const value = product?.change_5d;
+      const n = parseChangeNumber(value);
+      let style = "";
+      if (n !== null) {
+        const { dir, t } = heatmapIntensity(n, scale);
+        const colors = heatmapCellColors(dir, t);
+        style = ` style="background:${colors.bg};color:${colors.color};border-color:transparent;"`;
+      }
+      return `
+        <button type="button" class="board-product-chip"${style} data-open-product="${e(product.symbol || "")}" title="${e(product.name || "")} · ${formatChange(value)}">
+          <span class="chip-name">${e(product.name || "-")}</span>
+          <span class="chip-change">${formatChange(value)}</span>
+        </button>
+      `;
+    }
+
+    function renderNanhuaIndexSection(rows, tableRows, leafRows) {
+      const source = rows || [];
+      const summaryRows = tableRows || sortNanhuaDisplayRows(filterNanhuaTableRows(source));
+      const heatmapRows = leafRows || sortNanhuaDisplayRows(filterNanhuaLeafRows(source));
+      if (!summaryRows.length) {
+        const errRows = state.global?.errors || [];
+        const nanhuaErr = errRows.find((row) => row.source === "nanhua_indices");
+        if (nanhuaErr?.message) {
+          return emptySmall(`南华指数暂不可用：${e(nanhuaErr.message)}`);
+        }
+        return emptySmall("暂无南华指数数据。若 .env 已配置 TUSHARE_TOKEN，请点击右上角「刷新大盘」更新缓存。");
+      }
+      return `
+        <div class="index-series-stack">
+          <div class="index-series-block">
+            <div class="index-series-head">
+              <h4 class="group-title">南华板块指数</h4>
+            </div>
+            <div class="nanhua-index-layout">
+              <div class="nanhua-index-panel nanhua-index-left">
+                ${renderPeriodMatrix(summaryRows, {
+                  fullName: true,
+                  showCode: true,
+                  showLevel: false,
+                  showGroup: false,
+                  showConstituents: false,
+                  hideChartToggle: true,
+                  matrixClass: "nanhua-matrix",
+                  heatmap: false,
+                })}
+                <div class="nanhua-heatmap-block">
+                  <p class="nanhua-heatmap-label">板块涨跌幅热力图</p>
+                  ${renderPeriodMatrix(heatmapRows, {
+                    fullName: true,
+                    showCode: false,
+                    showLatest: false,
+                    showLevel: false,
+                    showGroup: false,
+                    showConstituents: false,
+                    hideChartToggle: true,
+                    matrixClass: "nanhua-matrix nanhua-heatmap-matrix",
+                    heatmap: true,
+                  })}
+                </div>
+              </div>
+              <div class="nanhua-index-panel nanhua-index-right">
+                <div class="nanhua-chart-head">
+                  <span class="nanhua-chart-title">今年以来走势</span>
+                  <span class="nanhua-chart-sub">归一化 · 起点=100 · 叶子板块</span>
+                </div>
+                <canvas id="nanhua-normalized-chart"></canvas>
+                <div class="nanhua-chart-legend">
+                  ${heatmapRows.map((row, index) => `
+                    <span class="nanhua-legend-item" title="${e(row.name || "")}">
+                      <span class="nanhua-legend-dot" style="background:${NANHUA_CHART_COLORS[index % NANHUA_CHART_COLORS.length]}"></span>
+                      ${e(formatIndexCode(row))}
+                    </span>
+                  `).join("")}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function formatIndexCode(row) {
+      return row.index_code || String(row.id || "").replace(".CCI", "").replace(".NH", "") || "-";
+    }
+
+    function allGlobalSeries(data) {
+      return [...(data.nanhua_indices || []), ...(data.drivers || [])].filter(Boolean);
+    }
+
+    function groupDriversByCategory(drivers) {
+      const grouped = new Map();
+      drivers.forEach(row => {
+        const name = row.group || "其他";
+        if (!grouped.has(name)) grouped.set(name, []);
+        grouped.get(name).push(row);
+      });
+      const ordered = [];
+      DRIVER_GROUP_ORDER.forEach(name => {
+        if (grouped.has(name)) {
+          ordered.push({ name, rows: grouped.get(name) });
+          grouped.delete(name);
+        }
+      });
+      grouped.forEach((rows, name) => ordered.push({ name, rows }));
+      return ordered;
+    }
+
+    function matrixColCount(options = {}) {
+      const showConstituents = options.showConstituents === true;
+      const showCode = options.showCode === true;
+      const showLevel = matrixShowLevel(options);
+      const showLatest = options.showLatest !== false;
+      return 1 + (showCode ? 1 : 0) + (showLevel ? 1 : 0) + (showLatest ? 1 : 0) + GLOBAL_PERIOD_COLS.length + (showConstituents ? 1 : 0);
+    }
+
+    function matrixShowLevel(options = {}) {
+      if (options.showLevel != null) return options.showLevel === true;
+      return options.showGroup !== false;
+    }
+
+    function renderMatrixRows(rows, options = {}) {
+      const fullName = options.fullName === true;
+      const showConstituents = options.showConstituents === true;
+      const showCode = options.showCode === true;
+      const showLevel = matrixShowLevel(options);
+      const nameClass = fullName ? "name-cell full-name" : "name-cell";
+      const colCount = matrixColCount(options);
+      const heatmapScales = options.heatmapScales || null;
+      const showLatest = options.showLatest !== false;
+      return rows.map(row => {
+        const expanded = state.globalExpandedIndexId === row.id;
+        const chartOpen = !options.hideChartToggle && state.globalOpenChartId === row.id;
+        const constituents = row.constituents;
+        const count = constituents?.product_count || (constituents?.products || []).length || 0;
+        return `
+          <tr class="change-matrix-row ${chartOpen ? "chart-open" : ""} ${expanded ? "expanded" : ""}">
+            <td class="${nameClass}">
+              <div class="matrix-name-block">
+                <div class="matrix-name-line">
+                  <div class="matrix-name" title="${e(row.name || "")}">${e(displayGlobalName(row))}</div>
+                  ${!options.hideChartToggle && row.chart?.length ? `
+                    <button
+                      type="button"
+                      class="chart-toggle row-chart-toggle icon-only ${chartOpen ? "open" : ""}"
+                      data-toggle-chart="${e(row.id)}"
+                      aria-label="${chartOpen ? "收起近180日走势" : "展开近180日走势"}"
+                      title="${chartOpen ? "收起走势" : "展开走势"}"
+                    >
+                      <span class="chart-chevron" aria-hidden="true"></span>
+                    </button>
+                  ` : ""}
+                </div>
+              </div>
+            </td>
+            ${showCode ? `<td class="code-cell">${e(formatIndexCode(row))}</td>` : ""}
+            ${showLevel ? `<td class="group-cell">${e(row.level || row.group || "-")}</td>` : ""}
+            ${showLatest ? `<td class="latest-cell">${e(row.value_label || "-")}</td>` : ""}
+            ${GLOBAL_PERIOD_COLS.map(col => renderChangeCell(
+              row.changes?.[col.key],
+              row.change_kind,
+              heatmapScales?.[col.key]
+            )).join("")}
+            ${showConstituents ? `
+              <td class="constituent-toggle-cell">
+                ${constituents && count ? `
+                  <button type="button" class="constituent-toggle ${expanded ? "open" : ""}" data-toggle-constituents="${e(row.id)}">
+                    ${count} 品种
+                  </button>
+                ` : `<span class="subtle">-</span>`}
+              </td>
+            ` : ""}
+          </tr>
+          ${!options.hideChartToggle && chartOpen && row.chart?.length ? `
+            <tr class="row-chart-detail">
+              <td colspan="${colCount}">
+                <canvas class="row-chart-canvas" id="${chartCanvasId(row.id)}"></canvas>
+              </td>
+            </tr>
+          ` : ""}
+          ${expanded && constituents ? `
+            <tr class="constituent-detail-row">
+              <td colspan="${colCount}">
+                ${renderConstituentBlock(constituents, "inline")}
+              </td>
+            </tr>
+          ` : ""}
+        `;
+      }).join("");
+    }
+
+    function renderPeriodMatrix(rows, options = {}) {
+      if (!rows.length) return emptySmall("暂无数据。");
+      const compact = options.compact === true;
+      const showConstituents = options.showConstituents === true;
+      const showCode = options.showCode === true;
+      const showLevel = matrixShowLevel(options);
+      const showLatest = options.showLatest !== false;
+      const levelHeader = showLevel ? "<th>层级</th>" : "";
+      const codeHeader = showCode ? "<th>代码</th>" : "";
+      const latestHeader = showLatest ? "<th>最新</th>" : "";
+      const constituentHeader = showConstituents ? "<th>成分</th>" : "";
+      const extraClass = options.matrixClass ? ` ${options.matrixClass}` : "";
+      const heatmapScales = options.heatmap === true
+        ? buildHeatmapScales(rows, GLOBAL_PERIOD_COLS.map(col => col.key))
+        : null;
+      const rowOptions = { ...options, heatmapScales };
+      return `
+        <div class="change-matrix-wrap">
+          <table class="change-matrix ${compact ? "compact" : ""}${extraClass}">
+            <thead>
+              <tr>
+                <th>名称</th>
+                ${codeHeader}
+                ${levelHeader}
+                ${latestHeader}
+                ${GLOBAL_PERIOD_COLS.map(col => `<th>${col.label}</th>`).join("")}
+                ${constituentHeader}
+              </tr>
+            </thead>
+            <tbody>
+              ${renderMatrixRows(rows, rowOptions)}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function renderDriverLensPanel(groups) {
+      return `
+        <aside class="driver-lens-panel">
+          <div class="group-title">怎么看</div>
+          <div class="driver-lens-list">
+            ${groups.map(group => `
+              <div class="driver-lens-item">
+                <div class="driver-lens-name">${e(group.name)}</div>
+                <p class="driver-lens-text">${e(DRIVER_GROUP_LENS[group.name] || "对照盘面变化，判断对该类商品是顺风还是逆风。")}</p>
+              </div>
+            `).join("")}
+          </div>
+        </aside>
+      `;
+    }
+
+    function renderDriverGroupsMatrix(groups) {
+      const options = { showGroup: false, heatmap: true };
+      const colCount = matrixColCount(options);
+      const allRows = groups.flatMap(group => group.rows || []);
+      const heatmapScales = buildHeatmapScales(allRows, GLOBAL_PERIOD_COLS.map(col => col.key));
+      const rowOptions = { ...options, heatmapScales };
+      return `
+        <div class="driver-zone-layout">
+          <div class="change-matrix-wrap driver-matrix-wrap">
+            <table class="change-matrix driver-matrix">
+              <thead>
+                <tr>
+                  <th>名称</th>
+                  <th>最新</th>
+                  ${GLOBAL_PERIOD_COLS.map(col => `<th>${col.label}</th>`).join("")}
+                </tr>
+              </thead>
+              <tbody>
+                ${groups.map(group => `
+                  <tr class="driver-category-row">
+                    <td colspan="${colCount}">${e(group.name)}</td>
+                  </tr>
+                  ${renderMatrixRows(group.rows, rowOptions)}
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
+          ${renderDriverLensPanel(groups)}
+        </div>
+      `;
+    }
+
+    function renderConstituentBlock(constituents, mode = "inline") {
+      const groups = constituents?.groups || [];
+      if (!groups.length) return emptySmall("暂无成分说明。");
+      return `
+        <div class="constituent-block ${mode}">
+          <p class="constituent-scope">${e(constituents.scope || "")}</p>
+          <div class="constituent-groups">
+            ${groups.map(group => `
+              <div class="constituent-group">
+                <div class="constituent-group-label">${e(group.board || "成分")}</div>
+                <div class="constituent-tags">
+                  ${(group.products || []).map(name => `<span class="constituent-tag">${e(name)}</span>`).join("")}
+                </div>
+              </div>
+            `).join("")}
+          </div>
+          <p class="constituent-note">${e(constituents.note || "")}</p>
+        </div>
+      `;
+    }
+
+    function toggleGlobalIndexExpand(id) {
+      state.globalExpandedIndexId = state.globalExpandedIndexId === id ? null : id;
+      renderGlobalMarket();
+    }
+
+    function displayGlobalName(row) {
+      return shortSeriesName(row.name);
+    }
+
+    function renderChangeCell(value, kind = "pct", heatmapScale = null) {
+      if (heatmapScale) return renderHeatmapChangeCell(value, kind, heatmapScale);
+      const cls = cnChangeClass(value);
+      return `<td class="change-cell ${cls}">${formatChange(value, kind)}</td>`;
+    }
+
+    function parseChangeNumber(value) {
+      const n = Number(value);
+      return Number.isFinite(n) ? n : null;
+    }
+
+    function buildHeatmapScales(rows, periodKeys) {
+      const scales = {};
+      periodKeys.forEach(key => {
+        const buckets = {
+          pct: { maxPos: 1e-9, maxNeg: 1e-9 },
+          diff_bp: { maxPos: 1e-9, maxNeg: 1e-9 },
+        };
+        (rows || []).forEach(row => {
+          const kind = row?.change_kind || "pct";
+          const bucket = buckets[kind] || buckets.pct;
+          const n = parseChangeNumber(row?.changes?.[key]);
+          if (n === null) return;
+          if (n > 0) bucket.maxPos = Math.max(bucket.maxPos, n);
+          if (n < 0) bucket.maxNeg = Math.max(bucket.maxNeg, Math.abs(n));
+        });
+        scales[key] = buckets;
+      });
+      return scales;
+    }
+
+    function resolveHeatmapScale(scale, kind = "pct") {
+      if (!scale) return null;
+      if (scale.maxPos != null) return scale;
+      return scale[kind] || scale.pct;
+    }
+
+    function heatmapIntensity(value, scale) {
+      const n = parseChangeNumber(value);
+      if (n === null || n === 0) return { dir: "flat", t: 0 };
+      if (n > 0) return { dir: "rise", t: Math.min(1, n / scale.maxPos) };
+      return { dir: "fall", t: Math.min(1, Math.abs(n) / scale.maxNeg) };
+    }
+
+    function heatmapCellColors(dir, t) {
+      const minAlpha = 0.28;
+      const maxAlpha = 0.82;
+      const alpha = minAlpha + t * (maxAlpha - minAlpha);
+      if (dir === "rise") {
+        return {
+          bg: `rgba(184, 50, 50, ${alpha.toFixed(3)})`,
+          color: "#fff",
+        };
+      }
+      if (dir === "fall") {
+        return {
+          bg: `rgba(45, 106, 62, ${alpha.toFixed(3)})`,
+          color: "#fff",
+        };
+      }
+      return {
+        bg: "var(--neutral-soft)",
+        color: "var(--subtle)",
+      };
+    }
+
+    function renderHeatmapChangeCell(value, kind, scale) {
+      const bucket = resolveHeatmapScale(scale, kind);
+      if (!bucket) {
+        const cls = cnChangeClass(value);
+        return `<td class="change-cell ${cls}">${formatChange(value, kind)}</td>`;
+      }
+      const n = parseChangeNumber(value);
+      if (n === null) {
+        return `<td class="change-cell heatmap-cell flat">-</td>`;
+      }
+      const { dir, t } = heatmapIntensity(n, bucket);
+      const colors = heatmapCellColors(dir, t);
+      return `<td class="change-cell heatmap-cell ${dir}" style="background:${colors.bg};color:${colors.color};">${formatChange(value, kind)}</td>`;
+    }
+
+    function cnChangeClass(value) {
+      const n = Number(value);
+      if (!Number.isFinite(n)) return "flat";
+      if (n > 0) return "rise";
+      if (n < 0) return "fall";
+      return "flat";
+    }
+
+    function cnToneChip(tone) {
+      if (tone === "up") return "danger";
+      if (tone === "down") return "success";
+      return "info";
     }
 
     function renderDetail() {
@@ -256,68 +3157,1016 @@
         detailEl.innerHTML = '<div class="empty">暂无详情。</div>';
         return;
       }
-      const m = item.metrics || {};
-      const directionClass = item.direction === "up" ? "up" : item.direction === "down" ? "down" : "";
+
+      const skills = normalizeSkills(item);
+      const byId = Object.fromEntries(skills.map(skill => [skill.id, skill]));
+      const tables = collectDetailTables(skills);
+      const pillar = ["views", "macro"].includes(state.detailPillar) ? "overview" : (state.detailPillar || "overview");
+
       detailEl.innerHTML = `
-        <section>
-          <h2>${item.name}</h2>
-          <div class="muted">分析序列：${item.symbol}　实际主力：${item.actual_symbol || "-"}　最新价：${item.last_price || "-"}</div>
-        </section>
-        <div class="spec-grid">
-          ${metric("一手吨数/乘数", spec(m.volume_multiple))}
-          ${metric("最小变动价位", spec(m.price_tick))}
-          ${metric("一跳金额", money(m.tick_value))}
-          ${metric("预估保证金/手", money(m.estimated_margin))}
-          ${metric("一手合约价值", money(m.contract_value))}
-          ${metric("近5日日均波动/手", money(m.avg_daily_range_amount_5d))}
+        <div class="dashboard">
+          ${renderDetailHeader(item)}
+          ${renderPillarNav(pillar, byId, skills)}
+          <div class="pillar-panel">
+            ${renderPillarContent(pillar, item, byId, skills, tables)}
+          </div>
         </div>
-        <section>
-          <h3>量价分析</h3>
-          <p><strong>${item.state}</strong>。${item.level}</p>
-          <div class="analysis-metrics">
-            ${metric("关注分", item.score)}
-            ${metric("日涨跌幅", pct(m.return_pct), directionClass)}
-            ${metric("成交量分位", pct(m.volume_rank_60))}
-            ${metric("ATR分位", pct(m.atr_rank_60))}
+      `;
+      bindKlinePanel(item);
+      const termSkill = byId.term_structure;
+      if (pillar === "capital" && termSkill && termSkill.status !== "unavailable") {
+        bindTermStructureChart(termSkill);
+      }
+      if (pillar === "seasonal") {
+        bindSeasonalChart(byId.seasonality);
+      }
+    }
+
+    function renderPillarNav(active, byId, skills) {
+      return `
+        <nav class="pillar-nav" aria-label="品种分析维度">
+          ${DETAIL_PILLARS.map(pillar => `
+            <button
+              type="button"
+              class="pillar-tab ${pillar.id === active ? "active" : ""}"
+              onclick="setDetailPillar('${pillar.id}')"
+            >${e(pillar.label)}${renderPillarBadge(pillar, byId, skills)}</button>
+          `).join("")}
+        </nav>
+      `;
+    }
+
+    function renderPillarBadge(pillar, byId, skills) {
+      const count = countPillarModules(pillar, byId, skills).filter(row => row.available).length;
+      return count ? `<span class="pillar-count">${count}</span>` : "";
+    }
+
+    function countPillarModules(pillar, byId, skills) {
+      if (pillar.idPrefix) {
+        return skills.filter(skill => String(skill.id || "").startsWith(pillar.idPrefix)).map(skill => ({
+          id: skill.id,
+          available: moduleAvailable(skill),
+        }));
+      }
+      const rows = (pillar.moduleIds || []).map(id => ({ id, available: moduleAvailable(byId[id]) }));
+      (pillar.extras || []).forEach(id => {
+        if (id === "macro_bar") rows.push({ id, available: Boolean(state.macro && state.macro.status !== "unavailable") });
+        if (id === "kline") rows.push({ id, available: true });
+        if (id === "news_placeholder") rows.push({ id, available: false });
+      });
+      return rows;
+    }
+
+    function moduleAvailable(skill) {
+      if (!skill) return false;
+      if (skill.status === "unavailable") return false;
+      if ((skill.signals || []).length) return true;
+      if ((skill.tables || []).length) return true;
+      if ((skill.charts || []).length) return true;
+      if ((skill.levels || []).length) return true;
+      if ((skill.gaps || []).length) return true;
+      if (skill.summary && !/暂无|未接入|无法/.test(skill.summary)) return true;
+      return false;
+    }
+
+    function renderPillarContent(pillarId, item, byId, skills, tables) {
+      switch (pillarId) {
+        case "overview":
+          return `
+            ${renderInsight(byId.insight || legacyInsightSkill(byId.summary, byId.research_lens, item), item)}
+            ${renderDirectionMatrix(item)}
+          `;
+        case "market":
+          return renderPillarStack([
+            renderAnalyzerAccordion(byId.price_volume, skill => `
+              ${renderSignalCardGrid(skill.signals, 6, "暂无量价信号。")}
+            `),
+            renderAnalyzerAccordion(byId.board_resonance, skill => `
+              ${renderSignalGroups(skill.signals)}
+              ${renderTables((skill.tables || []).slice(0, 2))}
+              ${renderNotes(skill.notes)}
+            `),
+            renderAnalyzerAccordion(byId.technical_signals, skill => `
+              ${renderSignalCardGrid(skill.signals, 6, "暂无明显技术指标阈值信号。")}
+              ${renderNotes(skill.notes)}
+            `),
+            renderAnalyzerAccordion(byId.candlestick_patterns, skill => `
+              ${renderSignalCardGrid(skill.signals, 6, "暂无显著K线形态。")}
+              ${renderNotes(skill.notes)}
+            `),
+            renderAnalyzerAccordion(byId.key_levels, skill => `
+              <div class="level-grid">${nearestLevels(skill.levels || []).map(renderLevel).join("") || emptySmall("暂无关键点位。")}</div>
+            `),
+            renderAccordionBlock("K线图", "需要时再展开核对形态与均线", renderKlineSection(), false),
+            renderDetailTables(tables.filter(table => ["本板块品种对照", "相关板块强弱"].includes(table.title))),
+          ]);
+        case "fundamental":
+          return renderPillarStack([
+            renderKnowledgeAccordion(byId.product_framework),
+            renderAnalyzerAccordion(byId.basis, skill => `
+              ${renderSignalGroups(skill.signals)}
+              ${renderTables(skill.tables)}
+              ${renderNotes(skill.notes)}
+            `),
+            renderAnalyzerAccordion(byId.warehouse_receipts, skill => `
+              ${renderSignalGroups(skill.signals)}
+              ${renderTables(skill.tables)}
+              ${renderNotes(skill.notes)}
+            `),
+            !moduleAvailable(byId.product_framework) && !moduleAvailable(byId.basis) && !moduleAvailable(byId.warehouse_receipts)
+              ? `<div class="pillar-empty">产业数据以 Playbook 框架、期现基差与仓单库存为主；利润等尚未接入，刷新后可见品种框架推理。</div>`
+              : "",
+          ]);
+        case "seasonal":
+          return renderSeasonalityPanel(byId.seasonality);
+        case "capital":
+          return renderPillarStack([
+            renderAccordionBlock("期限结构", byId.term_structure?.summary || "同品种期货合约链跨期价差", renderTermStructureBody(byId.term_structure), moduleAvailable(byId.term_structure)),
+            renderAnalyzerAccordion(byId.position_rank, skill => `
+              ${renderSignalGroups(skill.signals)}
+              ${renderTables(skill.tables)}
+              ${renderNotes(skill.notes)}
+            `),
+          ]);
+        default:
+          return "";
+      }
+    }
+
+    function renderPillarStack(blocks) {
+      const rows = blocks.filter(Boolean);
+      return rows.length
+        ? `<div class="pillar-stack">${rows.join("")}</div>`
+        : `<div class="pillar-empty">本栏暂无内容。</div>`;
+    }
+
+    function renderAnalyzerAccordion(skill, bodyRenderer) {
+      if (!skill) return "";
+      return renderAccordionBlock(
+        skill.title || skill.id,
+        clip(skill.summary || "暂无摘要", 72),
+        bodyRenderer(skill),
+        false,
+        moduleAvailable(skill),
+      );
+    }
+
+    function renderKnowledgeAccordion(skill) {
+      if (!skill) return "";
+      return renderAccordionBlock(
+        skill.title || skill.id,
+        clip(skill.summary || "暂无摘要", 72),
+        renderKnowledgeBody(skill),
+        false,
+        moduleAvailable(skill),
+      );
+    }
+
+    function renderKnowledgeBody(skill) {
+      const gaps = (skill.gaps || []).slice(0, 4);
+      return `
+        ${renderSignalGroups((skill.signals || []).slice(0, 8))}
+        ${gaps.length ? `<div class="module-sub" style="margin-top:10px">缺项：${gaps.map(g => e(clip(g, 48))).join(" · ")}</div>` : ""}
+        ${renderNotes(skill.notes)}
+      `;
+    }
+
+    function renderAccordionBlock(title, subtitle, body, open = false, available = true) {
+      return `
+        <details class="pillar-section" ${open ? "open" : ""}>
+          <summary class="pillar-summary">
+            <div class="pillar-summary-main">
+              <strong>${e(title)}</strong>
+              <span class="pillar-summary-sub">${e(subtitle || "")}</span>
+            </div>
+          </summary>
+          <div class="pillar-body">${body}</div>
+        </details>
+      `;
+    }
+
+    function renderTermStructureBody(skill) {
+      if (!skill) return `<div class="pillar-empty">暂无期限结构数据。</div>`;
+      const available = skill.status !== "unavailable" && ((skill.tables || []).length || (skill.charts || []).length);
+      if (!available) {
+        return `${renderNotes(skill.notes)}<div class="pillar-empty">${e(skill.summary || "暂无足够合约链报价。")}</div>`;
+      }
+      const tables = skill.tables || [];
+      const spreadTable = tables.find(item => item.title === "跨期价差");
+      const chainTable = tables.find(item => item.title === "合约链报价");
+      const chart = (skill.charts || []).find(item => item.type === "line");
+      return `
+        ${renderSignalCardGrid(skill.signals, 4, "")}
+        ${spreadTable ? renderTermSpreadCards(spreadTable) : ""}
+        ${chainTable ? renderTermChainTable(chainTable) : ""}
+        ${chart ? `
+          <div class="term-curve-panel">
+            <div class="group-title">${e(chart.title || "期限结构曲线")}</div>
+            <canvas id="term-curve-chart" class="mini-chart"></canvas>
           </div>
-          <div class="analysis-subtitle">诊断依据</div>
-          <p>${compactDiagnosis(item)}</p>
-          <div class="analysis-columns">
-            <div>
-              <div class="analysis-subtitle">后续可能成立的条件</div>
-              ${plainList(item.to_confirm)}
+        ` : ""}
+        ${renderNotes(skill.notes)}
+      `;
+    }
+
+    function renderTermSpreadCards(spreadTable) {
+      const rows = spreadTable.rows || [];
+      if (!rows.length) return "";
+      return `
+        <div class="term-spread-section">
+          <div class="zone-title">跨期价差</div>
+          <div class="card-grid term-spread-grid">${rows.map(row => `
+            <div class="signal-card watch">
+              <div class="signal-card-title"><span>${e(row["价差"] || "-")}</span></div>
+              <div class="signal-desc">${e(row["近端"] || "-")} → ${e(row["远端"] || "-")}</div>
+              <div class="chips">
+                <span class="chip info">${e(formatCell(row["点差"]))}</span>
+                <span class="chip warning">${e(row["价差率"] || "-")}</span>
+              </div>
             </div>
-            <div>
-              <div class="analysis-subtitle">判断失效的条件</div>
-              ${plainList(item.invalidation)}
+          `).join("")}</div>
+        </div>
+      `;
+    }
+
+    function renderTermChainTable(chainTable, maxRows = 5) {
+      const columns = chainTable.columns || [];
+      const allRows = chainTable.rows || [];
+      if (!columns.length || !allRows.length) return "";
+      const rows = allRows.slice(0, maxRows);
+      const hidden = allRows.length - rows.length;
+      return `
+        <div class="term-chain-section">
+          <div class="zone-title">合约链报价</div>
+          <div class="table-wrap" aria-label="合约链报价">
+            <table>
+              <thead><tr>${columns.map(col => `<th>${e(col)}</th>`).join("")}</tr></thead>
+              <tbody>
+                ${rows.map(row => `<tr>${columns.map(col => `<td>${formatTableCell(col, row[col])}</td>`).join("")}</tr>`).join("")}
+              </tbody>
+            </table>
+            ${hidden > 0 ? `<div class="table-more">另有 ${hidden} 个合约未展示。</div>` : ""}
+          </div>
+        </div>
+      `;
+    }
+
+    function bindTermStructureChart(skill) {
+      const canvas = document.getElementById("term-curve-chart");
+      if (!canvas) return;
+      const chart = (skill.charts || []).find(item => item.type === "line");
+      if (!chart) return;
+      const draw = () => drawTermCurve(canvas, chart.points || []);
+      const details = canvas.closest("details.pillar-section");
+      if (!details) {
+        draw();
+        return;
+      }
+      if (!details.dataset.termChartBound) {
+        details.dataset.termChartBound = "1";
+        details.addEventListener("toggle", () => {
+          if (details.open) draw();
+        });
+      }
+      if (details.open) draw();
+    }
+
+    function bindKlinePanel(item) {
+      const canvas = document.getElementById("kline");
+      if (!canvas) return;
+      const draw = () => drawKline(canvas, (item.charts || {})[state.period] || []);
+      const details = canvas.closest("details.pillar-section");
+      if (!details) {
+        draw();
+        return;
+      }
+      if (!details.dataset.klineBound) {
+        details.dataset.klineBound = "1";
+        details.addEventListener("toggle", () => {
+          if (details.open) draw();
+        });
+      }
+      if (details.open) draw();
+    }
+
+    function matrixPeriods(matrix) {
+      return (matrix.periods || []).filter(period => period.key !== "hour");
+    }
+
+    function renderDirectionMatrix(item) {
+      const matrix = item.direction_matrix;
+      if (!matrix || !Array.isArray(matrix.cells) || !matrix.cells.length) return "";
+      const periods = matrixPeriods(matrix);
+      if (!periods.length) return "";
+      const dimensions = matrix.dimensions || [];
+      const active = activeMatrixCell(matrix, periods);
+      const columns = Math.max(periods.length + 1, 2);
+      const gridStyle = `grid-template-columns: 72px repeat(${periods.length}, 68px);`;
+      return `
+        <section class="evidence-card">
+          <div class="module-head">
+            <h3>多周期方向矩阵</h3>
+          </div>
+          <div class="matrix-layout">
+            <div class="matrix-panel matrix-scroll">
+              <div class="matrix-table" style="${gridStyle}">
+                <div class="matrix-label"></div>
+                ${periods.map(period => `<div class="matrix-label matrix-head">${e(period.label)}</div>`).join("")}
+                ${dimensions.map(dimension => `
+                  <div class="matrix-label">${e(dimension.label)}</div>
+                  ${periods.map(period => renderMatrixCell(cellFor(matrix, period.key, dimension.key), active)).join("")}
+                `).join("")}
+              </div>
             </div>
+            ${renderMatrixExplain(active)}
           </div>
         </section>
-        <section>
+      `;
+    }
+
+    function activeMatrixCell(matrix, periods = matrixPeriods(matrix)) {
+      const cells = matrix.cells || [];
+      const allowed = new Set(periods.map(period => period.key));
+      const selected = state.matrixCell
+        ? cells.find(cell => cell.period === state.matrixCell.period && cell.dimension_key === state.matrixCell.dimension)
+        : null;
+      if (selected && allowed.has(selected.period)) return selected;
+      return (
+        cells.find(cell => allowed.has(cell.period) && cell.bias !== "neutral")
+        || cells.find(cell => cell.period === "day" && cell.dimension_key === "trend")
+        || cells.find(cell => allowed.has(cell.period))
+        || cells[0]
+      );
+    }
+
+    function cellFor(matrix, period, dimension) {
+      return (matrix.cells || []).find(cell => cell.period === period && cell.dimension_key === dimension) || {
+        period,
+        dimension_key: dimension,
+        bias: "neutral",
+        label: "中立",
+        summary: "暂无数据。",
+        reasons: [],
+      };
+    }
+
+    function renderMatrixCell(cell, active) {
+      const isActive = active && active.period === cell.period && active.dimension_key === cell.dimension_key;
+      return `
+        <button
+          class="matrix-cell ${e(cell.bias || "neutral")} ${isActive ? "active" : ""}"
+          title="${e(cell.summary || "")}"
+          onclick="selectMatrixCell('${e(cell.period)}', '${e(cell.dimension_key)}')"
+        >${e(cell.label || "中立")}</button>
+      `;
+    }
+
+    function selectMatrixCell(period, dimension) {
+      state.matrixCell = { period, dimension };
+      renderCurrent();
+    }
+
+    function renderMatrixExplain(cell) {
+      if (!cell) return "";
+      return `
+        <div class="matrix-explain">
+          <div class="matrix-explain-title">
+            <h3>${e(cell.period_label || periodName(cell.period))} / ${e(cell.dimension || "-")}</h3>
+            <span class="${chipClassForBias(cell.bias)}">${e(cell.label || "中立")}</span>
+          </div>
+          <p class="module-sub">${e(cell.summary || "暂无解释。")}</p>
+          ${(cell.reasons || []).length ? `<ul class="reason-list">${cell.reasons.map(reason => `<li>${e(reason)}</li>`).join("")}</ul>` : ""}
+        </div>
+      `;
+    }
+
+    function renderMacroBar(macro, embedded = false) {
+      if (!macro || macro.status === "unavailable") return "";
+      const body = renderMacroBarBody(macro);
+      if (embedded) return body;
+      return `<section class="macro-bar">${body}</section>`;
+    }
+
+    function renderMacroBarBody(macro) {
+      const snapshot = macro.snapshot || {};
+      const calendar = macro.calendar || {};
+      const drivers = Object.fromEntries((snapshot.drivers || []).map(row => [row.id, row]));
+      const us10y = drivers.us10y;
+      const next = calendar.next_event;
+      const parts = [];
+      if (us10y) parts.push(`10Y ${e(us10y.value_label || us10y.latest_value)}`);
+      if (next) parts.push(`下一事件 ${e(next.date)} ${e(next.time)} ${e(next.title)}`);
+      if (calendar.risk_window_48h) parts.push("48h 内有重要数据");
+      const events = (calendar.upcoming || []).slice(0, 5);
+      return `
+        <div class="macro-bar-head">
+          <h3>宏观窗口</h3>
+          <span class="subtle">更新 ${e(macro.refreshed_at || "-")}</span>
+        </div>
+        <p class="macro-bar-lead">${parts.length ? parts.join(" · ") : "宏观快照已更新"}</p>
+        ${events.length ? `<ul class="macro-event-list">${events.map(ev => `
+          <li><span class="k">${e(ev.date)} ${e(ev.time)}</span> ${e(ev.region)} · ${e(ev.title)}</li>
+        `).join("")}</ul>` : ""}
+      `;
+    }
+
+    function boardLabel(item) {
+      return item?.nanhua_board || item?.board || "未分类";
+    }
+
+    function boardTagTitle(item) {
+      const code = item?.nanhua_index_code;
+      const internal = item?.board;
+      if (code && internal && internal !== boardLabel(item)) {
+        return `${boardLabel(item)}（${code}）· 内部分组 ${internal}`;
+      }
+      if (code) return `${boardLabel(item)}（${code}）`;
+      return boardLabel(item);
+    }
+
+    function renderDetailHeader(item) {
+      const m = item.metrics || {};
+      const retClass = Number(m.return_pct) > 0 ? "up" : Number(m.return_pct) < 0 ? "down" : "";
+      return `
+        <section class="detail-header evidence-card">
+          <div class="detail-header-main">
+            <div class="hero-title">
+              <h2>${e(item.name)}</h2>
+              <span class="hero-symbol">${e(item.actual_symbol || item.symbol || "-")}</span>
+            </div>
+            <div class="chips">
+              <span class="pill" title="${e(boardTagTitle(item))}">${e(boardLabel(item))}${item.nanhua_index_code ? ` · ${e(item.nanhua_index_code)}` : ""}</span>
+              <span class="pill">主力合约</span>
+              <span class="pill" title="${e(sessionDetail(item))}">${e(sessionLabel(item))}</span>
+              <span class="${chipClassForDirection(item.direction)}">${directionText(item.direction)}</span>
+            </div>
+          </div>
+          <div class="detail-header-metrics">
+            ${metric("最新价", formatCell(item.last_price ?? m.close), `${pct(m.return_pct)} · ${shortQuoteTime(item.quote_time)}`, "", retClass)}
+            ${metric("开仓保证金", `${money(m.estimated_margin)}/手`, `合约价值 ${money(m.contract_value)} · 乘数 ${spec(m.volume_multiple)}`)}
+            ${metric("波动幅度", `${money(m.avg_daily_range_amount_5d)}/日`, `日内振幅 ${pct(m.range_pct)} · 一跳 ${money(m.tick_value)}`)}
+          </div>
+        </section>
+      `;
+    }
+
+    function renderInsight(insightSkill, item) {
+      if (!insightSkill) return "";
+      const direction = directionText(item.direction);
+      const brief = insightSkill.brief || legacySummaryBrief(insightSkill, item, direction);
+      const hits = filterProductInsightHits(insightSkill.core_hits || []).slice(0, 4);
+      const score = insightSkill.priority ?? item.score ?? "-";
+      const headline = cleanInsightHeadline(brief.headline || `${item.state || ""} · ${item.level || ""}`, direction, score);
+      const hitBlocks = renderInsightHits(hits, brief);
+      const summaryNote = insightSkill.judgment_note || buildInsightJudgmentNote(hits);
+      const body = hitBlocks || "";
+
+      return `
+        <section class="decision-band insight-block">
+          <div class="decision-headline-row">
+            <p class="insight-lead decision-headline">${e(headline)}</p>
+            <span class="${chipClassForDirection(item.direction)}">${directionText(item.direction)}</span>
+          </div>
+          ${body || `<p class="insight-line"><span class="k">提示</span><span>暂无解读，请刷新数据。</span></p>`}
+          ${summaryNote ? `<p class="insight-summary">${e(summaryNote)}</p>` : ""}
+        </section>
+      `;
+    }
+
+    function buildInsightJudgmentNote(hits) {
+      if (!hits.length) return "";
+      const names = hits.slice(0, 3).map(hit => shortHitName(hit.name)).filter(Boolean).join("、");
+      return `已命中 ${hits.length} 项${names ? `（${names}）` : ""}，当前以盘面与品种逻辑为主。`;
+    }
+
+    function filterProductInsightHits(hits) {
+      const macroPattern = /非农|ISM|GDP|CPI|PPI|国债收益率|中间价|FOMC|宏观环境|宏观·/;
+      return (hits || []).filter(hit => {
+        const text = `${hit.name || ""} ${hit.text || ""}`;
+        return !macroPattern.test(text);
+      });
+    }
+
+    function cleanInsightHeadline(headline, direction, score) {
+      return String(headline || "")
+        .replace(/\s*·\s*方向(偏多|偏空|中性)/g, "")
+        .replace(/\s*·\s*关注分\s*\d+/g, "")
+        .replace(/^[\s·]+|[\s·]+$/g, "")
+        .trim() || `方向${direction}`;
+    }
+
+    function renderInsightHits(hits, brief) {
+      if (hits.length) {
+        return `
+          <div class="insight-lines">
+            <ul class="insight-hit-list">
+              ${hits.map(hit => `
+                <li class="insight-hit-item">
+                  <span class="insight-hit-name">${e(shortHitName(hit.name))}</span>
+                  ${hit.text ? `<span class="insight-hit-desc">${e(clip(hit.text, 72))}</span>` : ""}
+                </li>
+              `).join("")}
+            </ul>
+          </div>
+        `;
+      }
+      const fallback = (brief.evidence || [])
+        .filter(text => !/非农|ISM|GDP|CPI|宏观/.test(String(text)))
+        .slice(0, 3);
+      if (fallback.length) {
+        return renderInsightPlainList(fallback.map(text => clip(text, 72)));
+      }
+      const triggers = (brief.triggers || [])
+        .filter(text => !/macro_regime|宏观环境/.test(String(text)))
+        .slice(0, 3);
+      if (triggers.length) {
+        return renderInsightPlainList(triggers.map(text => clip(text, 72)));
+      }
+      return "";
+    }
+
+    function renderInsightTagList(items, label) {
+      if (!items.length) return "";
+      return `
+        <div class="insight-lines">
+          <p class="group-title insight-section-label">${e(label)}</p>
+          <ul class="insight-tag-list">
+            ${items.map(text => `<li><span>${e(text)}</span></li>`).join("")}
+          </ul>
+        </div>
+      `;
+    }
+
+    function renderInsightPlainList(items) {
+      if (!items.length) return "";
+      return `
+        <div class="insight-lines">
+          <ul class="insight-tag-list">
+            ${items.map(text => `<li><span>${e(text)}</span></li>`).join("")}
+          </ul>
+        </div>
+      `;
+    }
+
+    function legacyInsightSkill(summarySkill, lensSkill, item) {
+      if (!summarySkill && !lensSkill) return null;
+      const lens = normalizeResearchLens(lensSkill);
+      const direction = directionText(item?.direction);
+      const brief = summarySkill?.brief || legacySummaryBrief(summarySkill || {}, item || {}, direction);
+      return {
+        brief,
+        core_hits: lens?.core_hits || [],
+        gaps: lens?.gaps || [],
+        judgment_note: lens?.judgment_note || summarySkill?.judgment_note || "",
+        priority: summarySkill?.priority ?? item?.score,
+      };
+    }
+
+    function compactGap(text) {
+      const raw = String(text || "");
+      if (!raw) return "";
+      const head = raw.split("：")[0].split("·").slice(-1)[0] || raw;
+      if (raw.includes("未接入")) return `${head}未接入`;
+      if (raw.includes("无对应盘面")) return `${head}待验证`;
+      return clip(raw.replace(/·/g, "/"), 36);
+    }
+
+    function clip(text, max = 36) {
+      const value = String(text || "");
+      return value.length > max ? `${value.slice(0, max)}…` : value;
+    }
+
+    function legacySummaryBrief(skill, item, direction) {
+      return {
+        headline: `${item.state || ""} · ${item.level || ""}`,
+        triggers: (skill.signals || []).slice(0, 3).map(sig => sig.name).filter(Boolean),
+        evidence: [],
+        framework: [],
+        verify: [],
+      };
+    }
+
+    function normalizeResearchLens(skill) {
+      if (!skill || skill.status === "unavailable") return null;
+      const normalized = { ...skill };
+      if (!Array.isArray(normalized.core_hits) || !normalized.core_hits.length) {
+        normalized.core_hits = (normalized.signals || []).slice(0, 5).map(sig => ({
+          name: sig.name,
+          text: String(sig.interpretation || "").split("（")[0].trim() || sig.interpretation || "",
+          level: sig.level || "info",
+          value: sig.value,
+        }));
+      }
+      if (!Array.isArray(normalized.gaps)) normalized.gaps = [];
+      if (!normalized.judgment_note && normalized.core_hits?.length && !normalized.gaps.length) {
+        normalized.judgment_note = "当前以盘面证据为主；如需基本面闭环，请刷新数据或补充产业数据。";
+      }
+      if (!normalized.judgment_note && !normalized.core_hits?.length) {
+        normalized.judgment_note = "暂无结构化思维链，请点击「刷新数据」重新生成。";
+      }
+      return normalized;
+    }
+
+    function renderKlineSection() {
+      return `
+        <div class="kline-panel">
           <div class="chart-head">
-            <h3>K线图</h3>
-            <div class="tabs">
-              ${tab("day", "日线")}
-              ${tab("hour", "1小时")}
-              ${tab("week", "周线")}
+            <div class="chart-tools">
+              <div class="ma-legend">
+                <span class="ma-key"><i class="ma-line"></i>MA20</span>
+                <span class="ma-key"><i class="ma-line ma60"></i>MA60</span>
+              </div>
+              <div class="tabs">
+                ${tab("day", "日线")}
+                ${tab("week", "周线")}
+              </div>
             </div>
           </div>
           <canvas id="kline"></canvas>
+        </div>
+      `;
+    }
+
+    function shortHitName(name) {
+      const parts = String(name || "").split("·");
+      return parts[parts.length - 1] || name || "-";
+    }
+
+    function renderMacroRegime(skill) {
+      if (!skill || skill.status === "unavailable") return "";
+      return `
+        <div class="module">
+          ${moduleHead(skill)}
+          <p class="module-sub">${e(skill.summary || "")}</p>
+          ${renderSignalGroups(skill.signals)}
+          ${renderTables(skill.tables)}
+          ${renderNotes(skill.notes)}
+        </div>
+      `;
+    }
+
+    function renderPriceVolume(skill) {
+      if (!skill) return "";
+      return `
+        <div class="module">
+          ${moduleHead(skill)}
+          <p class="module-sub">${e(skill.summary || "")}</p>
+          ${renderSignalGroups(skill.signals)}
+        </div>
+      `;
+    }
+
+    function renderTechnical(skill) {
+      if (!skill) return "";
+      const rows = (skill.signals || []).slice(0, 6);
+      return `
+        <div class="module">
+          ${moduleHead(skill)}
+          <p class="module-sub">${e(skill.summary || "")}</p>
+          <div class="card-grid">
+            ${rows.length ? rows.map(sig => renderSignalCard(sig)).join("") : emptySmall("暂无明显技术指标阈值信号。")}
+          </div>
+          ${renderNotes(skill.notes)}
+        </div>
+      `;
+    }
+
+    function renderPatterns(skill) {
+      if (!skill) return "";
+      const rows = (skill.signals || []).slice(0, 6);
+      return `
+        <div class="module">
+          ${moduleHead(skill)}
+          <p class="module-sub">${e(skill.summary || "")}</p>
+          <div class="signal-groups">
+            ${rows.length ? rows.map(renderPatternCard).join("") : emptySmall("暂无显著K线形态。")}
+          </div>
+          ${renderNotes(skill.notes)}
+        </div>
+      `;
+    }
+
+    function renderKeyLevels(skill) {
+      if (!skill) return "";
+      const rows = nearestLevels(skill.levels || []);
+      return `
+        <div class="module">
+          ${moduleHead(skill)}
+          <div class="level-grid">
+            ${rows.length ? rows.map(renderLevel).join("") : emptySmall("暂无关键点位。")}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderGenericModules(skills) {
+      const dedicatedAnalyzers = new Set([
+        "price_volume", "board_resonance", "seasonality", "technical_signals", "candlestick_patterns", "key_levels", "term_structure", "macro_regime",
+      ]);
+      return skills.filter(skill => skill.kind === "analyzer" && !dedicatedAnalyzers.has(skill.id)).map(skill => `
+        <div class="module">
+          ${moduleHead(skill)}
+          <p class="module-sub">${e(skill.summary || "")}</p>
+          ${renderSignalGroups(skill.signals)}
+          ${renderNotes(skill.notes)}
+        </div>
+      `).join("");
+    }
+
+    function renderDetailTables(tables) {
+      if (!tables.length) return "";
+      return tables.map(table => `
+        <section>
+          <div class="module-head"><h3>${e(table.title || "数据表")}</h3></div>
+          ${renderTable(table)}
+        </section>
+      `).join("");
+    }
+
+    function renderTermStructure(skill) {
+      if (!skill) return "";
+      const available = skill.status !== "unavailable" && ((skill.tables || []).length || (skill.charts || []).length);
+      return `
+        <section class="term-card ${available ? "available" : ""}">
+          <div class="module-head">
+            <h3>${e(skill.title || "期限结构")}</h3>
+            <span class="chip ${available ? "info" : ""}">${available ? "已启用" : "暂无数据"}</span>
+          </div>
+          <p class="module-sub">${e(skill.summary || "暂无足够合约链报价，先不判断期限结构。")}</p>
+          ${available ? renderSignalGroups(skill.signals) + renderTables(skill.tables) + renderCharts(skill) : renderNotes(skill.notes)}
         </section>
       `;
-      drawKline(document.getElementById("kline"), (item.charts || {})[state.period] || []);
     }
 
     function tab(period, label) {
       return `<button class="tab ${state.period === period ? "active" : ""}" onclick="setPeriod('${period}')">${label}</button>`;
     }
 
-    function metric(label, value, klass = "") {
-      return `<div class="metric"><div class="label">${label}</div><div class="value ${klass}">${value ?? "-"}</div></div>`;
+    function metric(label, value, sub, klass = "", subKlass = "") {
+      return `
+        <div class="metric">
+          <div class="label">${e(label)}</div>
+          <div class="value ${klass}">${e(value ?? "-")}</div>
+          <div class="sub ${subKlass}">${e(sub || "")}</div>
+        </div>
+      `;
     }
 
-    function plainList(rows) {
-      return `<ul>${(rows || []).map(row => `<li>${row}</li>`).join("")}</ul>`;
+    function shortQuoteTime(text) {
+      if (!text) return "更新未知";
+      const raw = String(text);
+      const match = raw.match(/(\d{4}-\d{2}-\d{2})/);
+      if (match) return match[1];
+      return raw.slice(0, 16);
+    }
+
+    function moduleHead(skill) {
+      return `
+        <div class="module-head">
+          <h3>${e(skill.title || "-")}</h3>
+          <span class="${chipClass(scoreLevel(skill.priority))}">${e(skill.priority ?? "-")}</span>
+        </div>
+      `;
+    }
+
+    const SIGNAL_PERIODS = new Set(["day", "week"]);
+
+    function filterSignalsByPeriod(signals) {
+      return (signals || []).filter(sig => !sig.period || SIGNAL_PERIODS.has(sig.period));
+    }
+
+    function sortSignalsByPeriod(signals) {
+      const order = { day: 0, week: 1 };
+      return [...signals].sort((a, b) => (order[a.period] ?? 9) - (order[b.period] ?? 9));
+    }
+
+    function levelsForDisplay(levels) {
+      const rows = (levels || []).filter(row => row.period !== "hour");
+      const dayRows = rows.filter(row => row.period === "day" || row.period_label === "日线");
+      if (dayRows.length) return dayRows;
+      return rows.filter(row => row.period === "week" || row.period_label === "周线");
+    }
+
+    function renderSignalCardGrid(signals, limit = 6, emptyText = "") {
+      const all = sortSignalsByPeriod(filterSignalsByPeriod(signals));
+      const rows = all.slice(0, limit);
+      if (!rows.length) return emptyText ? emptySmall(emptyText) : "";
+      const hidden = all.length - rows.length;
+      return `
+        <div class="card-grid">${rows.map(renderSignalCard).join("")}</div>
+        ${hidden > 0 ? `<div class="table-more">另有 ${hidden} 个信号未展示。</div>` : ""}
+      `;
+    }
+
+    function renderSignalGroups(signals, limit = 6) {
+      return renderSignalCardGrid(signals, limit);
+    }
+
+    function shortSignalDesc(sig) {
+      const text = String(sig.interpretation || "").split("（")[0].trim() || sig.interpretation || "";
+      return clip(text, 52);
+    }
+
+    function renderSignalLine(sig) {
+      const valueParts = [];
+      if (sig.value !== null && sig.value !== undefined) valueParts.push(formatCell(sig.value));
+      if (sig.threshold) valueParts.push(sig.threshold);
+      return `
+        <div class="signal-line">
+          <i class="dot" style="background:${signalColor(sig)}"></i>
+          <span class="signal-name">${e(sig.name || "-")}</span>
+          <span class="signal-desc">${e(shortSignalDesc(sig))}</span>
+          <span class="signal-value">${e(valueParts.join(" · ") || "")}</span>
+        </div>
+      `;
+    }
+
+    function renderSignalCard(sig) {
+      return `
+        <div class="signal-card ${signalTone(sig)}">
+          <div class="signal-card-title">
+            <span>${e(sig.name || "-")}</span>
+            ${sig.period ? `<span class="chip">${periodName(sig.period)}</span>` : ""}
+          </div>
+          <div class="signal-desc">${e(sig.interpretation || "")}</div>
+          <div class="chips">
+            ${sig.value !== null && sig.value !== undefined ? `<span class="chip info">${e(formatCell(sig.value))}</span>` : ""}
+            ${sig.threshold ? `<span class="chip warning">${e(sig.threshold)}</span>` : ""}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderPatternCard(sig) {
+      const bull = patternDirection(sig) === "bull";
+      return `
+        <div class="pattern-card ${bull ? "bull" : "bear"}">
+          <div class="pattern-title">
+            <span>${e(sig.name || "-")}</span>
+            <span class="chip ${bull ? "danger" : "success"}">${bull ? "偏多" : "偏空"}</span>
+          </div>
+          <div class="signal-desc">${e(sig.interpretation || "")}</div>
+          <div class="subtle">${periodName(sig.period)}${sig.value !== null && sig.value !== undefined ? ` · ${e(sig.value)}` : ""}</div>
+        </div>
+      `;
+    }
+
+    function renderLevel(level) {
+      const type = level.type || "confirm";
+      return `
+        <div class="level-item ${e(type)}">
+          <div>
+            <span class="type-pill ${levelTypeClass(type)}">${levelTypeName(type)}</span>
+            <div class="level-price">${e(formatCell(level.price))}</div>
+            <div class="subtle ellipsis">${e(level.period_label || periodName(level.period))} · ${e(level.name || "-")}</div>
+          </div>
+          <div class="level-distance">${formatDistance(level.distance_pct)}</div>
+        </div>
+      `;
+    }
+
+    function renderTables(tables) {
+      return (tables || []).map(renderTable).join("");
+    }
+
+    function renderTable(item, maxRows = MAX_DETAIL_TABLE_ROWS) {
+      const columns = item.columns || [];
+      const allRows = item.rows || [];
+      if (!columns.length || !allRows.length) return "";
+      const rows = allRows.slice(0, maxRows);
+      const hidden = allRows.length - rows.length;
+      return `
+        <div class="table-wrap" aria-label="${e(item.title || "数据表")}">
+          <table>
+            <thead><tr>${columns.map(col => `<th>${e(col)}</th>`).join("")}</tr></thead>
+            <tbody>
+              ${rows.map(row => `<tr>${columns.map(col => `<td>${formatTableCell(col, row[col])}</td>`).join("")}</tr>`).join("")}
+            </tbody>
+          </table>
+          ${hidden > 0 ? `<div class="table-more">另有 ${hidden} 行未展开。</div>` : ""}
+        </div>
+      `;
+    }
+
+    function renderCharts(skill) {
+      const charts = skill.charts || [];
+      if (!charts.length) return "";
+      return charts.map((chart, index) => {
+        if (chart.type !== "line") return "";
+        return `<canvas class="curve-canvas" id="skill-chart-${e(skill.id)}-${index}"></canvas>`;
+      }).join("");
+    }
+
+    function renderNotes(notes) {
+      if (!notes || !notes.length) return "";
+      return `<div class="module-sub" style="margin-top:10px">${notes.map(e).join("；")}</div>`;
+    }
+
+    function emptySmall(text) {
+      return `<div class="empty" style="padding:12px">${e(text)}</div>`;
+    }
+
+    function collectDetailTables(skills) {
+      const titleMap = {
+        price_volume: "周期数据对比表",
+        board_resonance: "板块共振对照表",
+        candlestick_patterns: "形态结构数据表",
+        warehouse_receipts: "仓单库存变化表",
+        basis: "期现基差表",
+        position_rank: "席位持仓表",
+      };
+      return skills
+        .filter(skill => titleMap[skill.id])
+        .flatMap(skill => (skill.tables || []).map(table => ({ ...table, title: titleMap[skill.id] })));
+    }
+
+    function nearestLevels(levels) {
+      const pool = levelsForDisplay(levels);
+      const support = pool.filter(row => row.type === "support").sort((a, b) => Math.abs(a.distance_pct ?? 999) - Math.abs(b.distance_pct ?? 999))[0];
+      const resistance = pool.filter(row => row.type === "resistance").sort((a, b) => Math.abs(a.distance_pct ?? 999) - Math.abs(b.distance_pct ?? 999))[0];
+      const confirm = pool
+        .filter(row => !["support", "resistance"].includes(row.type) || /^MA/i.test(row.name || ""))
+        .map(row => ({ ...row, type: "confirm" }))
+        .sort((a, b) => Math.abs(a.distance_pct ?? 999) - Math.abs(b.distance_pct ?? 999))[0];
+      return [resistance, support, confirm].filter(Boolean);
+    }
+
+    function stripHourFromSkill(skill) {
+      if (!skill) return skill;
+      return {
+        ...skill,
+        signals: filterSignalsByPeriod(skill.signals),
+        levels: (skill.levels || []).filter(row => row.period !== "hour"),
+      };
+    }
+
+    function normalizeSkills(item) {
+      let skills = [];
+      if (Array.isArray(item.analyzers) || Array.isArray(item.skills)) {
+        skills = [...(item.analyzers || []), ...(item.skills || [])];
+      } else if (Array.isArray(item.skills) && item.skills.length) {
+        skills = item.skills;
+      } else {
+        skills = legacySkills(item);
+      }
+      return skills.map(stripHourFromSkill);
+    }
+
+    function isKnowledgeSkill(module) {
+      const id = String(module?.id || "");
+      if (module?.kind === "skill") return true;
+      if (module?.kind === "analyzer") return false;
+      return id === "insight" || id === "summary" || id === "research_lens"
+        || id.endsWith("_framework") || id.startsWith("persona_");
+    }
+
+    function legacySkills(item) {
+      const m = item.metrics || {};
+      return [
+        {
+          id: "summary",
+          title: "综合提炼",
+          priority: item.score || 0,
+          summary: `${item.state || ""}，${item.level || ""}。${compactDiagnosis(item)}`,
+          signals: [
+            ...(item.to_confirm || []).slice(0, 2).map(row => ({ name: "后续确认", level: "info", interpretation: row })),
+            ...(item.invalidation || []).slice(0, 2).map(row => ({ name: "失效条件", level: "watch", interpretation: row })),
+          ],
+        },
+        {
+          id: "price_volume",
+          title: "量价分析",
+          priority: item.score || 50,
+          summary: `日涨跌幅${pct(m.return_pct)}，成交量分位${pct(m.volume_rank_60)}，ATR分位${pct(m.atr_rank_60)}。`,
+          signals: [],
+          tables: [{
+            title: "日线量价",
+            columns: ["指标", "数值"],
+            rows: [
+              { "指标": "收盘价", "数值": m.close },
+              { "指标": "涨跌幅", "数值": pct(m.return_pct) },
+              { "指标": "振幅", "数值": pct(m.range_pct) },
+              { "指标": "成交量分位", "数值": pct(m.volume_rank_60) },
+              { "指标": "持仓变化", "数值": pct(m.open_interest_change_pct) },
+              { "指标": "ATR分位", "数值": pct(m.atr_rank_60) },
+            ],
+          }],
+        },
+        {
+          id: "key_levels",
+          title: "关键点位",
+          priority: 55,
+          summary: "基于现有缓存字段生成近20/60周期高低点和均线点位。",
+          levels: [
+            { period_label: "日线", type: "resistance", name: "近20周期高点", price: m.prev_high_20 },
+            { period_label: "日线", type: "support", name: "近20周期低点", price: m.prev_low_20 },
+            { period_label: "日线", type: "resistance", name: "近60周期高点", price: m.prev_high_60 },
+            { period_label: "日线", type: "support", name: "近60周期低点", price: m.prev_low_60 },
+            { period_label: "日线", type: "confirm", name: "MA20", price: m.ma20 },
+            { period_label: "日线", type: "confirm", name: "MA60", price: m.ma60 },
+          ].filter(row => row.price !== null && row.price !== undefined),
+        },
+      ];
     }
 
     function compactDiagnosis(item) {
@@ -325,8 +4174,214 @@
       return `${item.facts || ""}${evidence ? " " + evidence : ""}`;
     }
 
+    function scoreRing(score, extra = "") {
+      return `<span class="score-ring ${scoreClass(score)} ${extra}">${e(score ?? "-")}</span>`;
+    }
+
+    function scoreClass(score) {
+      const n = Number(score);
+      if (n >= 80) return "score-high";
+      if (n >= 70) return "score-mid";
+      return "score-low";
+    }
+
+    function scoreLevel(score) {
+      const n = Number(score);
+      if (n >= 80) return "danger";
+      if (n >= 70) return "warning";
+      return "info";
+    }
+
+    function chipClass(level) {
+      return `chip ${level || ""}`.trim();
+    }
+
+    function chipClassForDirection(direction) {
+      if (direction === "up") return "chip danger";
+      if (direction === "down") return "chip success";
+      return "chip info";
+    }
+
+    function chipClassForBias(bias) {
+      if (bias === "long") return "chip danger";
+      if (bias === "short") return "chip success";
+      return "chip info";
+    }
+
+    function directionText(direction) {
+      return ({ up: "偏多", down: "偏空", neutral: "中性" })[direction] || "观察";
+    }
+
+    function directionClass(item) {
+      return item.direction === "up" ? "up" : item.direction === "down" ? "down" : "muted";
+    }
+
+    function sessionLabel(item) {
+      const session = item?.session;
+      if (!session) return "夜盘未知";
+      return session.label || (session.has_night ? "有夜盘" : "无夜盘");
+    }
+
+    function sessionDetail(item) {
+      const session = item?.session;
+      if (!session) return "";
+      if (session.has_night) {
+        const night = session.night_session || "";
+        const day = session.day_session || "";
+        return [night ? `夜盘 ${night}` : "", day ? `日盘 ${day}` : ""].filter(Boolean).join(" · ");
+      }
+      return session.day_session ? `日盘 ${session.day_session}` : "";
+    }
+
+    function sessionHasNight(item) {
+      const session = item?.session;
+      if (!session) return null;
+      return Boolean(session.has_night);
+    }
+
+    function signalTag(sig) {
+      return `${sig.period ? periodName(sig.period) + ":" : ""}${sig.name || "-"}`;
+    }
+
+    function signalColor(sig) {
+      if (sig.level === "critical") return "var(--danger)";
+      if (sig.level === "watch") return "var(--warning)";
+      return "var(--accent)";
+    }
+
+    function signalTone(sig) {
+      const text = `${sig.name || ""}${sig.interpretation || ""}`;
+      if (/偏多|金叉|转强|修复|突破/.test(text)) return "bull";
+      if (/偏空|死叉|转弱|回落|跌破|压力|过热/.test(text)) return "bear";
+      if (sig.level === "watch") return "watch";
+      return "";
+    }
+
+    function patternDirection(sig) {
+      const text = `${sig.name || ""}${sig.interpretation || ""}`;
+      if (/偏多|长下影|锤头|早晨|刺透|修复|承接/.test(text)) return "bull";
+      return "bear";
+    }
+
+    function levelTypeName(type) {
+      return ({ support: "支撑", resistance: "压力", confirm: "确认位", dynamic: "确认位" })[type] || "确认位";
+    }
+
+    function levelTypeClass(type) {
+      if (type === "support") return "support";
+      if (type === "resistance") return "resistance";
+      return "confirm";
+    }
+
+    function periodName(period) {
+      return ({ day: "日线", week: "周线", month: "月线", hour: "1小时", other: "其他" })[period] || period || "-";
+    }
+
+    function formatTableCell(column, value) {
+      const text = formatCellForColumn(column, value);
+      if (["涨跌幅", "持仓变化", "1日", "5日", "20日", "60日", "YTD"].includes(column)) return `<span class="${signedClass(text)}">${e(text)}</span>`;
+      if (column === "路径") return `<span class="${/下行/.test(text) ? "down" : /上行/.test(text) ? "up" : ""}">${e(text)}</span>`;
+      if (column === "类型") {
+        const cls = text === "支撑" ? "support" : text === "压力" ? "resistance" : "confirm";
+        return `<span class="type-pill ${cls}">${e(text)}</span>`;
+      }
+      return e(text);
+    }
+
+    function formatCellForColumn(column, value) {
+      if (column === "成交量" || column === "持仓") return compactNumber(value);
+      return formatCell(value);
+    }
+
+    function signedClass(text) {
+      if (String(text).startsWith("-")) return "down";
+      if (/^[+]?([0-9]|\.)/.test(String(text)) && !String(text).startsWith("0.00")) return "up";
+      return "";
+    }
+
+    function formatCell(value) {
+      if (value === null || value === undefined || Number.isNaN(value)) return "-";
+      if (typeof value === "number") return Number.isInteger(value) ? value.toLocaleString("zh-CN") : value.toLocaleString("zh-CN", { maximumFractionDigits: 4 });
+      return value;
+    }
+
+    function formatDistance(value) {
+      if (value === null || value === undefined || Number.isNaN(value)) return "-";
+      const n = Number(value);
+      return `${n > 0 ? "+" : ""}${n.toFixed(2)}%`;
+    }
+
+    function compactNumber(value) {
+      if (value === null || value === undefined || Number.isNaN(value)) return "-";
+      const n = Number(value);
+      if (!Number.isFinite(n)) return value;
+      if (Math.abs(n) >= 10000) return `${(n / 10000).toLocaleString("zh-CN", { maximumFractionDigits: 1 })}万`;
+      return n.toLocaleString("zh-CN", { maximumFractionDigits: 0 });
+    }
+
+    function e(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
     function pct(value) {
       return value === null || value === undefined ? "-" : `${Number(value).toFixed(2)}%`;
+    }
+
+    function formatChange(value, kind = "pct") {
+      if (value === null || value === undefined || Number.isNaN(Number(value))) return "-";
+      const n = Number(value);
+      if (kind === "diff_bp") return `${n > 0 ? "+" : ""}${n.toFixed(1)}bp`;
+      return `${n > 0 ? "+" : ""}${n.toFixed(2)}%`;
+    }
+
+    function signedText(value, kind = "pct") {
+      return formatChange(value, kind);
+    }
+
+    function changeClass(value) {
+      const n = Number(value);
+      if (!Number.isFinite(n)) return "";
+      if (n > 0) return "up";
+      if (n < 0) return "down";
+      return "";
+    }
+
+    function marketToneText(tone) {
+      return ({ up: "偏强", down: "偏弱", neutral: "中性" })[tone] || "观察";
+    }
+
+    const SERIES_SHORT_NAMES = {
+      "国内大宗商品价格指数": "大宗商品",
+      "美国10年期国债收益率": "美债10Y",
+      "中国10年期国债收益率": "国债10Y",
+      "美国10Y-2Y利差": "美债10Y-2Y",
+      "美元兑人民币中间价": "美元/人民币",
+    };
+
+    function shortSeriesName(name) {
+      const text = String(name || "").trim();
+      if (!text) return "-";
+      if (SERIES_SHORT_NAMES[text]) return SERIES_SHORT_NAMES[text];
+      return shortIndexName(text);
+    }
+
+    function shortIndexName(name) {
+      let text = String(name || "").trim();
+      if (!text) return "-";
+      text = text
+        .replace(/^中证监控中国/, "")
+        .replace(/^中证监控/, "")
+        .replace(/^中证商品/, "商品")
+        .replace(/^中证/, "")
+        .replace(/期货指数$/, "")
+        .replace(/^中国/, "")
+        .trim();
+      return text || String(name).trim() || "-";
     }
 
     function spec(value) {
@@ -335,6 +4390,400 @@
 
     function money(value) {
       return value === null || value === undefined ? "-" : `¥${Number(value).toLocaleString("zh-CN", { maximumFractionDigits: 0 })}`;
+    }
+
+    function niceChartStep(span, ticks) {
+      const rough = span / Math.max(ticks, 1);
+      const mag = Math.pow(10, Math.floor(Math.log10(rough || 1)));
+      const norm = rough / mag;
+      let step = 10;
+      if (norm <= 1) step = 1;
+      else if (norm <= 2) step = 2;
+      else if (norm <= 5) step = 5;
+      return step * mag;
+    }
+
+    function niceChartTicks(min, max, count = 4) {
+      if (!Number.isFinite(min) || !Number.isFinite(max)) return [0];
+      if (min === max) return [min];
+      const step = niceChartStep(max - min, count);
+      const lo = Math.floor(min / step) * step;
+      const hi = Math.ceil(max / step) * step;
+      const ticks = [];
+      for (let v = lo; v <= hi + step * 0.001; v += step) ticks.push(v);
+      return ticks.length ? ticks : [min, max];
+    }
+
+    function formatChartAxisValue(value) {
+      const n = Number(value);
+      if (!Number.isFinite(n)) return "-";
+      const abs = Math.abs(n);
+      if (abs >= 1000) return n.toFixed(0);
+      if (abs >= 100) return n.toFixed(1);
+      if (abs >= 10) return n.toFixed(2);
+      return n.toFixed(3);
+    }
+
+    function chartDateTickIndices(length, maxTicks = 5) {
+      if (length <= 1) return [0];
+      const count = Math.min(maxTicks, length);
+      const out = [];
+      for (let i = 0; i < count; i++) out.push(Math.round(i * (length - 1) / (count - 1)));
+      return out;
+    }
+
+    function buildMiniLineMeta(canvas, rows, tone, height, cnColors) {
+      const rect = canvas.getBoundingClientRect();
+      const parentWidth = canvas.parentElement?.clientWidth || 0;
+      const ratio = window.devicePixelRatio || 1;
+      const width = Math.max(320, Math.floor(rect.width || parentWidth || 320));
+      const values = rows.map(row => Number(row.value)).filter(Number.isFinite);
+      const rawMin = Math.min(...values);
+      const rawMax = Math.max(...values);
+      const yTicks = niceChartTicks(rawMin, rawMax, 4);
+      const yMin = yTicks[0];
+      const yMax = yTicks[yTicks.length - 1];
+      const ySpan = Math.max(yMax - yMin, 1e-9);
+      const pad = { left: 52, right: 16, top: 18, bottom: 30 };
+      const plotW = width - pad.left - pad.right;
+      const plotH = height - pad.top - pad.bottom;
+      const xAt = index => pad.left + (rows.length === 1 ? plotW / 2 : plotW * index / (rows.length - 1));
+      const yAt = value => pad.top + (yMax - value) / ySpan * plotH;
+      const lineColor = cnColors
+        ? (tone === "up" ? "#b83232" : tone === "down" ? "#2d6a3e" : "#8b5a2b")
+        : (tone === "up" ? "#2d6a3e" : tone === "down" ? "#b83232" : "#8b5a2b");
+      return {
+        rows,
+        width,
+        height,
+        ratio,
+        pad,
+        plotW,
+        plotH,
+        yTicks,
+        yMin,
+        yMax,
+        ySpan,
+        xAt,
+        yAt,
+        lineColor,
+        xTickIndices: chartDateTickIndices(rows.length, 5),
+        hoverIndex: -1,
+      };
+    }
+
+    function nearestChartIndex(canvas, meta, clientX) {
+      const rect = canvas.getBoundingClientRect();
+      const localX = clientX - rect.left;
+      let best = 0;
+      let bestDist = Infinity;
+      meta.rows.forEach((_, index) => {
+        const dist = Math.abs(meta.xAt(index) - localX);
+        if (dist < bestDist) {
+          bestDist = dist;
+          best = index;
+        }
+      });
+      return best;
+    }
+
+    function renderMiniLine(canvas, meta) {
+      const { rows, width, height, ratio, pad, plotW, plotH, yTicks, yMax, ySpan, xAt, yAt, lineColor, xTickIndices, hoverIndex } = meta;
+      canvas.width = width * ratio;
+      canvas.height = height * ratio;
+      const ctx = canvas.getContext("2d");
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      ctx.clearRect(0, 0, width, height);
+
+      ctx.strokeStyle = "#e4ddd2";
+      ctx.lineWidth = 1;
+      yTicks.forEach(tick => {
+        const yy = pad.top + (yMax - tick) / ySpan * plotH;
+        ctx.beginPath();
+        ctx.moveTo(pad.left, yy);
+        ctx.lineTo(width - pad.right, yy);
+        ctx.stroke();
+      });
+
+      ctx.strokeStyle = lineColor;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      let started = false;
+      rows.forEach((row, index) => {
+        const value = Number(row.value);
+        if (!Number.isFinite(value)) return;
+        const px = xAt(index);
+        const py = yAt(value);
+        if (!started) { ctx.moveTo(px, py); started = true; }
+        else ctx.lineTo(px, py);
+      });
+      ctx.stroke();
+
+      ctx.fillStyle = "#9a9084";
+      ctx.font = "11px PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif";
+      ctx.textAlign = "right";
+      ctx.textBaseline = "middle";
+      yTicks.forEach(tick => {
+        const yy = pad.top + (yMax - tick) / ySpan * plotH;
+        ctx.fillText(formatChartAxisValue(tick), pad.left - 8, yy);
+      });
+
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+      xTickIndices.forEach(index => {
+        const label = String(rows[index]?.time || "").slice(0, 10);
+        if (!label) return;
+        ctx.fillText(label, xAt(index), height - pad.bottom + 6);
+      });
+
+      if (hoverIndex >= 0 && rows[hoverIndex]) {
+        const row = rows[hoverIndex];
+        const value = Number(row.value);
+        if (Number.isFinite(value)) {
+          const px = xAt(hoverIndex);
+          const py = yAt(value);
+          ctx.setLineDash([4, 3]);
+          ctx.strokeStyle = "#c4a574";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(px, pad.top);
+          ctx.lineTo(px, pad.top + plotH);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.fillStyle = lineColor;
+          ctx.beginPath();
+          ctx.arc(px, py, 4, 0, Math.PI * 2);
+          ctx.fill();
+          const tip = `${String(row.time || "").slice(0, 10)}  ${formatChartAxisValue(value)}`;
+          ctx.font = "12px PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif";
+          const tipW = ctx.measureText(tip).width + 16;
+          const tipH = 22;
+          let tipX = px - tipW / 2;
+          tipX = Math.max(pad.left, Math.min(tipX, width - pad.right - tipW));
+          const tipY = Math.max(4, py - 30);
+          ctx.fillStyle = "rgba(42, 36, 28, 0.88)";
+          roundRect(ctx, tipX, tipY, tipW, tipH, 4);
+          ctx.fill();
+          ctx.fillStyle = "#fffcf7";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(tip, tipX + tipW / 2, tipY + tipH / 2);
+        }
+      }
+    }
+
+    function roundRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + w, y, x + w, y + h, r);
+      ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r);
+      ctx.arcTo(x, y, x + w, y, r);
+      ctx.closePath();
+    }
+
+    function bindMiniLineHover(canvas) {
+      if (canvas._miniHoverBound) return;
+      canvas._miniHoverBound = true;
+      canvas.addEventListener("mousemove", event => {
+        const meta = canvas._miniChartMeta;
+        if (!meta) return;
+        const next = nearestChartIndex(canvas, meta, event.clientX);
+        if (next === meta.hoverIndex) return;
+        meta.hoverIndex = next;
+        renderMiniLine(canvas, meta);
+      });
+      canvas.addEventListener("mouseleave", () => {
+        const meta = canvas._miniChartMeta;
+        if (!meta || meta.hoverIndex < 0) return;
+        meta.hoverIndex = -1;
+        renderMiniLine(canvas, meta);
+      });
+    }
+
+    function drawMiniLine(canvas, rows, tone = "neutral", height = 180, cnColors = false) {
+      if (!canvas || !rows.length) return;
+      const meta = buildMiniLineMeta(canvas, rows, tone, height, cnColors);
+      meta.hoverIndex = canvas._miniChartMeta?.hoverIndex ?? -1;
+      canvas._miniChartMeta = meta;
+      renderMiniLine(canvas, meta);
+      bindMiniLineHover(canvas);
+    }
+
+    function renderSeasonalityPanel(skill) {
+      if (!skill || skill.status === "unavailable") {
+        return `<div class="pillar-empty">${e(skill?.summary || "暂无季节性数据，请刷新后重试。")}</div>`;
+      }
+      const chart = (skill.charts || []).find(item => item.type === "seasonal");
+      const qualTable = (skill.tables || []).find(item => item.title === "季节性要点");
+      return `
+        <div class="seasonal-panel">
+          ${chart?.interpretation ? `<div class="seasonal-interpret"><span class="k">解读</span>${e(chart.interpretation)}</div>` : ""}
+          ${chart?.series?.length ? `
+            <div class="seasonal-year-legend" id="seasonal-year-legend">
+              ${chart.series.map((row, index) => renderSeasonalYearChip(row, index)).join("")}
+            </div>
+            <canvas id="seasonal-chart"></canvas>
+          ` : ""}
+          ${qualTable ? renderAccordionBlock("季节性要点", "品种/板块定性描述", renderTable(qualTable), false, true) : ""}
+          ${renderTables((skill.tables || []).filter(item => item.title !== "季节性要点"))}
+          ${renderNotes(skill.notes)}
+        </div>
+      `;
+    }
+
+    function renderSeasonalYearChip(row, index) {
+      const year = row.year;
+      const hidden = state.seasonalHiddenYears[year];
+      const color = SEASONAL_YEAR_COLORS[index % SEASONAL_YEAR_COLORS.length];
+      const price = row.last_close != null ? formatCell(row.last_close) : "-";
+      return `
+        <button type="button" class="seasonal-year-chip ${hidden ? "off" : ""}" onclick="toggleSeasonalYear(${year})">
+          <span class="seasonal-year-dot" style="background:${color}"></span>
+          ${year}${row.in_progress ? "·进行中" : ""}
+          <span class="subtle">${e(price)}</span>
+        </button>
+      `;
+    }
+
+    function toggleSeasonalYear(year) {
+      state.seasonalHiddenYears[year] = !state.seasonalHiddenYears[year];
+      const item = state.items[state.selected];
+      if (!item) return;
+      const skill = normalizeSkills(item).find(mod => mod.id === "seasonality");
+      bindSeasonalChart(skill);
+      const legend = document.getElementById("seasonal-year-legend");
+      if (legend && skill) {
+        const chart = (skill.charts || []).find(item => item.type === "seasonal");
+        legend.innerHTML = (chart?.series || []).map((row, index) => renderSeasonalYearChip(row, index)).join("");
+      }
+    }
+
+    function bindSeasonalChart(skill) {
+      const chart = (skill?.charts || []).find(item => item.type === "seasonal");
+      const canvas = document.getElementById("seasonal-chart");
+      if (!chart || !canvas) return;
+      drawSeasonalChart(canvas, chart);
+    }
+
+    function drawSeasonalChart(canvas, chart) {
+      const series = (chart.series || []).filter(row => !state.seasonalHiddenYears[row.year]);
+      if (!series.length) return;
+
+      const rect = canvas.getBoundingClientRect();
+      const ratio = window.devicePixelRatio || 1;
+      const width = Math.max(520, Math.floor(rect.width));
+      const height = 280;
+      canvas.width = width * ratio;
+      canvas.height = height * ratio;
+      const ctx = canvas.getContext("2d");
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      ctx.clearRect(0, 0, width, height);
+
+      const pad = { left: 58, right: 16, top: 16, bottom: 34 };
+      const plotW = width - pad.left - pad.right;
+      const plotH = height - pad.top - pad.bottom;
+      const xForDoy = doy => pad.left + (Math.max(1, Math.min(365, doy)) - 1) / 364 * plotW;
+
+      const allCloses = series.flatMap(row => (row.points || []).map(point => Number(point.close))).filter(Number.isFinite);
+      if (!allCloses.length) return;
+      const min = Math.min(...allCloses);
+      const max = Math.max(...allCloses);
+      const span = Math.max(max - min, 1);
+      const y = value => pad.top + (max - value) / span * plotH;
+
+      ctx.strokeStyle = "#eef1f5";
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= 4; i++) {
+        const yy = pad.top + plotH * i / 4;
+        ctx.beginPath();
+        ctx.moveTo(pad.left, yy);
+        ctx.lineTo(width - pad.right, yy);
+        ctx.stroke();
+      }
+
+      const monthTicks = [1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335];
+      const monthLabels = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"];
+      monthTicks.forEach((doy, index) => {
+        const xx = xForDoy(doy);
+        ctx.strokeStyle = "#f0f2f5";
+        ctx.beginPath();
+        ctx.moveTo(xx, pad.top);
+        ctx.lineTo(xx, height - pad.bottom);
+        ctx.stroke();
+        if (index % 2 === 0) {
+          ctx.fillStyle = "#8a95a5";
+          ctx.font = "11px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText(monthLabels[index], xx, height - 12);
+        }
+      });
+
+      if (chart.focus_month) {
+        const startDoy = monthTicks[chart.focus_month - 1] || 1;
+        const endDoy = monthTicks[chart.focus_month] || 365;
+        ctx.fillStyle = "rgba(55, 138, 221, 0.08)";
+        ctx.fillRect(xForDoy(startDoy), pad.top, xForDoy(endDoy) - xForDoy(startDoy), plotH);
+      }
+      if (chart.focus_doy) {
+        const xx = xForDoy(chart.focus_doy);
+        ctx.strokeStyle = "rgba(55, 138, 221, 0.45)";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(xx, pad.top);
+        ctx.lineTo(xx, height - pad.bottom);
+        ctx.stroke();
+      }
+
+      series.forEach((row, index) => {
+        const color = SEASONAL_YEAR_COLORS[(chart.series || []).findIndex(item => item.year === row.year) % SEASONAL_YEAR_COLORS.length];
+        const points = row.points || [];
+        ctx.strokeStyle = color;
+        ctx.lineWidth = row.in_progress ? 2.5 : 1.8;
+        ctx.beginPath();
+        let started = false;
+        points.forEach(point => {
+          const value = Number(point.close);
+          if (!Number.isFinite(value)) return;
+          const px = xForDoy(point.doy);
+          const py = y(value);
+          if (!started) {
+            ctx.moveTo(px, py);
+            started = true;
+          } else {
+            ctx.lineTo(px, py);
+          }
+        });
+        ctx.stroke();
+      });
+
+      ctx.fillStyle = "#697586";
+      ctx.font = "11px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
+      ctx.textAlign = "right";
+      for (let i = 0; i <= 4; i++) {
+        const value = max - span * i / 4;
+        ctx.fillText(value.toFixed(0), pad.left - 8, pad.top + plotH * i / 4 + 4);
+      }
+    }
+
+    function toMiniLineRows(points, options = {}) {
+      const valueKey = options.valueKey || "value";
+      const timeKey = options.timeKey || "time";
+      return (points || []).map(point => {
+        const value = Number(point[valueKey] ?? point.value ?? point["价格"]);
+        const time = String(point[timeKey] ?? point.time ?? point["月份"] ?? "");
+        return { time, value };
+      }).filter(row => Number.isFinite(row.value));
+    }
+
+    function drawStandardLineChart(canvas, points, options = {}) {
+      const rows = toMiniLineRows(points, options);
+      if (!canvas || !rows.length) return;
+      drawMiniLine(canvas, rows, options.tone || "neutral", options.height || 180, true);
+    }
+
+    function drawTermCurve(canvas, points) {
+      drawStandardLineChart(canvas, points, { valueKey: "价格", timeKey: "月份" });
     }
 
     function drawKline(canvas, rows) {
@@ -368,7 +4817,7 @@
       const step = plotW / rows.length;
       const bodyW = Math.max(2, Math.min(9, step * 0.58));
 
-      ctx.strokeStyle = "#d9dee5";
+      ctx.strokeStyle = "#dce2ea";
       ctx.lineWidth = 1;
       ctx.beginPath();
       for (let i = 0; i <= 4; i++) {
@@ -380,7 +4829,7 @@
       ctx.lineTo(width - pad.right, volTop);
       ctx.stroke();
 
-      ctx.fillStyle = "#6c7785";
+      ctx.fillStyle = "#697586";
       ctx.font = "12px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
       ctx.textAlign = "right";
       for (let i = 0; i <= 4; i++) {
@@ -391,7 +4840,7 @@
       rows.forEach((row, i) => {
         const x = pad.left + step * i + step / 2;
         const rising = row.close >= row.open;
-        const color = rising ? "#b42318" : "#067647";
+        const color = rising ? "#b83232" : "#2d6a3e";
         ctx.strokeStyle = color;
         ctx.fillStyle = color;
         ctx.beginPath();
@@ -402,20 +4851,15 @@
         const y2 = priceY(Math.min(row.open, row.close));
         ctx.fillRect(x - bodyW / 2, y1, bodyW, Math.max(1, y2 - y1));
         const volBarH = (row.volume || 0) / maxVol * volH;
-        ctx.globalAlpha = 0.28;
+        ctx.globalAlpha = 0.25;
         ctx.fillRect(x - bodyW / 2, volTop + volH - volBarH, bodyW, volBarH);
         ctx.globalAlpha = 1;
       });
 
-      drawLine(ctx, rows, "ma20", "#176b87", pad.left, step, priceY);
-      drawLine(ctx, rows, "ma60", "#b54708", pad.left, step, priceY);
+      drawLine(ctx, rows, "ma20", "#378add", pad.left, step, priceY);
+      drawLine(ctx, rows, "ma60", "#ea4335", pad.left, step, priceY);
 
-      ctx.textAlign = "left";
-      ctx.fillStyle = "#176b87";
-      ctx.fillText("MA20", pad.left, 14);
-      ctx.fillStyle = "#b54708";
-      ctx.fillText("MA60", pad.left + 52, 14);
-      ctx.fillStyle = "#6c7785";
+      ctx.fillStyle = "#697586";
       ctx.textAlign = "center";
       const first = rows[0]?.time || "";
       const last = rows[rows.length - 1]?.time || "";

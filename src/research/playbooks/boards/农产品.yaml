@@ -1,0 +1,64 @@
+id: 农产品
+name: 农产品板块
+board: 农产品
+version: 1
+sources:
+  - broker: 建信期货
+    file: 20260605-建信期货-生猪日报.pdf
+    date: "2026-06-05"
+  - broker: 国泰君安期货
+    file: 20260605-国泰君安期货-美大豆，玉米主产区天气展望.pdf
+    date: "2026-06-05"
+
+reasoning_chain:
+  - id: supply
+    title: 供给端
+    focus: [产量, 出栏/压榨, 库存, 进口]
+    questions:
+      - 国内供应是在增加还是减少？
+      - 进口与替代油脂/蛋白是否扰动平衡？
+    fallback: 农产品先看国内供应周期，再看进口补充。
+
+  - id: demand
+    title: 需求端
+    focus: [养殖, 屠宰, 消费, 备货]
+    questions:
+      - 终端消费是否季节性走弱或走强？
+      - 下游是补库还是去库？
+    fallback: 需求常呈季节性，关注屠宰、开工与库存传导。
+
+  - id: weather
+    title: 天气与种植
+    focus: [主产区天气, 生长关键期, 单产预期]
+    questions:
+      - 主产区天气是否威胁产量？
+      - 生长关键期需要跟踪什么？
+    fallback: 豆类、玉米等作物对天气高度敏感，关键期需提高跟踪频率。
+
+  - id: spread
+    title: 价差与替代
+    focus: [月间价差, 跨品种, 区域价差]
+    questions:
+      - 月间价差反映近紧远松还是相反？
+      - 油脂粕类之间是否存在替代？
+    skill_links: [term_structure]
+    fallback: 农产品套利与替代关系是研究员常用分析维度。
+
+  - id: market
+    title: 盘面验证
+    skill_links: [price_volume, technical_signals, position_rank]
+
+confirmation:
+  - 供应收缩预期 + 需求旺季 + 库存去化
+  - 天气风险溢价与现货走强共振
+
+invalidation:
+  - 丰产预期兑现 + 需求淡季 + 库存累积
+  - 进口大增抵消国内缺口
+
+seasonal_notes:
+  - 农产品研究必须结合种植、养殖与消费日历
+
+risk_factors:
+  - 极端天气
+  - 贸易政策与生物安全事件

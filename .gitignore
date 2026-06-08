@@ -2,6 +2,13 @@
 .env.*
 !.env.example
 .DS_Store
+.cursor/
 data/
 __pycache__/
 *.pyc
+
+# 本地研报/PDF 原文（体积大、版权敏感）；仓库只保留蒸馏后的 Playbook YAML
+期货原始资料/
+期货研报/
+*.pdf
+*.docx

@@ -1,0 +1,132 @@
+version: 2
+updated: "2026-06-05"
+description: 分层知识库 Playbook — 宏观 / 技术面 / 板块 / 品种
+
+design_decisions:
+  knowledge_base:
+    recorded: "2026-06"
+    principle: 材料人工更新；研报数字过期 → 只蒸馏方法论，不以 RAG 为主库
+    runtime: Playbook（思维）+ Analyzer（事实）+ Catalog（溯源）
+    doc: docs/knowledge-distillation.md
+
+architecture:
+  order: [macro, technical, board, product, persona]
+  layers:
+    macro:
+      path: layers/macro.yaml
+      role: 宏观 regime、政策、跨资产 → 商品背景色
+    technical:
+      path: layers/technical.yaml
+      role: 多周期、量价、形态、期限结构（对接 skills）
+    board:
+      path: boards/{板块}.yaml
+      role: 板块共性基本面思维；无品种 Playbook 时使用
+    product:
+      path: products/{品种代码}.yaml
+      role: 品种差异与产业链细节；有则覆盖 board 层
+    persona:
+      path: personas/{id}.yaml
+      role: 大 V / 外部视角；按 scope.products 或 scope.boards 匹配，运行时作为 persona_* skill
+
+# 规划（未实现）：宏观不杂糅进单一 macro.yaml，而为每位宏观分析员建 persona，由 insight 做观点对比
+planned:
+  macro_personas:
+    status: agreed_not_implemented
+    note: 分析员名单待定；详见 docs/research-playbooks.md「宏观多 Persona」
+    target:
+      - 瘦身 layers/macro.yaml 为方法论薄层
+      - personas/macro_{analyst}.yaml 每人一条世界观
+      - insight 输出 agreements / disagreements
+    materials_layout: 期货原始资料/宏观-{分析员}/
+
+runtime:
+  analyzers: [price_volume, technical_signals, candlestick_patterns, key_levels, term_structure, warehouse_receipts, basis, position_rank]
+  knowledge_skills: [macro_framework, technical_framework, board_framework, product_framework, persona_{id}, insight]
+  pipeline: analyzers → knowledge_skills → insight
+
+reports_root: 期货研报/期货基本面
+parsed_cache: data/research/parsed
+
+raw_materials:
+  root: 期货原始资料
+  personas:
+    citic:
+      path: 中信期货研究所
+      parsed: data/research/parsed/citic
+      catalog: src/research/playbooks/catalogs/citic.yaml
+      reports: 52
+      parsed_ok: 29
+    peifengke_cu:
+      path: 培风客-铜
+      catalog: src/research/playbooks/catalogs/peifengke_cu.yaml
+      articles: 44
+      distill: personas/peifengke_cu.yaml
+    macro_brokers:
+      path: 期货宏观
+      parsed: data/research/parsed/macro
+      catalog: src/research/playbooks/catalogs/macro_brokers.yaml
+      reports: 16
+      distill: layers/macro.yaml
+      note: 仅索引+通用方法论，券商立场不杂糅
+
+products:
+  rb:
+    name: 螺纹钢
+    sources:
+      - 20260605-中航期货-钢材铁矿周度报告.pdf
+  hc:
+    name: 热卷
+    sources:
+      - 20260605-中航期货-钢材铁矿周度报告.pdf
+  i:
+    name: 铁矿石
+    sources:
+      - 20260605-中航期货-钢材铁矿周度报告.pdf
+  jm:
+    name: 焦煤
+    sources:
+      - 20260605-银河期货-双焦：谨慎看多，中期关注下游承接能力.pdf
+  j:
+    name: 焦炭
+    sources:
+      - 20260605-银河期货-双焦：谨慎看多，中期关注下游承接能力.pdf
+  ur:
+    name: 尿素
+    sources:
+      - 20260605-弘业期货-尿素研报系列（4）.pdf
+  ma:
+    name: 甲醇
+    sources:
+      - 20260605-弘业期货-甲醇：低供支撑，高位震荡.pdf
+  bu:
+    name: 沥青
+    sources:
+      - 20260605-弘业期货-沥青：成本支撑，低供托底.pdf
+      - 20260605-中航期货-沥青周度报告.pdf
+  lh:
+    name: 生猪
+    sources:
+      - 20260605-建信期货-生猪日报.pdf
+  au:
+    name: 黄金
+    sources:
+      - 20260605-山金期货-贵金属策略报告.pdf
+  ag:
+    name: 白银
+    sources:
+      - 20260605-山金期货-贵金属策略报告.pdf
+  si:
+    name: 工业硅
+    sources:
+      - 20260605-海证期货-工业硅多晶硅周度行情分析.pdf
+
+boards:
+  黑色: { fallback_for: [rb, hc, i, jm, j, SF, SM] }
+  能化: { fallback_for: [sc, fu, lu, bu, ru, nr, TA, PF, PX, MA, eg, l, pp, v, eb, pg, SA, FG, UR] }
+  农产品: { fallback_for: [a, b, m, y, p, RM, OI, c, cs, jd, lh] }
+  贵金属: { fallback_for: [au, ag] }
+
+maintenance:
+  - 框架层（macro/technical）可从书籍/CME 课程维护，不必来自 PDF
+  - 板块/品种层优先从券商研报蒸馏
+  - python3 scripts/research/validate_playbooks.py

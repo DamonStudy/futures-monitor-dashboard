@@ -1,0 +1,48 @@
+name: 思路 / 功能 / 数据源建议
+description: 分享产品想法、功能点、数据来源或研究方法论（不必写代码）
+title: "[discussion] "
+labels:
+  - discussion
+body:
+  - type: markdown
+    attributes:
+      value: |
+        欢迎只提想法、不写代码。详见 [open-source-roadmap.md](https://github.com/DamonStudy/futures-monitor-dashboard/blob/main/docs/open-source-roadmap.md)。
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: 所属维度
+      options:
+        - 数据源
+        - Playbook / 知识库
+        - 数据模块 (Analyzer)
+        - 功能 / 产品体验
+        - UI / 信息架构
+        - 工程 / 基础设施
+        - 其他
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: 你想解决什么问题？
+      placeholder: 例如：盘后想快速知道某板块是否共振，但当前缺少……
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 你的思路或建议
+      placeholder: 可以是对标产品、数据 API、研究 SOP、交互草图等
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: 背景（可选）
+      description: 使用场景、已试过的数据源、相关品种/板块
+      placeholder: 例如：试过 AkShare xxx 接口，字段不稳定……

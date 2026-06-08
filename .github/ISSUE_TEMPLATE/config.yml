@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 开源路线图（希望社区帮助的维度）
+    url: https://github.com/DamonStudy/futures-monitor-dashboard/blob/main/docs/open-source-roadmap.md
+    about: 数据源、Playbook、功能、工程等待办与贡献入口
+  - name: 贡献指南
+    url: https://github.com/DamonStudy/futures-monitor-dashboard/blob/main/CONTRIBUTING.md
+    about: 如何提 Issue / PR

@@ -1,0 +1,62 @@
+id: si
+name: 工业硅
+board: 有色
+version: 1
+sources:
+  - broker: 海证期货
+    file: 20260605-海证期货-工业硅多晶硅周度行情分析：西南丰水期来临，硅系价格承压运行.pdf
+    date: "2026-06-05"
+
+reasoning_chain:
+  - id: supply
+    title: 供给端
+    focus: [西南丰水期, 复产, 开工, 产量]
+    questions:
+      - 丰水期是否带来西南复产？
+      - 套保利润是否刺激复产意愿？
+    fallback: 西南丰水期复产是工业硅供应核心变量。
+
+  - id: demand
+    title: 需求端
+    focus: [有机硅, 铝合金, 多晶硅]
+    questions:
+      - 有机硅是否低负荷运行？
+      - 多晶硅排产变化如何拉动工业硅？
+    related_products: []
+    fallback: 三大下游开工决定需求，多晶硅边际变化影响最大。
+
+  - id: balance
+    title: 供需平衡
+    focus: [供大于求, 库存, 亏损]
+    questions:
+      - 是否仍处供过于求 + 高库存 + 产业亏损？
+      - 库存消化压力有多大？
+    skill_links: [warehouse_receipts]
+    fallback: 工业硅典型格局是过剩与高库存，价格呈上有顶下有底震荡。
+
+  - id: related
+    title: 硅系联动
+    focus: [多晶硅, 政策, 反内卷]
+    questions:
+      - 多晶硅监管政策是否影响产业链预期？
+      - 多晶硅价格是否反压工业硅？
+    fallback: 多晶硅反垄断与去产能政策扰动整个硅系定价。
+
+  - id: market
+    title: 盘面验证
+    skill_links: [price_volume, technical_signals, term_structure, position_rank]
+
+confirmation:
+  - 复产不及预期 + 下游排产回升 + 库存有效去化
+  - 多晶硅去库带动工业硅需求修复
+
+invalidation:
+  - 丰水期复产放量 + 库存高位难降
+  - 下游有机硅、多晶硅同时走弱
+
+seasonal_notes:
+  - 西南丰水期（夏季）通常对应供应回升压力
+
+risk_factors:
+  - 能耗限额与产业政策
+  - 多晶硅价格超预期下跌

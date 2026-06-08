@@ -1,0 +1,298 @@
+id: peifengke_cu
+name: 培风客·铜
+author: 培风客
+version: 1
+updated: '2026-06-08'
+scope:
+  products:
+  - cu
+sources:
+- 期货原始资料/培风客-铜/（44 篇，2024-09 至 2026-05）
+- catalog: src/research/playbooks/catalogs/peifengke_cu.yaml
+- 核心框架：Price = Structural + Cyclical；长/中/短三周期；四类市场参与者
+changelog:
+- date: '2026-06-08'
+  note: 44 篇 docx 蒸馏为铜专用 framework 链；规范见 docs/knowledge-distillation.md
+notes:
+- 仅存方法论与思维链，不存具体价位、喊单与过期预测
+- 研究方式强调与下游、贸易商等实地交流，而非纯模型
+- 蒸馏规范见 docs/knowledge-distillation.md
+reasoning_chain:
+- id: time_horizon
+  title: 先分时间尺度
+  focus:
+  - 长周期
+  - 中周期
+  - 短周期
+  - 范式是否切换
+  questions:
+  - 当前矛盾主要在哪个时间尺度上？长期供给故事、中期工业周期，还是短期资金流？
+  - 过去有效的经验（如铜跟中国 PMI、跟上证 50）是否仍成立，还是已范式切换？
+  - 是否在「短期与长期都有分歧」的重要且紧急窗口？
+  fallback: 长看供给约束与 capex 周期，中看全球工业产出，短看四类参与者博弈；勿用单一周期叙事覆盖全部。
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: reference_structure
+  freshness: evergreen
+- id: structural_cyclical
+  title: 结构性 vs 周期性
+  focus:
+  - 电网
+  - AI 电力
+  - 新能源
+  - 关税囤货
+  - 矿山扰动
+  - 再生铜
+  - 宏观降速
+  questions:
+  - 当前是「结构性顺风 + 周期性逆风」，还是两者共振/双杀？
+  - 结构性需求：电网改造、AI/数据中心 capex、贸易搬运（关税）哪几条在生效？
+  - 结构性供给：矿山扰动、ESG/勘探滞后、再生铜增量是否仍不足以覆盖需求增量？
+  fallback: 铜价 = 结构性因素 + 周期性因素；2025 典型是结构性支撑抵消经济降速，2026 关注两者能否同向。
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: reference_structure
+  freshness: evergreen
+- id: long_supply_demand
+  title: 长周期·供给重于需求
+  focus:
+  - 激励价格
+  - 勘探 capex
+  - ESG
+  - 大矿与小矿
+  - 中国冶炼份额
+  - 资源民族主义
+  questions:
+  - 价格上涨后是否有增产能力，还是仍卡在 incentive price 与 capex 周期？
+  - 大矿扰动（南美政治、ESG）与小矿融资（利率）哪个更紧？
+  - 是否警惕「十年后短缺数百万吨」的线性外推，而关注边际 30 万吨级缺口即可推价？
+  fallback: 长期需求随工业化向上，但研究重点在「贵了我能不能扩产」；不相信极端 Net Zero 需求曲线，也相信电网/电力是更扎实的增量叙事。
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: reference_structure
+  freshness: evergreen
+- id: demand_shift
+  title: 需求地理与行业再平衡
+  focus:
+  - 中国地产竣工
+  - 美国电网
+  - 印度
+  - 行业此消彼长
+  - 宏观脱敏
+  questions:
+  - 中国地产/竣工拖累是否已被全球电网、印度等增量部分对冲？
+  - 铜是否从「中国强周期品种」转向「跟美国公用事业/美股叙事更相关」？
+  - 单一国家或单一行业高增，是否会通过涨价压制其他区域/行业即期采购？
+  fallback: 铜下游广、地域广，拍不准平衡表正常；看全球工业产出与多区域需求扩散，而非只盯中国一条线。
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: reference_structure
+  freshness: evergreen
+- id: medium_industrial
+  title: 中周期·全球工业产出
+  focus:
+  - G7 工业产出
+  - 制造业 vs 服务业
+  - 国防安全开支
+  - 补库周期
+  questions:
+  - G7/全球工业产出处于周期什么位置？安全与国防类支出是否抬升工业需求？
+  - 美国是否仍「AI/电力强、地产汽车家电弱」？中国制造业外需与内需如何？
+  - 中期是否仍适用「逢低布局、底部缓慢上移（成本抬升）」？
+  analyzer_links:
+  - price_volume
+  - term_structure
+  fallback: 中期供给相对稳定，需求随经济周期摆动；制造业反弹往往快于服务业。
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: live_link
+  freshness: evergreen
+- id: macro_quadrant
+  title: 宏观四象限（尤其美国）
+  focus:
+  - AI capex
+  - 周期行业
+  - 利率
+  - 通胀预期
+  - 软着陆
+  questions:
+  - 美国 2026 式叙事落在哪象限：AI 好+周期好（过热）、AI 好+周期差（2025 延续）、AI 松动+周期好（轮动）、双差（衰退）？
+  - 10 年美债区间叙事：利率过高压制风险 vs 降息后经济韧性，哪一段对铜更友好？
+  - 通胀预期、油价与联储反应如何联动铜的宏观需求预期？
+  analyzer_links:
+  - technical_signals
+  - price_volume
+  fallback: 铜在中期是宏观品种；宏观决定库存预期、开工与合意库存水平。
+  chain: macro
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: live_link
+  freshness: evergreen
+- id: trade_inventory
+  title: 贸易·库存·合意库存
+  focus:
+  - Comex 库存
+  - LME
+  - 内外价差
+  - 关税
+  - 曲线
+  - 基差
+  - 主动/被动补库
+  questions:
+  - Comex 高库存是商业囤货（看价差/曲线）还是战略囤货（AI/中美竞争）？
+  - 合意库存是多少、何时触发向亚洲/欧洲回流？
+  - 显性库存与旺季备货：低库存 + 宏观不确定时，下游愿在哪个区间点价？
+  analyzer_links:
+  - term_structure
+  - warehouse_receipts
+  - price_volume
+  fallback: 库存与价格非简单负相关；不确定性上升时合意库存上升，需区分商业与战略动机。
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: live_link
+  freshness: evergreen
+- id: supply_mine_scrap
+  title: 供给双路径：矿山与再生铜
+  focus:
+  - 矿山干扰
+  - 冶炼加工费
+  - 再生铜政策
+  - 区域差异
+  questions:
+  - 矿山短缺是否为共识、短期无法靠价格完全解决？
+  - 再生铜增量能否覆盖需求增量？中/美/欧在废铜政策与产能上叙事是否分化？
+  - 冶炼是否为定价者，还是仍由中国制造卷加工费？
+  fallback: 供给看矿山 + 再生铜两条线；再生铜是 2026 前后值得单独拆区域研究的变量。
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: reference_structure
+  freshness: evergreen
+- id: market_participants
+  title: 四类参与者（短周期必看）
+  focus:
+  - 下游
+  - 贸易商
+  - 宏观基金
+  - CTA
+  - 净持仓
+  questions:
+  - 下游：需求预期与库存是否矛盾？旺季备货带着什么宏观预期？
+  - 贸易商：基差、利润、关税与趋势判断？
+  - 宏观/CTA：谁在当前阶段是边际定价者？净多头极端是否接近反向指标？
+  analyzer_links:
+  - position_rank
+  - price_volume
+  fallback: 2016 年只看 PMI 不够；需分群体理解，理想状态是多与产业链及宏观盘手交流验证。
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: live_link
+  freshness: evergreen
+- id: cu_vs_gold
+  title: 铜金相对与资产配置
+  focus:
+  - 地缘
+  - 经济复苏
+  - 结构性叙事
+  questions:
+  - 若地缘缓和 + 经济复苏预期升温，是否相对更利好铜而非黄金？
+  - 若地缘恶化、实际增长乏力，是否黄金占优？
+  - 铜金比/铜油比是否仍有效，还是买家群体已分化失效？
+  fallback: 铜的核心更偏经济周期，黄金更偏地缘与秩序；两者相关但驱动不同，比价需慎用。
+  chain: macro
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: live_link
+  freshness: evergreen
+- id: demand_diffusion
+  title: 需求扩散（脆弱供给背景下）
+  focus:
+  - AI 以外行业
+  - 内需政策
+  - 出口结构
+  - 韩国/纳斯达克情绪
+  questions:
+  - 叙事是否仍集中在 AI，还是出现「更多行业好起来」的扩散诉求？
+  - 美股/纳指方向、持仓与成交放大是否配合旺季做多叙事？
+  - 出口 AI 链与非 AI 地区数据是否分化？
+  analyzer_links:
+  - price_volume
+  - technical_signals
+  fallback: 供给脆弱 + 需求扩散未兑现时，旺季上涨需叙事与持仓共振，不宜单押 AI 一条线。
+  chain: product
+  tags:
+  - 铜
+  - 培风客
+  products:
+  - cu
+  knowledge_type: framework
+  data_policy: live_link
+  freshness: evergreen
+confirmation:
+- 全球工业产出回升或制造业 PMI 反弹快于服务业
+- 利率从高区间回落且软着陆叙事未被证伪
+- 旺季下游带着改善预期备货，持仓与成交同步放大
+- 结构性供给故事仍在（矿山扰动、再生铜不足以完全替代）
+- 四类参与者中至少下游与贸易商行为与看多叙事一致
+invalidation:
+- 2008/2020 级系统性危机冲击实物需求
+- 中美出现较长战略缓冲且战略囤货动机消退
+- AI capex 预期显著下修且电力/电网叙事同步走弱
+- 再生铜与矿山供给超预期释放，显性库存持续累积且基差走弱
+- 范式切换被证伪：铜重新与中国地产周期单一绑定且数据持续超预期恶化
+seasonal_notes:
+- 关注铜旺季/淡季对下游点价与备货节奏的影响
+- Q4 地缘、FOMC、重要政治会议常叠加波动
+risk_factors:
+- 南美政治（秘鲁、智利选举）与资源民族主义
+- 美国铜关税与 Comex 库存战略化
+- 油价冲击通过成本与联储路径影响铜
+- 中国地产与竣工链尾部风险
+- 净持仓与 CTA 动量在极端位置的反转

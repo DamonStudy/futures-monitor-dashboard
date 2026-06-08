@@ -1,0 +1,61 @@
+id: bu
+name: 沥青
+board: 能化
+version: 1
+sources:
+  - broker: 弘业期货
+    file: 20260605-弘业期货-沥青：成本支撑，低供托底.pdf
+    date: "2026-06-05"
+  - broker: 中航期货
+    file: 20260605-中航期货-沥青周度报告.pdf
+    date: "2026-06-05"
+
+reasoning_chain:
+  - id: cost
+    title: 成本端
+    focus: [原油, 炼厂利润, 转产渣油]
+    questions:
+      - 原油高位是否推高炼厂成本？
+      - 沥青-原油价差是否压缩炼厂利润？
+    fallback: 原油走势与炼厂加工利润决定生产积极性。
+
+  - id: supply
+    title: 供给端
+    focus: [炼厂开工, 检修, 转产, 产量]
+    questions:
+      - 集中检修是否导致供应低位？
+      - 是否有炼厂转产渣油降沥青产出？
+    fallback: 92家炼厂综合开工率与周度产量是供应核心指标。
+
+  - id: demand
+    title: 需求端
+    focus: [道路施工, 改性沥青, 区域分化, 雨季]
+    questions:
+      - 北方施工是否回暖、南方雨季是否压制需求？
+      - 炼厂出货量与改性企业开工如何？
+    fallback: 沥青需求南北分化明显，天气是短期关键变量。
+
+  - id: inventory
+    title: 库存
+    focus: [炼厂厂库, 社会库存, 去库]
+    skill_links: [warehouse_receipts]
+    fallback: 厂库与社会库存同步去库时，现货底部支撑较强。
+
+  - id: market
+    title: 盘面验证
+    skill_links: [price_volume, technical_signals, term_structure, key_levels]
+
+confirmation:
+  - 低供应 + 库存去化 + 北方需求回暖
+  - 炼厂利润修复后仍维持低开工
+
+invalidation:
+  - 南方 prolonged 雨季拖累整体需求
+  - 炼厂利润深度亏损后仍不见减产，或需求复苏不及预期
+
+seasonal_notes:
+  - 南方梅雨季压制施工；后期旺季集中落地可能带来需求修复
+
+risk_factors:
+  - 原油剧烈波动
+  - 基建项目落地节奏

@@ -1,0 +1,53 @@
+id: 黑色
+name: 黑色板块
+board: 黑色
+version: 1
+sources:
+  - broker: 中航期货
+    file: 20260605-中航期货-钢材铁矿周度报告.pdf
+    date: "2026-06-05"
+  - broker: 银河期货
+    file: 20260605-银河期货-双焦：谨慎看多，中期关注下游承接能力.pdf
+    date: "2026-06-05"
+
+reasoning_chain:
+  - id: chain_demand
+    title: 产业链需求锚
+    focus: [铁水产量, 高炉开工, 钢厂盈利率]
+    questions:
+      - 铁水是否维持高位？上方空间是否有限？
+      - 钢厂盈利率下滑是否会触发减产？
+    fallback: 黑色系共同需求锚是铁水，优先确认其方向与持续性。
+
+  - id: cost_game
+    title: 成本博弈
+    focus: [焦煤, 铁矿, 成材利润, 跷跷板]
+    questions:
+      - 煤强矿弱还是炉料共振？
+      - 成本能否向下游传导？
+    fallback: 关注焦煤-铁矿-成材之间的利润再分配。
+
+  - id: inventory
+    title: 库存与供需
+    focus: [成材库存, 炉料库存, 港口库存]
+    skill_links: [warehouse_receipts]
+    fallback: 成材与炉料库存方向分化时，黑色内部行情往往分化。
+
+  - id: market
+    title: 盘面验证
+    skill_links: [price_volume, technical_signals, term_structure, position_rank]
+
+confirmation:
+  - 铁水稳定 + 库存去化 + 利润修复
+  - 成本推动顺畅且板块共振
+
+invalidation:
+  - 供需双弱 + 库存累积 + 利润压缩触发减产
+  - 品种间严重分化，板块逻辑失效
+
+seasonal_notes:
+  - 夏季建材淡季，制造业与建材需求可能分化
+
+risk_factors:
+  - 粗钢产量政策
+  - 煤矿安检与进口扰动

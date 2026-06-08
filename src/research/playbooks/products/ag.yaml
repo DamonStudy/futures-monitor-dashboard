@@ -1,0 +1,50 @@
+id: ag
+name: 白银
+board: 贵金属
+version: 1
+sources:
+  - broker: 山金期货
+    file: 20260605-山金期货-贵金属策略报告.pdf
+    date: "2026-06-05"
+
+reasoning_chain:
+  - id: macro
+    title: 宏观与货币属性
+    focus: [实际利率, 美元, 工业预期]
+    questions:
+      - 白银是否同时受贵金属与工业属性驱动？
+      - 宏观预期变化对哪个属性影响更大？
+    fallback: 白银兼具金融与工业属性，波动通常大于黄金。
+
+  - id: safe_haven
+    title: 避险与跟随
+    focus: [黄金, 金银比, 地缘]
+    questions:
+      - 金银比是否处于历史极端？
+      - 黄金方向是否带动白银？
+    related_products: [au]
+    fallback: 短期常跟随黄金，金银比修复是独立行情线索。
+
+  - id: supply
+    title: 供应与实物
+    focus: [矿山供应, 进口, 工业需求]
+    questions:
+      - 供应偏紧是否提供额外支撑？
+      - 光伏等工业需求预期如何？
+    fallback: 供应偏紧与进口政策影响国内溢价。
+
+  - id: market
+    title: 盘面验证
+    skill_links: [price_volume, technical_signals, key_levels, position_rank]
+
+confirmation:
+  - 黄金走强 + 金银比低位修复 + 工业需求预期改善
+  - 供应偏紧叙事与低库存配合
+
+invalidation:
+  - 黄金回落且工业需求预期下调
+  - 金银比高位，白银相对黄金过度高估
+
+risk_factors:
+  - 工业需求不及预期
+  - 跟随黄金回调的放大效应
