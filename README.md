@@ -8,6 +8,22 @@
 
 **寻找贡献者**：欢迎从 [数据源、Playbook 知识库、功能模块、UI、工程](docs/open-source-roadmap.md) 等维度提 Issue——不必写代码，思路与踩坑同样有价值。见 [CONTRIBUTING.md](CONTRIBUTING.md)。
 
+## 界面预览
+
+> 截图来自本地缓存数据（2026-06-08），仅作功能示意。
+
+### 大盘首页 — 走势解读 + 板块热力图
+
+![大盘首页：走势解读与南华指数](docs/screenshots/global-home.png)
+
+![大盘首页：板块热力图与品种梯队](docs/screenshots/global-heatmap-macro.png)
+
+### 品种决策 — 决策解读 + 方向矩阵
+
+![品种决策：螺纹钢示例](docs/screenshots/product-rebar.png)
+
+左侧为 61 个活跃品种关注榜；右侧首屏展示**决策解读**（命中 / 缺项 / 待验）、**多周期方向矩阵**与关键证据，K 线默认折叠。
+
 ## 运行
 
 复制配置模板：
